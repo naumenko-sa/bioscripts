@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=10000:00:00,nodes=1:ppn=23
+
+goblastp2.sh goodProteins.fasta goodProteins.fasta
