@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=1000:00:00,nodes=1:ppn=24
+
+
+java -cp *:/mnt/lustre/nina/new_data_gam/b2g4pipe/ext/*: es.blast2go.prog.B2GAnnotPipe -in $xml -out result/myproject -prop b2gPipe.properties -v -annot -dat -img -ips ipsr -annex -goslim -wiki html_template.html
+

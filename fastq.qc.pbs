@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#PBS -l walltime=100:00:00,nodes=1:ppn=12
+#PBS -d .
+
+qc.sh 12 $left $right
