@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+
+#wrapper script for pbsnodes 
+#naumenko.sa 28.03.2012
+
+use strict;
+
+open(IN,"pbsnodes|");
+print "NODENAME       CORES_TOTAL(USED)\tLOAD\tMEM_TOTAL\tMEM_FREE\t\tSTATE\n";
+print "---------------------------------------------------------------------------------------------\n";
+while(<IN>)
+{
+    chomp;
+    if ($_ =~ /^node[0-9]{2}/)
+    {
+	my $node = $_;
+	my $state = <IN>;
+	chomp $state;
+	$state =~ s/state//;
+	$state =~ s/=//;
+	my $np = <IN>;
+	chomp $np;
+	$np =~ s/np//;
+	$np =~ s/=//;
+	my $properties = <IN>;
+	my $type = <IN>;
+	my $status = <IN>;
+	$status =~ s/^\s+//;
+	my $cores=0;
+	if ($status =~ /^jobs/)
+	{
+	    my $jobs = $status;
+	    $jobs =~ s/jobs//;
+	    $jobs =~ s/=//;
+	    my @job_array = split(',',$jobs);
+	    $cores = @job_array;
+
+	    $status = <IN>;
+	}
+	my @params = split(",",$status);
+	my $physmem=$params[8]; chomp $physmem;$physmem =~ s/physmem=//;
+	my $availmem=$params[9];$availmem =~ s/\s+$//;chomp $availmem;$availmem =~ s/availmem=//;
+	my $load = $params[6]; chomp $load;$load =~ s/loadave=//;
+	foreach my $par (@params)
+	{
+	    #print $par."\n";
+	    if ($par =~ /availmem/)
+	    {
+		my $physmem = $par;
+		$physmem =~ s/physmem//;
+		$physmem =~ s/=//;
+	    }
+	}
+	my $gpus = <IN>;
+	#print $status."\n";
+	print $node."\t".$np."(".$cores.")"."\t\t\t".$load."\t".$physmem."\t".$availmem."\t".$state."\n";
+	
+    }
+}
+close(IN);

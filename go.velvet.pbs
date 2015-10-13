@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l walltime=1000:00:00,nodes=node07:ppn=23
+#PBS -d.
+
+OMP_NUM_THREADS=23
+export OMP_NUM_THREADS
+
+date
+
+/home/tools/velvet/velveth assembly65 65 -shortPaired -fastq $1
+/home/tools/velvet/velvetg assembly65 -exp_cov auto -cov_cutoff auto -ins_length 360 -min_contig_lgth 10000
+
+date
