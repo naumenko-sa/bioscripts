@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=5000:00:00,nodes=1:ppn=22
+
+startdir=`pwd`
+date
+hostname
+shopt -s expand_aliases
+ulimit -s unlimited
+#alias java='/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64/jre/bin/java'
+#java -version
+mkdir /tmp/snaumenko
+cp $gam.r1.fq $gam.r2.fq /tmp/snaumenko
+cd /tmp/snaumenko
+/mnt/lustre/tools/trinityrnaseq-2.1.0/Trinity --seqType fq --max_memory 48G --left $gam.r1.fq --right $gam.r2.fq  --CPU 22
+cp trinity_out_dir/Trinity.fasta trinity_out_dir/Trinity.timing $startdir
+cd $startdir
+date
