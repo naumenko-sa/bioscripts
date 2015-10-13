@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#blastp with xml output for blast2go
+
+#PBS -d .
+#PBS -l walltime=1000:00:00,nodes=1:ppn=22
+date
+
+blastp -task blastp -num_threads 22 -query $qry -db $base -out ${qry}_vs_${base}.blastp.${ev}.xml -evalue $ev -outfmt 5 -num_alignments $num_hits
+
+date
+
