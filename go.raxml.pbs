@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#PBS -l walltime=1000:00:00,nodes=1:ppn=24
+#PBS -d .
+
+date
+raxml -T 24 -s $align -n $align.tree -m GTRCAT -p 8593771075132634533
+
+date
