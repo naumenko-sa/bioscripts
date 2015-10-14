@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -d .
+#PBS -l walltime=1000:00:00,nodes=1:ppn=20
+
+date
+
+#if [ $# -lt 2 ];then
+#    echo "Usage : goblastn.sh qry.fasta base.fasta num_hits evalue";
+#    echo "Base should be ready";
+#    exit 0;
+#fi;
+
+echo $BLASTDB
+/mnt/lustre/tools/ncbi-blast-2.2.25+/bin/blastn -task blastn -num_threads 20 -query $qry -db $base -out ${qry}_vs_${base}.blastn.${ev} -evalue $ev -outfmt "6 qseqid sseqid length pident qstart qend sstart send evalue" -num_alignments $num_hits
+
+date
+
