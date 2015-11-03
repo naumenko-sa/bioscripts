@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-#average pairwise distance between sequence in an alignment
+#average pairwise distance between sequences in an alignment
 
 use POSIX;
 

@@ -1,9 +1,18 @@
 #!/bin/bash
 
 #PBS -d .
-#PBS -l walltime=1000:00:00,nodes=1:ppn=32
+#PBS -l walltime=1000:00:00,nodes=1:ppn=24
+
+#run with -o and without -o to get bootstrap support for all branches
 
 date
-/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 32 -s $align -n $align.tree  -m GTRCAT -p 8593771075132634533 -f a -x 1234 -# 1000
+/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.tree -m GTRGAMMAI -p 8593771075132634533 -o gam10.1  -# 100
+/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.boot -m GTRGAMMAI -p 8593771075132634533 -b 1234567 -o gam10.1 -# 1000
+/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -m GTRGAMMAI -p 8593771075132634533 -f b -t RAxML_bestTree.$align.tree -z RAxML_bootstrap.$align.boot -n $align.final
+rm *tree.RUN*
+
+#-f a - rapid bootstrap with the tree
+#rapid bootstrapping
+#-x 1234 
 date
 #-m PROTGAMMAWAG

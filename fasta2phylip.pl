@@ -118,5 +118,4 @@ my $line = "";
 										    		    																																					    						    }	
 										    		    																																					    							close IN;
 												    		    																																					    							    close OUT;
-																																				    							    }
-															    		    																																					    							    
+}
