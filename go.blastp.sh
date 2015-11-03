@@ -1,5 +1,5 @@
 #!/bin/bash
-#blastp for ortholog pipeline
+#blastp for orthomcl pipeline
 
 date
 
