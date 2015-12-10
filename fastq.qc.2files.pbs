@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#PBS -l walltime=1:00:00,nodes=1:ppn=8
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=50g
+
+fastq.qc.2files.sh 8 $left $right

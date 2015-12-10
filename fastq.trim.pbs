@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#PBS -l walltime=24:00:00,nodes=1:ppn=20
+#PBS -l walltime=2:00:00,nodes=1:ppn=8
 #PBS -d .
+#PBS -joe
+#PBS -l vmem=50g
 
-trim.sh $left $right adapters.fasta 20 50 24
+fastq.trim.sh $left $right adapters.fasta 25 50 8

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -l walltime=100:00:00,nodes=1:ppn=12
+#PBS -l walltime=100:00:00,nodes=1:ppn=8
 #PBS -d .
 
 if [ $# -lt "2" ]
@@ -10,4 +10,4 @@ then
     exit 1
 fi
 
-fastqc -noextract -nogroup -t $1 $2
+fastqc -noextract -nogroup -t $1 $2 $3

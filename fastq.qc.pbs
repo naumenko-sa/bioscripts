@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#PBS -l walltime=100:00:00,nodes=1:ppn=12
+#PBS -l walltime=100:00:00,nodes=1:ppn=40
+#PBS -joe .
 #PBS -d .
+#PBS -l vmem=100g
 
-qc.sh 12 $left $right
+fastq.qc.sh 40 $fastq
