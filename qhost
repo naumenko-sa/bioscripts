@@ -1,20 +1,21 @@
 #!/usr/bin/perl
 
-#wrapper script for pbsnodes 
+#wrapper script for pbsnodes
 #naumenko.sa 28.03.2012
 
 use strict;
 
 open(IN,"pbsnodes|");
-print "NODENAME       CORES_TOTAL(USED)\tLOAD\tMEM_TOTAL\tMEM_FREE\t\tSTATE\n";
+print "NODENAME\tCORES\tLOAD\tSTATE\n";
 print "---------------------------------------------------------------------------------------------\n";
 while(<IN>)
 {
     chomp;
-    if ($_ =~ /^node[0-9]{2}/)
+    if ($_ =~ /^r/)
     {
 	my $node = $_;
 	my $state = <IN>;
+	my $powerstate = <IN>;
 	chomp $state;
 	$state =~ s/state//;
 	$state =~ s/=//;
@@ -22,38 +23,51 @@ while(<IN>)
 	chomp $np;
 	$np =~ s/np//;
 	$np =~ s/=//;
-	my $properties = <IN>;
-	my $type = <IN>;
+	my $ntype = <IN>;
+	
 	my $status = <IN>;
 	$status =~ s/^\s+//;
-	my $cores=0;
+	
+	    #awk -F '=' '{print $2}' | awk -F '/' '{print "-("$1")+1"}' | bc 
+	    
+	    
+	my $cpu_busy=0;
 	if ($status =~ /^jobs/)
 	{
-	    my $jobs = $status;
-	    $jobs =~ s/jobs//;
-	    $jobs =~ s/=//;
-	    my @job_array = split(',',$jobs);
-	    $cores = @job_array;
-
+	    my @ar3 = split("=",$status);
+	    
+	    my $s = $ar3[1];
+	    $s =~ s/\/[0-9]+//g;
+	    my @ar4 = split(",",$s);
+	    foreach my $t(@ar4)
+	    {
+		if ($t =~ /-/)
+		{
+		    my @ar5=split("-",$t);
+		    $cpu_busy += $ar5[1]-$ar5[0]+1;
+		}
+		else
+		{
+		    $cpu_busy +=1;
+		}
+	    }
+	    #$cpu_busy=`echo $status | awk -F '=' '{print $2}' | awk -F '/' '{print "-("$1")+1"} | bc`;
+	    
 	    $status = <IN>;
 	}
+	my $mom1 = <IN>;
+	my $mom2 = <IN>;
+	my $cores=0;
 	my @params = split(",",$status);
-	my $physmem=$params[8]; chomp $physmem;$physmem =~ s/physmem=//;
-	my $availmem=$params[9];$availmem =~ s/\s+$//;chomp $availmem;$availmem =~ s/availmem=//;
-	my $load = $params[6]; chomp $load;$load =~ s/loadave=//;
+	my %prms;
 	foreach my $par (@params)
 	{
-	    #print $par."\n";
-	    if ($par =~ /availmem/)
-	    {
-		my $physmem = $par;
-		$physmem =~ s/physmem//;
-		$physmem =~ s/=//;
-	    }
+	    my @ar = split("=", $par);
+	    $prms{$ar[0]}=$ar[1];
 	}
 	my $gpus = <IN>;
 	#print $status."\n";
-	print $node."\t".$np."(".$cores.")"."\t\t\t".$load."\t".$physmem."\t".$availmem."\t".$state."\n";
+	print $node."\t".$np."(".$cpu_busy.")"."\t".$prms{"loadave"}."\t".$state."\n";
 	
     }
 }
