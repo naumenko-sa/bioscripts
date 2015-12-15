@@ -8,4 +8,8 @@
 STAR --runMode genomeGenerate --genomeDir . \
   --genomeFastaFiles GRCm38.p4.genome.fa \
   --sjdbGTFfile gencode.vM8.annotation.gtf --runThreadN 40 \
-  --sjdbOverhang 99
+  --sjdbOverhang 99 \
+  --sjdbFileChrStartEnd SJ.out.tab
+
+
+ 

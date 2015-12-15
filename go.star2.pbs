@@ -3,6 +3,6 @@
 #PBS -l walltime=1:00:00,nodes=1:ppn=40
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=100g
+#PBS -l vmem=50g
 
 STAR --genomeDir $reference --readFilesIn $left $right --runThreadN 40

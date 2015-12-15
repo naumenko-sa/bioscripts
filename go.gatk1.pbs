@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l walltime=1:00:00,nodes=1:ppn=40
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=50g
+
+export PICARD=/hpf/tools/centos6/picard-tools/1.108;
+
+java -Xmx10g -jar $PICARD/AddOrReplaceReadGroups.jar I=$sam O=rg_added_sorted.bam \
+    SO=coordinate RGID=id RGLB=library RGPL=platform RGPU=machine RGSM=sample 
+
+java -Xms10g -jar $PICARD/MarkDuplicates.jar I=rg_added_sorted.bam O=dedupped.bam \
+     CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=output.metrics 
