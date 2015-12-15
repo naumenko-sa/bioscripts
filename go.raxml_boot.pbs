@@ -6,8 +6,8 @@
 #run with -o and without -o to get bootstrap support for all branches
 
 date
-/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.tree -m GTRGAMMAI -p 8593771075132634533 -o gam10.1  -# 100
-/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.boot -m GTRGAMMAI -p 8593771075132634533 -b 1234567 -o gam10.1 -# 1000
+/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.tree -m GTRGAMMAI -p 8593771075132634533  -# 100
+/mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -s $align -n $align.boot -m GTRGAMMAI -p 8593771075132634533 -b 1234567 -# 1000
 /mnt/lustre/tools/RAxML-8.0.26/raxmlHPC-PTHREADS-SSE3 -T 24 -m GTRGAMMAI -p 8593771075132634533 -f b -t RAxML_bestTree.$align.tree -z RAxML_bootstrap.$align.boot -n $align.final
 rm *tree.RUN*
 
