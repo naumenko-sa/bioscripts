@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #merges reads 
 
 if [ $# -ne 4 ];
