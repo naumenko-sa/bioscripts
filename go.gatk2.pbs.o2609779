@@ -1,0 +1,4 @@
+ModuleCmd_Load.c(208):ERROR:105: Unable to locate a modulefile for 'sratoolkit/2.5.5'
+Error occurred during initialization of VM
+Could not reserve enough space for object heap
+Could not create the Java virtual machine.
