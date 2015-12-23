@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=40
+#PBS -l walltime=1:00:00,nodes=1:ppn=20
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=50g
 
 STAR --runMode genomeGenerate --genomeDir . \
   --genomeFastaFiles GRCm38.p4.genome.fa \
-  --sjdbGTFfile gencode.vM8.annotation.gtf --runThreadN 40 \
+  --sjdbGTFfile gencode.vM8.annotation.gtf --runThreadN 20 \
   --sjdbOverhang 99 \
   --sjdbFileChrStartEnd SJ.out.tab
 
