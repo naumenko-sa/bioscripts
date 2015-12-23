@@ -1,0 +1,42 @@
+#!/bin/bash
+#PBS -l walltime=1:00:00,nodes=1:ppn=20
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=20g
+
+export PICARD=/hpf/tools/centos6/picard-tools/2.0.1;
+export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
+export GATK=/hpf/tools/centos6/gatk/3.5.0;
+export GENOME=/home/naumenko/work/reference_2pass;
+
+#sam2bam by picard
+$JAVA_HOME/bin/java -Xmx10g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=$sam OUTPUT=rg_added_sorted.bam \
+    SO=coordinate RGID=id RGLB=library RGPL=ILLUMINA RGPU=machine RGSM=sample
+
+$JAVA_HOME/bin/java -Xms10g -jar $PICARD/picard.jar MarkDuplicates INPUT=rg_added_sorted.bam OUTPUT=dedupped.bam \
+     CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE=output.metrics
+
+#split n trim
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T SplitNCigarReads -R $GENOME/GRCm38.p4.genome.fa \
+   -I dedupped.bam -o split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS \
+   -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+#base recalibration
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -R $GENOME/GRCm38.p4.genome.fa \
+    -I split.bam -o recalibration_report.grp -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key \
+    -knownSites $GENOME/mgp.v5.merged.snps_all.dbSNP142.vcf.gz
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -R $GENOME/GRCm38.p4.genome.fa -I split.bam \
+    -BQSR recalibration_report.grp -o output.bam -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+#calling haplotypes
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T HaplotypeCaller \
+   -R $GENOME/GRCm38.p4.genome.fa -I output.bam -dontUseSoftClippedBases \
+   -stand_call_conf 20.0 -stand_emit_conf 20.0 \
+   -o output.vcf \
+   -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+#variant filtration
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration \
+    -R $GENOME/GRCm38.p4.genome.fa -V output.vcf -window 35 -cluster 3 -filterName FS -filter "FS > 30.0" \
+    -filterName QD -filter "QD < 2.0" -o filtered.vcf \
+    -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key

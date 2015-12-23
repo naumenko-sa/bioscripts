@@ -2,7 +2,7 @@
 
 #get nondegenerate sites 
 #prints 0-based site number (aa number),1,2,3 codon position
-#requires 9 gapless triplets left and right
+#requires 3 gapless triplets left and right
 @aln;
 
 open(IN,$ARGV[0]);
@@ -18,8 +18,8 @@ while(<IN>)
 $par=0;
 $syn=0;
 $sites=0;
-#dont look at first 9 and last 9 codons
-for ($i=9;$i<length($aln[0])/3-9;$i++)
+#dont look at first 3 and last 3 codons
+for ($i=3;$i<length($aln[0])/3-3;$i++)
 {
     $nondegenerate=0;
     @triplets;
@@ -32,7 +32,7 @@ for ($i=9;$i<length($aln[0])/3-9;$i++)
     $dna='';
     for($j=0;$j<@aln;$j++)
     {
-	$dna .= substr($aln[$j],$i*3-27,19*3); #left 9 triplets and right 9 triplets should not have gaps
+	$dna .= substr($aln[$j],$i*3-9,7*3); #left 3 triplets and right 3 triplets should not have gaps
     } 
     #print $dna."\n";
     if ($nondegenerate == @aln and $dna !~ /-/)

@@ -5,4 +5,4 @@
 #PBS -joe
 #PBS -l vmem=50g
 
-fastq.trim.sh $left $right adapters.fasta 13 50 8
+fastq-dump -I --split-files $srr
