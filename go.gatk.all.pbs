@@ -1,16 +1,32 @@
 #!/bin/bash
-#PBS -l walltime=1:00:00,nodes=1:ppn=20
+#PBS -l walltime=50:00:00,nodes=1:ppn=20
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=20g
+#PBS -l vmem=50g
+
+echo "START:";
+date;
 
 export PICARD=/hpf/tools/centos6/picard-tools/2.0.1;
 export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
 export GATK=/hpf/tools/centos6/gatk/3.5.0;
 export GENOME=/home/naumenko/work/reference_2pass;
 
+#fastq-dump
+fastq-dump -I --split-files $srr;
+
+#trim
+>adapters.fasta;
+fastq.trim.sh ${srr}_1.fastq ${srr}_2.fastq adapters.fasta 13 50 8;
+mv ${srr}_1.fastq.trim ${srr}_1.fq;
+mv ${srr}_2.fastq.trim ${srr}_2.fq;
+rm ${srr}_1.fastq ${srr}_2.fastq;
+
+#map
+STAR --genomeDir $GENOME --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThreadN 20
+
 #sam2bam by picard
-$JAVA_HOME/bin/java -Xmx10g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=$sam OUTPUT=rg_added_sorted.bam \
+$JAVA_HOME/bin/java -Xmx10g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=Aligned.out.sam OUTPUT=rg_added_sorted.bam \
     SO=coordinate RGID=id RGLB=library RGPL=ILLUMINA RGPU=machine RGSM=sample
 
 $JAVA_HOME/bin/java -Xms10g -jar $PICARD/picard.jar MarkDuplicates INPUT=rg_added_sorted.bam OUTPUT=dedupped.bam \
@@ -40,3 +56,8 @@ $JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration
     -R $GENOME/GRCm38.p4.genome.fa -V output.vcf -window 35 -cluster 3 -filterName FS -filter "FS > 30.0" \
     -filterName QD -filter "QD < 2.0" -o filtered.vcf \
     -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+rm dedupped.* Aligned.out.sam split.* rg_added_sorted.bam
+
+echo "END";
+date;
