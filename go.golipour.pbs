@@ -14,6 +14,7 @@ export GENOME=/home/naumenko/work/reference_2pass;
 
 #fastq-dump
 fastq-dump -I --split-files $srr;
+rm ~/ncbi/public/sra/$srr.sra;
 
 #trim
 >adapters.fasta;
@@ -23,13 +24,31 @@ mv ${srr}_2.fastq.trim ${srr}_2.fq;
 rm ${srr}_1.fastq ${srr}_2.fastq;
 
 #map
-STAR --genomeDir $GENOME --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThreadN 20
+STAR --genomeDir $GENOME --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThreadN 20;
+
+mkdir newreference;
+ref=/home/naumenko/work/reference;
+
+STAR --genomeDir $ref --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThreadN 20;
+
+STAR --runMode genomeGenerate --genomeDir newreference \
+  --genomeFastaFiles $ref/GRCm38.p4.genome.fa \
+    --sjdbGTFfile $ref/gencode.vM8.annotation.gtf --runThreadN 20 \
+      --sjdbOverhang 99 \
+        --sjdbFileChrStartEnd SJ.out.tab;
+        
+rm Aligned.out.sam;
+        
+STAR --genomeDir newreference --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThread 20;
+        
+rm newreference/*;
+rmdir newreference;
 
 #sam2bam by picard
-$JAVA_HOME/bin/java -Xmx10g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=Aligned.out.sam OUTPUT=rg_added_sorted.bam \
+$JAVA_HOME/bin/java -Xmx40g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=Aligned.out.sam OUTPUT=rg_added_sorted.bam \
     SO=coordinate RGID=id RGLB=library RGPL=ILLUMINA RGPU=machine RGSM=sample
 
-$JAVA_HOME/bin/java -Xms10g -jar $PICARD/picard.jar MarkDuplicates INPUT=rg_added_sorted.bam OUTPUT=dedupped.bam \
+$JAVA_HOME/bin/java -Xms40g -jar $PICARD/picard.jar MarkDuplicates INPUT=rg_added_sorted.bam OUTPUT=dedupped.bam \
      CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE=output.metrics
 
 #split n trim
@@ -58,6 +77,33 @@ $JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration
     -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
 
 rm dedupped.* Aligned.out.sam split.* rg_added_sorted.bam
+
+mv filtered.vcf $srr.vcf;
+
+#filter out snps without PASS in the filter field
+vcftools --vcf $srr.vcf --remove-filtered-all --recode --recode-INFO-all --out $srr.pass;
+mv $srr.pass.recode $srr.pass.vcf;
+
+#annotate variants with snpEff
+java -Xmx10g -jar ~/work/eff/snpEff/snpEff.jar GRCm38.82 $srr.pass.vcf > $srr.ann.vcf;
+
+#remove non-coding and non-splicing variants
+cat $srr.ann.vcf | egrep "^#|frameshift_variant|missense_variant|splice|start_lost|stop_gained|stop_lost|synonymous_variant" > $srr.coding.vcf;
+
+#filter dnsnp database
+cat $srr.coding.vcf | grep -v '^#'  | awk '{print $1"\t"$2}' | sed s/chr// > $srr.coding.list;
+while read chr pos;
+do
+    tabix $GENOME/mgp.v5.merged.snps_all.dbSNP142.vcf.gz $chr:$pos-$pos >> $srr.dbsnp.vcf;
+done < $srr.coding.list;
+
+cat $srr.coding.vcf | grep -v '^#' | awk '{print $1"\t"$2}' | sed s/chr// | sort > $srr.coding.sorted;
+cat $srr.dbsnp.vcf | grep -v '^#' | awk '{print $1"\t"$2}' | sort > $srr.dbsnp.sorted;
+
+#cat $srr.coding.vcf | grep "^#" > $srr.mutations.vcf;
+comm -23 $srr.coding.sorted $srr.dbsnp.sorted | awk '{print "chr"$1"\t"$2}' > $srr.mutations.list;
+vcftools --positions $srr.mutations.list --recode --recode-INFO-all --vcf $srr.ann.vcf --out $srr.mutations;
+mv $srr.mutations.recode.vcf $srr.mutations.vcf;
 
 echo "END";
 date;
