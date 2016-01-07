@@ -1,0 +1,31 @@
+#!/bin/bash
+
+srr=sc1-d14;
+
+#mv filtered.vcf $srr.vcf;
+
+#filter out snps without PASS in the filter field
+#bgzip $srr.vcf;
+#bcftools index $srr.vcf.gz;
+#bcftools view -f .,PASS sc1-d14.vcf.gz > $srr.pass.vcf;
+
+#annotate variants with snpEff
+#java -Xmx4g -jar ~/work/eff/snpEff/snpEff.jar GRCm38.82 $srr.pass.vcf > $srr.ann.vcf;
+
+#remove non-coding and non-splicing variants
+#cat $srr.ann.vcf | egrep "^#|frameshift_variant|missense_variant|splice|start_lost|stop_gained|stop_lost|synonymous_variant" > $srr.coding.vcf;
+
+#filter dnsnp database
+#cat $srr.coding.vcf | grep -v '^#'  | awk '{print $1"\t"$2}' | sed s/chr// > $srr.coding.list;
+#while read chr pos;
+#do
+#    tabix /home/naumenko/work/reference_2pass/mgp.v5.merged.snps_all.dbSNP142.vcf.gz $chr:$pos-$pos >> $srr.dbsnp.vcf;
+#done < $srr.coding.list;
+
+cat $srr.coding.vcf | grep -v '^#' | awk '{print $1"\t"$2}' | sed s/chr// | sort > $srr.coding.sorted;
+cat $srr.dbsnp.vcf | grep -v '^#' | awk '{print $1"\t"$2}' | sort > $srr.dbsnp.sorted;
+
+#cat $srr.coding.vcf | grep "^#" > $srr.mutations.vcf;
+comm -23 $srr.coding.sorted $srr.dbsnp.sorted | awk '{print "chr"$1"\t"$2}' > $srr.mutations.list;
+vcftools --positions $srr.mutations.list --recode --recode-INFO-all --vcf $srr.ann.vcf --out $srr.mutations;
+mv $srr.mutations.recode.vcf $srr.mutations.vcf;
