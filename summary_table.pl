@@ -16,5 +16,6 @@ foreach $key (keys %freq)
 
 foreach ( sort { $freq{$b} <=> $freq{$a}} keys %freq )
 {
-    print $_."\t".$freq{$_}."\t".substr($freq{$_}/$total,0,5)."\n";
+    print $_."\t".$freq{$_}."\n";
+    #substr($freq{$_}/$total,0,5)."\n";
 }
