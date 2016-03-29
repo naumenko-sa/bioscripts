@@ -12,13 +12,17 @@ export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
 export GATK=/hpf/tools/centos6/gatk/3.5.0;
 export GENOME=/home/naumenko/work/reference_2pass;
 
+#please download and unpack your data
 #fastq-dump
-fastq-dump -I --split-files $srr;
-rm ~/ncbi/public/sra/$srr.sra;
+#fastq-dump -I --split-files $srr;
+#rm ~/ncbi/public/sra/$srr.sra;
+
+#please access the quality of the data, including adapters,
+#otherwise we will use our own set of adapters
 
 #trim
->adapters.fasta;
-fastq.trim.sh ${srr}_1.fastq ${srr}_2.fastq adapters.fasta 13 50 8;
+ln -s ~/bioscripts/illumina.adapters.fasta adapters.fasta;
+fastq.trim.sh ${srr}_1.fastq ${srr}_2.fastq adapters.fasta 30 50 8;
 mv ${srr}_1.fastq.trim ${srr}_1.fq;
 mv ${srr}_2.fastq.trim ${srr}_2.fq;
 rm ${srr}_1.fastq ${srr}_2.fastq;
