@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#for bhutani c-0
+#for dbsnp c-1
+
 while read line;
 do
     read chr pos ref alt <<< "$line";
