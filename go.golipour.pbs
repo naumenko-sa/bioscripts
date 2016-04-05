@@ -42,7 +42,7 @@ STAR --genomeDir newreference --readFilesIn ${srr}_1.fq ${srr}_2.fq --runThreadN
 rm newreference/*;
 rmdir newreference;
 
-#sam2bam by picard
+#sam2bam and mark duplicates by picard
 $JAVA_HOME/bin/java -Xmx40g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=Aligned.out.sam OUTPUT=rg_added_sorted.bam \
     SO=coordinate RGID=id RGLB=library RGPL=ILLUMINA RGPU=machine RGSM=sample
 
