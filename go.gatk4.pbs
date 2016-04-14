@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#PBS -l walltime=10:00:00,nodes=1:ppn=20
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=50g
+
+export GATK=/hpf/tools/centos6/gatk/3.5.0;
+GENOME=/home/naumenko/work/reference_2pass;
+export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
+
+
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T HaplotypeCaller \
+   -R $GENOME/GRCm38.p4.genome.fa -I output.bam -dontUseSoftClippedBases \
+   -stand_call_conf 20.0 -stand_emit_conf 20.0 \
+   -o output.vcf \
+   -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T VariantFiltration \
+    -R $GENOME/GRCm38.p4.genome.fa -V output.vcf -window 35 -cluster 3 -filterName FS -filter "FS > 30.0" \
+    -filterName QD -filter "QD < 2.0" -o filtered.vcf \
+    -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key

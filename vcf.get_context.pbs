@@ -1,0 +1,9 @@
+#!/bin/bash
+#PBS -l walltime=48:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=10g
+
+vcf.get_context.sh $mutations > $mutations.context;
+
+#test.mutations.context | awk '{print $3$4"\t"$5}' | grep "^CT" | awk '{print $2}'| awk -F '' '{print $3}' |summary_table.pl

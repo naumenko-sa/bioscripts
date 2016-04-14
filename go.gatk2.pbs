@@ -1,13 +1,15 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=30
+#PBS -l walltime=2:00:00,nodes=1:ppn=10
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=100g
+#PBS -l vmem=50g
 
-export GATK=/hpf/tools/centos6/gatk/3.4.0;
-GENOME=/home/naumenko/work/reference_2pass
+export GATK=/hpf/tools/centos6/gatk/3.5.0;
+GENOME=/home/naumenko/work/reference_2pass;
+export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
 
-java -Xmx100g -jar $GATK/GenomeAnalysisTK.jar -T SplitNCigarReads -R $GENOME/GRCm38.p4.genome.fa \
-   -I dedupped.bam -o split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T SplitNCigarReads -R $GENOME/GRCm38.p4.genome.fa \
+   -I dedupped.bam -o split.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS \
+   -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
 

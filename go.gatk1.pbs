@@ -1,14 +1,15 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=40
+#PBS -l walltime=2:00:00,nodes=1:ppn=20
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=50g
+#PBS -l vmem=20g
 
-export PICARD=/hpf/tools/centos6/picard-tools/1.108;
+export PICARD=/hpf/tools/centos6/picard-tools/2.0.1;
+export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
 
-java -Xmx10g -jar $PICARD/AddOrReplaceReadGroups.jar I=$sam O=rg_added_sorted.bam \
-    SO=coordinate RGID=id RGLB=library RGPL=platform RGPU=machine RGSM=sample 
+$JAVA_HOME/bin/java -Xmx10g -jar $PICARD/picard.jar AddOrReplaceReadGroups INPUT=$sam OUTPUT=rg_added_sorted.bam \
+    SO=coordinate RGID=id RGLB=library RGPL=ILLUMINA RGPU=machine RGSM=sample
 
-java -Xms10g -jar $PICARD/MarkDuplicates.jar I=rg_added_sorted.bam O=dedupped.bam \
-     CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=output.metrics 
+$JAVA_HOME/bin/java -Xms10g -jar $PICARD/picard.jar MarkDuplicates INPUT=rg_added_sorted.bam OUTPUT=dedupped.bam \
+     CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT METRICS_FILE=output.metrics
