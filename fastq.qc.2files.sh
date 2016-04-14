@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#PBS -l walltime=100:00:00,nodes=1:ppn=8
-#PBS -d .
-
 if [ $# -lt "2" ]
 then
     echo "Runs fastqc for left.fq [and right.fq]"

@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=40
+#PBS -l walltime=3:00:00,nodes=1:ppn=20
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=50g
 
-STAR --genomeDir $reference --readFilesIn $left $right --runThreadN 40
+STAR --genomeDir $reference --readFilesIn $left $right --runThreadN 20

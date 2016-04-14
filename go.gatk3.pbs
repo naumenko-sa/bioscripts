@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#PBS -l walltime=2:00:00,nodes=1:ppn=20
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=50g
+
+export GATK=/hpf/tools/centos6/gatk/3.5.0;
+GENOME=/home/naumenko/work/reference_2pass;
+export JAVA_HOME=/hpf/tools/centos6/java/1.8.0_65/;
+
+
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T BaseRecalibrator -R $GENOME/GRCm38.p4.genome.fa \
+    -I split.bam -o recalibration_report.grp -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key \
+    -knownSites $GENOME/mgp.v5.merged.snps_all.dbSNP142.vcf.gz
+$JAVA_HOME/bin/java -Xmx40g -jar $GATK/GenomeAnalysisTK.jar -T PrintReads -R $GENOME/GRCm38.p4.genome.fa -I split.bam \
+    -BQSR recalibration_report.grp -o output.bam -et NO_ET -K /home/naumenko/tools/evolgenomicslab_gmail.com.key
+
+

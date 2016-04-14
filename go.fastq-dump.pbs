@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#PBS -l walltime=2:00:00,nodes=1:ppn=20
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=20g
+
+fastq-dump -I --split-files $srr

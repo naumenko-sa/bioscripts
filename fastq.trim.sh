@@ -7,9 +7,9 @@ then
     exit 1
 fi
 
-java -jar /hpf/tools/centos6/trimmomatic/0.32/trimmomatic-0.32.jar PE -threads $6 -phred33 \
+java -Xmx10g -jar /hpf/tools/centos6/trimmomatic/0.32/trimmomatic-0.32.jar PE -threads $6 -phred33 \
   $1 $2 \
-  `echo $1 | sed s/fq/trim.fq/` forward_unpaired.fq `echo $2 | sed s/fq/trim.fq/` reverse_unpaired.fq \
+  $1.trim  forward_unpaired.fq $2.trim reverse_unpaired.fq \
   ILLUMINACLIP:$3:2:40:15 LEADING:$4 TRAILING:$4 SLIDINGWINDOW:4:$4 MINLEN:$5
 
 fastq.nreads.sh `echo $1 | sed s/fq/trim.fq/`
