@@ -1,0 +1,37 @@
+# exome variant calling template
+---
+upload:
+  dir: ../final
+details:
+  - files: [../input/SRR1976040_1.fastq, ../input/SRR1976040_2.fastq]
+    description: SRR1976040
+    metadata:
+      sex: female
+      batch: batch1
+    analysis: variant2
+    genome_build: GRCh37
+    algorithm:
+      aligner: bwa
+      coverage_interval: regional
+      coverage: ../input/nexterarapidcapture_exome_targetedregions_v1.2.no_chr.MT.bed
+      align_split_size: 5000000
+      variantcaller: [freebayes, gatk-haplotype, gatk]
+      variant_regions: ../input/nexterarapidcapture_exome_targetedregions_v1.2.no_chr.MT.bed
+      recalibrate: gatk
+      realign: gatk
+      merge_bamprep: true
+      ensemble:
+        numpass: 2
+      effects: vep
+      remove_lcr
+      tools_on: [svplots, qualimap]
+resources:
+  default:
+    memory: 2G
+    cores: 16
+    jvm_opts: ["-Xms750m", "-Xmx2000m"]
+  gatk:
+      keyfile: /home/naumenko/tools/evolgenomicslab_gmail.com.key
+  tmp:
+      dir: /scratch
+
