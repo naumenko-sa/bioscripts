@@ -7,7 +7,6 @@ details:
     description: SRR1976040
     metadata:
       sex: female
-      batch: batch1
     analysis: variant2
     genome_build: GRCh37
     algorithm:
