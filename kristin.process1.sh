@@ -5,35 +5,30 @@
 #PBS -d /home/naumenko/work
 #PBS -l vmem=20g
 
-module load p7zip/15.14.1
-
-FDIR=/hpf/largeprojects/ccmbio/boycott_exome/raw
+#parameters: from target
 
 echo "Start " `date`
 
-mkdir /scratch/${file}_dir
-cp $FDIR/$file /scratch/${file}_dir
+mkdir /scratch/kristin_dir
+cp ${from}/* /scratch/kristin_dir
 
 echo "Copy done " `date`
 
-cd /scratch/${file}_dir
-7za e -bd $file
-
-
-echo "Unpacking done" `date`
+cd /scratch/kristin_dir
 
 for f in *.gz;do gunzip $f;done;
 
-cat *R1*> $file.r1.fq
-cat *R2*> $file.r2.fq
+cat *R1*> ${target}_1.fq
+cat *R2*> ${target}_2.fq
 
-gzip $file.r1.fq
-gzip $file.r2.fq
+gzip ${target}_1.fq
+gzip ${target}_2.fq
 
 echo "gzip done " `date`
-mv $file.r1.fq.gz ~/work/kristin_nimblegen/input
-mv $file.r2.fq.gz ~/work/kristin_nimblegen/input
 
-rm /scratch/${file}_dir/*
+mv ${target}_1.fq.gz  /hpf/largeprojects/ccmbio/cheo.variants/data/Illumina
+mv ${target}_2.fq.gz  /hpf/largeprojects/ccmbio/cheo.variants/data/Illumina
+
+rm /scratch/kristin_dir/*
 
 echo "End " `date`
