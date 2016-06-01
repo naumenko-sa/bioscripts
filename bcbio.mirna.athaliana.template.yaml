@@ -1,0 +1,19 @@
+details:
+- algorithm:
+    adapters:
+    - TGGAATTCTCGGGTGCCAAGG
+    aligner: star
+    species: ath
+    tools_off:
+    - seqcluster
+  analysis: smallRNA-seq
+  description: R4229
+  files:
+  - /home/naumenko/work/mirna2/input/HI.3550.005.RPI42.R4229_R1.fastq.gz
+  genome_build: TAIR10
+  metadata:
+    batch: batch1
+fc_date: '2016-05-10'
+fc_name: srna1
+upload:
+  dir: ../final
