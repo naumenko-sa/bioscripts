@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#PBS -l walltime=50:00:00,nodes=1:ppn=16
+#PBS -l walltime=100:00:00,nodes=1:ppn=20
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=80g
+#PBS -l vmem=120g
 
-# exceeded 47 GB on test exome data
+echo "START: " `date`;
 
-bcbio_nextgen.py ../config/NA12878-exome-methodcmp.yaml -n 16
+bcbio_nextgen.py ../config/${project}.yaml -n 20
 
 echo "END: " `date`;
 

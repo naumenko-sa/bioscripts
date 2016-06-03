@@ -1,8 +1,8 @@
 #!/bin/bash
 
-KPATH=/home/naumenko/work/mirna/input
+KPATH=/hpf/largeprojects/ccmbio/naumenko/mirna_potato/input
 
-bcbio_nextgen.py -w template potato.template.yaml srna12.csv \
+bcbio_nextgen.py -w template bcbio.mirna.potato.template.yaml bcbio.mirna.12samples.csv \
 $KPATH/HI.3550.004.RPI3.R4217_R1.fastq.gz \
 $KPATH/HI.3550.004.RPI1.R4215_R1.fastq.gz \
 $KPATH/HI.3550.004.RPI4.R4218_R1.fastq.gz \
