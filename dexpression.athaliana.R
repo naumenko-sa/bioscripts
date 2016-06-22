@@ -16,10 +16,18 @@ de_comparison = function(x,group,output)
     #output="test1"
   
     y=DGEList(counts=x,group=group)
+    
+    keep=rowSums(cpm(y)>2) >=2
+    y=y[keep,,keep.lib.sizes=FALSE]
+    
     y=calcNormFactors(y)
+    
+    cd=estimateCommonDisp(y)
+    write.table(cd$pseudo.counts,paste0(output,".normalized_counts.txt"),col.names=NA)
+    
     design=model.matrix(~group)
     y=estimateDisp(y,design)
-    write.table(y$counts,paste0(output,".normalized_counts.txt"),col.names=NA)
+    
     fit=glmFit(y,design)
     lrt=glmLRT(fit)
     #prints top 50 genes with p.value<0.05, check if there are more
@@ -125,3 +133,4 @@ do.analysis2=function()
 
 do.analysis1()
 do.analysis2()
+
