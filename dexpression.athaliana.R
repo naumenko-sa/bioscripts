@@ -17,13 +17,15 @@ de_comparison = function(x,group,output)
   
     y=DGEList(counts=x,group=group)
     
+    #filtration
     keep=rowSums(cpm(y)>2) >=2
     y=y[keep,,keep.lib.sizes=FALSE]
     
-    y=calcNormFactors(y)
+    #normalized counts
+    nc=cpm(y,normalized.lib.sizes=F)
+    write.table(nc,paste0(output,".normalized_counts.txt"),col.names=NA)
     
-    cd=estimateCommonDisp(y)
-    write.table(cd$pseudo.counts,paste0(output,".normalized_counts.txt"),col.names=NA)
+    y=calcNormFactors(y)
     
     design=model.matrix(~group)
     y=estimateDisp(y,design)
