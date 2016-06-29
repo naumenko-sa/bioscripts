@@ -5,6 +5,8 @@
 #PBS -d .
 #PBS -l vmem=120g
 
+module load gatk/3.6.0
+
 echo "START: " `date`;
 
 bcbio_nextgen.py ../config/${project}.yaml -n 10
