@@ -40,6 +40,7 @@ get_exon_coordinates = function()
   write.table(exon_coordinates.bed,"ccds.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+setwd("~/Desktop/project_cheo")
 init()
 get_exon_coordinates()
 
