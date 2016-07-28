@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#PBS -l walltime=5:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=10g
+
+#without -csvStats to produce html reports
+#csvStats for multiqc
+
+java -Xmx4G -jar /hpf/tools/centos6/snpEff/4.0/snpEff.jar GRCh37.75 $file -s ${file}.report.html > `echo $file | sed s/vcf/ann.vcf/`;
