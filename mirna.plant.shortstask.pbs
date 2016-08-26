@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#PBS -l walltime=5:00:00,nodes=1:ppn=20
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=20g
+
+
+outdir=`echo $file | sed s/.fq.gz//`_output
+
+module load samtools
+module load bowtie
+~/tools/ShortStack/ShortStack --readfile $file \
+                              --genome /home/naumenko/work/tools/bcbio/genomes/stuberosum/soltub3/seq/soltub3.fa \
+                              --adapter=TGGAATTCTCGGGTGC \
+                              --bowtie_cores 20 \
+                              --outdir $outdir \
+                              --sort_mem 10G
