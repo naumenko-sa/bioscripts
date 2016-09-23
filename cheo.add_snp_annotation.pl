@@ -22,7 +22,7 @@ while (<GEMINI>)
     @arr = split ("\t",$_);
     $arr[0] =~ s/chr//;
     $id=$arr[0]."-".$arr[2]."-".$arr[4]."-".$arr[5];
-    print $_."\t\"".$scores1{$id}."\"\n";
+    print $_."\t".$scores1{$id}."\n";
 }
 
 close(OMIM);
