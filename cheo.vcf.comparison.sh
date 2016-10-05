@@ -46,6 +46,7 @@ function new_variants
 
     bedtools intersect -header -a $1.bcbio.new.notinjacekdb.recode.vcf -b ~/work/cheo.variants/data/BED/omim.orphanet/omim.bed > $1.bcbio.new.in_omim.vcf
 }
+
 #prepare $1
 #lost_variants $1
 new_variants $1

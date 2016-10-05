@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#PBS -l walltime=1:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=10g,mem=10g
+
+cd $sample/final/2016-08-30_mh;
+cheo.gemini2txt1.sh $sample-gatk-haplotype.db;
+cd ../../../
