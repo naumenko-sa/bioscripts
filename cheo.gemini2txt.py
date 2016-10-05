@@ -11,7 +11,9 @@ from gemini import GeminiQuery
 
 database = sys.argv[1]
 gemquery = GeminiQuery(database)
-query = """select v.chrom,
+query = """select 
+	    v.info,
+	    v.chrom,
 	  v.start as start0based,
 	  v.start+1  as start1based,
 	  v.end as end1based,

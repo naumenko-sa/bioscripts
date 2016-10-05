@@ -1,7 +1,7 @@
 #!/bin/bash
-
 #exports gemini database to txt file to import to xls
 #database schema: https://gemini.readthedocs.io/en/latest/content/database_schema.html#the-variants-table
+#when using v.chr = g.chr AND v.gene = g.gene it becomes very slow
 #reports PASS only variants to the database
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
@@ -72,11 +72,11 @@ gemini query --header -q "select v.chrom,
 			  v.in_cse,
 			  v.info
 			  from variants v, gene_summary g
-			  where v.chrom=g.chrom AND v.gene=g.gene" $1 > $bname.tmp;
+			  where v.gene=g.gene" $1 > $bname.txt;
 
-head -n1 $bname.tmp | awk '{for (i=1;i<=NF;i++) printf $i"\t";printf "exac_pLi\texac_mis_z\told_call\tomim\n"}' > $bname.txt
-cat $bname.tmp | sed 1d > $bname.body;
-cheo.add_exac_scores.pl $bname.body > $bname.body1;
-cheo.add_snp_annotation.pl $bname.body1 $3 > $bname.body2;
-cheo.add_omim_string.pl $bname.body2 >>  $bname.txt
+#head -n1 $bname.tmp | awk '{for (i=1;i<=NF;i++) printf $i"\t";printf "exac_pLi\texac_mis_z\told_call\tomim\n"}' > $bname.txt
+#cat $bname.tmp | sed 1d > $bname.body;
+#cheo.add_exac_scores.pl $bname.body > $bname.body1;
+#cheo.add_snp_annotation.pl $bname.body1 $3 > $bname.body2;
+#cheo.add_omim_string.pl $bname.body2 >>  $bname.txt
 #rm $bname.tmp $bname.body $bname.body1 $bname.body2
