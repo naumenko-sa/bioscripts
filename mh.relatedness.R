@@ -14,10 +14,18 @@ genofile = snpgdsOpen("dataset1.gds")
 
 #dendogram
 
-dissMatrix  =  snpgdsDiss(genofile , sample.id=NULL, snp.id=NULL, autosome.only=TRUE,remove.monosnp=TRUE, 
-                          maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)
+#dissMatrix  =  snpgdsDiss(genofile , sample.id=NULL, snp.id=NULL, autosome.only=TRUE,remove.monosnp=TRUE, 
+#                          maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)
 
-snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.25)
+#LD based SNP pruning
+set.seed(1000)
+snpset = snpgdsLDpruning(genofile,ld.threshold = 0.5)
+snp.id=unlist(snpset)
+
+dissMatrix  =  snpgdsIBS(genofile , sample.id=NULL, snp.id=snp.id, autosome.only=TRUE,remove.monosnp=TRUE, 
+                         maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)
+
+snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
 
 snpgdsClose(genofile)
 
@@ -27,8 +35,9 @@ cutTree = snpgdsCutTree(snpHCluster, z.threshold=15, outlier.n=5, n.perm = 5000,
                          label.Z=TRUE, verbose=TRUE)
 snpgdsDrawTree(cutTree,type="z-score", main="Dataset 1")
 snpgdsDrawTree(cutTree, main = "Dataset 1",edgePar=list(col=rgb(0.5,0.5,0.5,0.75),t.col="black"),
-               y.label.kinship=T,leaflab="perpendicular",y.kinship.baseline = 0.8)
+               y.label.kinship=T,leaflab="perpendicular")
 
+image(dissMatrix$ibs,col=terrain.colors(32))
 #pca
 sample.id = read.gdsn(index.gdsn(genofile, "sample.id"))
 
