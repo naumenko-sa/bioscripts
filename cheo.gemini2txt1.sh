@@ -71,8 +71,8 @@ gemini query --header -q "select v.chrom,
 			  v.gms_illumina,
 			  v.in_cse,
 			  v.info
-			  from variants v, gene_summary g
-			  where v.gene=g.gene" $1 > $bname.txt;
+			  from variants v, gene_detailed g
+			  where v.transcript=g.transcript and v.gene=g.gene" $1 > $bname.txt;
 
 #head -n1 $bname.tmp | awk '{for (i=1;i<=NF;i++) printf $i"\t";printf "exac_pLi\texac_mis_z\told_call\tomim\n"}' > $bname.txt
 #cat $bname.tmp | sed 1d > $bname.body;
