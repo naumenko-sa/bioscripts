@@ -71,8 +71,8 @@ query = """select
 	    v.gms_illumina,
 	    v.in_cse,
 	    v.info
-	    from variants v, gene_summary g
-	    where v.gene=g.gene"""
+	    from variants v, gene_detailed g
+	    where v.transcript=g.transcript and v.gene=g.gene"""
 
 gemquery.run(query)
 
