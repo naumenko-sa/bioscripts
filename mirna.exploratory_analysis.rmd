@@ -1,0 +1,542 @@
+# the report has been downloaded from here
+#https://github.com/lpantano/seqcluster/blob/master/seqcluster/templates/report.rmd
+---
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: readable
+    highlight: zenburn
+---
+
+The most recent update of this html document occurred: `r date()`
+
+
+```{r setup}
+library(knitr)
+library(ggplot2)
+library(reshape)
+library(DESeq2)
+library(genefilter)
+library(CHBUtils)
+library(gtools)
+library(gridExtra)
+library(devtools)
+library(dplyr)
+library(isomiRs)
+library(pheatmap)
+
+knitr::opts_chunk$set(tidy=TRUE, highlight=TRUE, dev="png", fig.width=6,fig.heigh=6,
+               cache=FALSE, highlight=TRUE, autodep=TRUE, 
+               warning=FALSE, error=FALSE,
+               message=FALSE, prompt=TRUE, comment='', fig.cap='', bootstrap.show.code=FALSE)
+
+
+root_path = "/home/sergey/Desktop/project_microRNA_potato/2016-06-01-report/"
+root_file = file.path(root_path, "srna_out_files")
+dir.create(root_file, showWarnings = FALSE)
+
+#metadata_fn =  list.files(file.path(root_path), pattern = "summary.csv$",recursive = T, full.names = T)
+metadata_fn = "/home/sergey/Desktop/bioscripts/bcbio.mirna.12samples.csv"
+metadata = read.csv(metadata_fn, row.names="description")
+condition = names(metadata)[1]
+design = metadata
+formula = ~ condition # modify this to get your own formula, it should be a column in your metadata
+isde=TRUE # turn this true to make DE ananlysis
+```
+
+```{r render,eval=FALSE, echo=FALSE}
+library(rmarkdown)
+render("newreport.rmd")
+```
+
+# Exploratory analysis
+
+In this section we will see descriptive figures about quality of the data, 
+reads with adapter, reads mapped to miRNAs, reads mapped to other small RNAs. 
+
+## size distribution
+
+After adapter removal, we can plot the size distribution of the small RNAs.
+
+```{r adapter-check,fig.width=10}
+files = list.files(file.path(root_path),pattern = "trimming_stats",recursive = T)
+isadapter = length(files)>0
+```
+
+```{r adapter,fig.width=10,eval=isadapter}
+names(files) = sapply(files, function(x){
+  gsub("-ready.trimming_stats", "", basename(x))
+})
+
+
+tab = data.frame()
+for (sample in rownames(metadata)) {
+    d = read.table(file.path(root_path, files[sample]), sep=" ")
+    tab = rbind(tab, d %>% mutate(sample=sample, group=metadata[sample, condition]))
+}
+
+reads_adapter = tab %>% group_by(sample, group) %>% summarise(total=sum(V2))
+ggplot(reads_adapter, aes(x=sample,y=total,fill=group)) +
+    geom_bar(stat="identity", position = "dodge") +
+    ggtitle("total number of reads with adapter") +
+    ylab("# reads") +
+    theme(axis.text.x = element_text(vjust = 0.5, hjust=1),text=element_text(size=20),legend.position="none")
+
+ggplot(tab, aes(x=V1,y=V2, group=sample)) +
+    geom_bar(stat="identity", position = "dodge") +
+    facet_wrap(~group, ncol=2)+
+    ggtitle("size distribution") +
+    ylab("# reads") + xlab("size") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1,size=15))
+```
+
+```{r mirna-load}
+files = list.files(file.path(root_path),pattern = "mirbase-ready",recursive = T,full.names = T)
+ismirbase = length(files) > 0
+mirdeep2_files = list.files(file.path(root_path),pattern = "novel-ready",recursive = T,full.names = T)
+ismirdeep2 = length(mirdeep2_files) > 0
+```
+
+## miRNA
+
+### total miRNA expression annotated with mirbase
+
+
+```{r mirna,results='hide', eval=ismirbase}
+
+names(files) = sapply(files, function(x){
+  gsub("-mirbase-ready.counts", "", basename(x))
+})
+
+obj <- IsomirDataSeqFromFiles(files, design = design, header = T, skip=0)
+```
+
+
+```{r mirna-mirbase, eval=ismirbase}
+ggplot(data.frame(sample=colnames(counts(obj)),total=colSums(counts(obj)))) +
+    geom_bar(aes(x=sample,y=total), stat='identity')+ggtitle('Number of miRNAs found in mirbase')+
+    theme(axis.text.x = element_text(vjust = 0.5, hjust=1),text=element_text(size=20))
+mirna_step <- as.data.frame(colSums(counts(obj)))
+```
+
+### Distribution of mirna expression
+
+```{r depth, eval=ismirbase}
+ggplot(melt(counts(obj))) +
+    geom_boxplot(aes(x=X2,y=value))+ggtitle('Distribution of mirna expression')+
+    scale_y_log10()+xlab("Sample")+ylab("Expression")+
+    theme(axis.text.x = element_text(vjust = 0.5, hjust=1),text=element_text(size=20))
+```
+
+### cumulative distribution of miRNAs
+
+```{r cum, eval=ismirbase}
+cs <- as.data.frame(apply(counts(obj),2,function(x){cumsum(sort(x, decreasing = T))}))
+cs$pos <- 1:nrow(cs)
+
+ggplot((melt(cs,id.vars = "pos")))+
+    geom_line(aes(x=pos,y=value,color=variable))+
+    scale_y_log10()+ggtitle("Cumulative distribution of miRNAs")
+```
+
+### Clustering
+```{r mirna-clustering, eval=ismirbase}
+counts = counts(obj)
+dds = DESeqDataSetFromMatrix(counts[rowSums(counts>0)>3,], colData=design, design=~1)
+vst = rlog(dds)
+
+pheatmap(assay(vst), annotation_col = design, show_rownames = F, 
+         clustering_distance_cols = "correlation",
+         clustering_method = "ward.D")
+```
+
+### MDS plot
+```{r pca, eval=ncol(counts) > 1, eval=ismirbase}
+mds(assay(vst), condition = design[,condition])
+```
+
+### complexity
+
+Number of miRNAs with > 3 counts.
+
+```{r complexity, eval=ismirbase}
+
+kable(as.data.frame(colSums(counts>3)))
+
+```
+
+## novel miRNA by mirdeep2
+
+### total miRNA expression
+
+```{r mirdeep2,results='hide', eval=ismirdeep2}
+files = mirdeep2_files
+
+names(files) = sapply(files, function(x){
+  gsub("-novel-ready.counts", "", basename(x))
+})
+
+obj_mirdeep <- IsomirDataSeqFromFiles(files = files[rownames(design)], design = design , header = T)
+```
+
+
+```{r mirna-mirdeep2, eval=ismirdeep2}
+ggplot( data.frame(sample=colnames(counts(obj_mirdeep)), total=colSums(counts(obj_mirdeep)))) +
+    geom_bar(aes(x=sample,y=total), stat='identity')+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+mirna_step <- as.data.frame(colSums(counts(obj)))
+```
+
+### Distribution of mirna expression
+
+```{r depth-mirdeep2, eval=ismirdeep2}
+ggplot(melt(counts(obj_mirdeep))) +
+    geom_boxplot(aes(x=X2,y=value))+
+    scale_y_log10()+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+### cumulative distribution of miRNAs
+
+```{r cum-mirdeep2, eval=ismirdeep2}
+cs <- as.data.frame(apply(counts(obj_mirdeep),2,function(x){cumsum(sort(x, decreasing = T))}))
+cs$pos <- 1:nrow(cs)
+
+ggplot((melt(cs,id.vars = "pos")))+
+    geom_line(aes(x=pos,y=value,color=variable))+
+    scale_y_log10()
+```
+
+### Clustering
+```{r mirna-clustering-mirdeep2, eval=ismirdeep2}
+counts = counts(obj_mirdeep)
+dds = DESeqDataSetFromMatrix(counts[rowSums(counts>0)>3,], colData=design, design=~1)
+vst = rlog(dds)
+
+pheatmap(assay(vst), annotation_col = design, show_rownames = F, 
+         clustering_distance_cols = "correlation",
+         clustering_method = "ward.D")
+```
+
+### MDS plot
+```{r pca-mirdeep2, eval=ncol(counts) > 1, eval=ismirdeep2}
+mds(assay(vst), condition = designi[,condition])
+```
+
+### complexity
+
+Number of miRNAs with > 3 counts.
+
+```{r complexity-mirdeep2, eval=ismirdeep2}
+
+kable(as.data.frame(colSums(counts>10)))
+
+```
+
+
+## Others small RNA
+
+The data was analyzed with [seqcluster](http://seqcluster.readthedocs.org/)
+
+This tools used all reads, uniquely mapped and multi-mapped reads. The first
+step is to cluster sequences in all locations they overlap. The second step is to 
+create meta-clusters: is the unit that merge all clusters that share the 
+same sequences. This way the output are meta-clusters, common sequences that could
+come from different region of the genome.
+
+
+### genome covered
+
+In this table 1 means % of the genome with at least 1 read, and 0 means %
+of the genome without reads.
+
+```{r genome-covered, results='asis'}
+fn_json = list.files(file.path(root_path),pattern = "seqcluster.json",recursive = T,full.names = T)
+seq_dir = dirname(fn_json)
+
+isseqcluster = length(fn_json)>0
+#cov_stats <- read.table(file.path(root_path, "..", "align", "seqs_rmlw.bam_cov.tsv"),sep="\t",check.names = F)
+
+#kable(cov_stats[cov_stats$V1=="genome",] %>%  dplyr::select(coverage=V2,ratio_genome=V5), row.names = FALSE)
+
+```
+
+The normal value for human data with strong small RNA signal is: 0.0002.
+This will change for smaller genomes.
+
+### classification
+
+Number of reads in the data after each step:
+
+* raw: initial reads
+* cluster: after cluster detection
+* multimap: after meta-cluster detection
+
+```{r reads-track,eval=isseqcluster}
+reads_stats <- read.table(file.path(seq_dir, "read_stats.tsv"),sep="\t",check.names = F)
+ggplot(reads_stats, aes(x=V2, y=V1, fill=V3)) + 
+    geom_bar(stat = 'identity', position = 'dodge') +
+    labs(list(x="samples", y="reads")) +
+    scale_fill_brewer("steps", palette = 'Set1')+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
+```{r cluster,eval=isseqcluster}
+
+clus <- read.table(file.path(seq_dir, "counts.tsv"),header=T,sep="\t",row.names=1, check.names = FALSE)
+ann <- clus[,2]
+toomany <- clus[,1]
+clus_ma <- clus[,3:ncol(clus)]
+clus_ma = clus_ma[,row.names(design)]
+
+```
+
+
+Check complex meta-clusters: This kind of events happen when there are small RNA over the whole genome, and all
+repetitive small rnas map to thousands of places and sharing many sequences in many positions.
+If any meta-cluster is > 40% of the total data, maybe it is worth to add some filters
+like: minimum number of counts `-e` or `--min--shared` in `seqcluster prepare`
+
+
+```{r complex-meta-clusters,eval=isseqcluster}
+library(edgeR)
+clus_ma_norm = cpm(DGEList(clus_ma),normalized.lib.sizes = TRUE)
+head(clus_ma_norm[toomany>0,])
+```
+
+### complexity
+
+Number of miRNAs with > 10 counts.
+
+```{r complexity-clus,eval=isseqcluster}
+
+kable(as.data.frame(colSums(clus_ma>10)))
+
+```
+
+### Contribution by class
+
+```{r cluster_type,eval=isseqcluster}
+rRNA <- colSums(clus_ma[grepl("rRNA",ann) & grepl("miRNA",ann)==F,])
+miRNA <- colSums(clus_ma[grepl("miRNA",ann),])
+tRNA <- colSums(clus_ma[grepl("tRNA",ann) & grepl("rRNA",ann)==F & grepl("ncRNA",ann)==F & grepl("miRNA",ann)==F,])
+rmsk <- colSums(clus_ma[grepl("ncRNA",ann) & grepl("rRNA",ann)==F & grepl("miRNA",ann)==F,])
+total <- colSums(clus_ma)
+
+dd <- data.frame(samples=names(rRNA),
+                 rRNA=rRNA,
+                 miRNA=miRNA,
+                 tRNA=tRNA,
+                 ncRNA=rmsk,
+                total=total)
+ggplot(melt(dd)) +
+    geom_bar(aes(x=samples,y=value,fill=variable),
+             stat='identity',
+             position="dodge")+
+    scale_fill_brewer(palette = "Set1")+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+dd_norm = dd
+dd_norm[,2:5] = sweep(dd[,2:5],1,dd[,6],"/")
+ggplot(melt(dd_norm[,1:5])) +
+    geom_bar(aes(x=samples,y=value,fill=variable),
+             stat='identity',
+             position="dodge")+
+    scale_fill_brewer(palette = "Set1")+
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+    labs(list(title="relative proportion of small RNAs",y="% reads"))
+```
+
+```{r clus-size-by-class}
+# size_clus <- read.table(file.path(root_path, "..", "seqcluster", "cluster", "size_counts.tsv"),sep="\t",check.names = F)
+```
+
+
+# Differential expression
+
+[DESeq2](http://bioconductor.org/packages/release/bioc/html/DESeq2.html) is used for this analysis.
+
+
+```{r de-setup}
+library(DESeq2)
+# library(DEGreport)
+library(vsn)
+```
+
+```{r deseq2-handler}
+#' save file
+save_file <- function(dat, fn, basedir="."){
+    tab <- cbind(id=data.frame(id=row.names(dat)), as.data.frame(dat))
+    write.table(tab, file.path(basedir, fn), quote=F, sep="\t", row.names=F)
+}
+
+filter_handle <- function(res){
+    res_nona <- res[!is.na(res$padj),]
+    keep <- res_nona$padj < 0.1 
+    res_nona[keep,]
+}
+
+handle_deseq2 = function(dds, summarydata, column, prefix, all_combs=NULL) {
+  if ( is.null(all_combs) )
+    all_combs = combn(levels(summarydata[,column]), 2, simplify=FALSE)
+  all_results = list()
+  contrast_strings = list()
+  rlog = rlog(dds)
+  for(comb in all_combs) {
+    contrast_string = paste(comb, collapse="_vs_")
+    cat("\n\n## Comparison: ", contrast_string, "\n")
+    contrast = c(column, comb)
+    res = results(dds, contrast=contrast)
+    res = res[order(res$padj),]
+    all_results = c(all_results, res)
+    contrast_strings = c(contrast_strings, contrast_string)
+    print_out(dds, rlog, res, paste0(prefix, "_", contrast_string))
+  }
+  names(all_results) = contrast_strings
+  return(all_results)
+}
+
+do_de = function(raw, summarydata, condition, minc=3){
+    dss = DESeqDataSetFromMatrix(countData = raw[rowMeans(raw)>minc,],
+                       colData = summarydata,
+                       design = ~ condition)
+    dss = DESeq(dss)
+    dss
+}
+
+do_norm = function(dss, path, prefix){
+    rlog_ma = assay(rlog(dss))
+    count_ma = counts(dss, normalized=TRUE)
+    raw = counts(dss, normalized=FALSE)
+    
+    fn_log = paste0(prefix, "_log_matrix.txt")
+    save_file(rlog_ma, fn_log, path)
+    
+    fn_count = paste0(prefix, "_norm_matrix.txt")
+    save_file(count_ma, fn_count, path)
+    
+    fn_raw = paste0(prefix, "_raw_matrix.txt")
+    save_file(raw, fn_raw, path)
+}
+
+print_out = function(dss, rlog=NULL, res=NULL, prefix="standard_"){
+  plotDispEsts(dss)
+  if ( is.null(res) )
+    res = results(dss)
+  if ( is.null(rlog))
+    rlog = rlog(dss)
+  
+  rlogmat = assay(rlog)
+  design = as.data.frame(colData(dss)[, names(colData(dss)) != "sizeFactor", drop=FALSE ])
+  
+  out_df = as.data.frame(res)
+  out_df = out_df[!is.na(out_df$padj),]
+  out_df = out_df[order(out_df$padj),]
+  do_norm(dss, root_file, prefix)
+
+  cat("\n",paste(capture.output(summary(res))[1:8], collapse = "<br>"),"\n")
+  cat("\n\n### MA plot plot\n\n")
+  DESeq2::plotMA(res)
+  
+  cat("\n\n### Top DE miRNAs\n\n")
+  print(kable(head(out_df, 20)))
+  fn = paste(prefix, ".tsv", sep="")
+  save_file(out_df, fn, root_file)
+  
+  sign = row.names(out_df)[out_df$padj<0.05 & !is.na(out_df$padj) & abs(out_df$log2FoldChange) > 0.5]
+  
+  cat("\n\n### Heatmap most significand(", length(sign), "), padj<0.05 and log2FC > 0.5\n")
+  if (length(sign)<2){
+    cat("Too few genes to plot.")
+  }else{
+    pheatmap(rlogmat[sign, ], show_rownames = F, 
+             annotation_col = design,
+             clustering_distance_cols = "correlation", 
+             clustering_method = "ward.D2")
+    mds(rlogmat[sign,], condition = design[,condition])
+  }
+
+}
+
+```
+
+## Analysis for miRNA
+
+```{r de, results='asis', eval=(ismirbase & isde)}
+
+counts = counts(obj)
+dss = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
+                             colData = design,
+                             design = formula)
+dss = DESeq(dss)
+all_results = handle_deseq2(dss, design, condition, "mirna_" )
+
+```
+
+
+```{r DESeq-confirmation, eval=FALSE}
+DESeq2::plotCounts(dds, put_gene_name_here)
+
+```
+
+## Analysis for novel miRNA
+
+```{r de-mirdeep2, results='asis',  eval=(ismirdeep2 & isde)}
+
+counts = counts(obj_mirdeep)
+dss_mirdeep2 = DESeqDataSetFromMatrix(countData = counts[rowSums(counts>0)>3,],
+                             colData = design,
+                             design = formula)
+
+dss = DESeq(dss)
+all_results = handle_deseq2(dss_mirdeep2, design, condition, "mirdeep2_")
+
+```
+
+## Analysis for isomiRs
+
+```{r de-iso, results='asis',  eval=(ismirbase & isde)}
+
+counts_iso = counts(isoCounts(obj, ref=T, iso5=T, iso3=T, add=T, subs =T))
+dss_iso = DESeqDataSetFromMatrix(countData = counts_iso[rowSums(counts_iso>0)>3,],
+                             colData = design,
+                             design = formula)
+
+dss = DESeq(dss)
+all_results = handle_deseq2(dss_iso, design, condition, "isomirs_")
+
+```
+
+
+```{r DESeq-confirmation-iso, eval=FALSE}
+DESeq2::plotCounts(dds, put_gene_name_here)
+
+```
+
+## Analysis for clusters
+
+```{r de-c, results='asis', eval=(isde & isseqcluster)}
+
+dss_clus = DESeqDataSetFromMatrix(countData = clus_ma[rowSums(clus_ma>0)>3,],
+                                 colData = design,
+                                 design = formula)
+
+dss = DESeq(dss)
+all_results = handle_deseq2(dss_clus, design, condition, "clusters_")
+
+```
+
+
+# Files
+
+Files generated contains raw count, normalized counts, log2 normalized counts and DESeq2 results.
+
+#R Session Info
+
+(useful if replicating these results)
+
+```{r sessioninfo}
+sessionInfo()
+```
