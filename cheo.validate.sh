@@ -22,6 +22,13 @@ export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin:$PATH &&
    -t /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rtg/GRCh37.sdf \
    -o /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/eval_genap/rtg --vcf-score-field='GQ'
 
+module load bcftools
+for f in {tp,fp,fn};
+do
+    echo snp $f `bcftools view --types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
+    echo indels $f `bcftools view --exclude-types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
+done
+
 #vcfanno /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/work/validate/NA12878-2/freebayes/rtg/tx/tmpO5vSAo/tp-baseline-context.toml \
 #    /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/work/validate/NA12878-2/freebayes/rtg/tp-baseline.vcf.gz | bgzip -c > \
 #    /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/work/validate/NA12878-2/freebayes/rtg/tx/tmpO5vSAo/tp-baseline-context.vcf.gz
