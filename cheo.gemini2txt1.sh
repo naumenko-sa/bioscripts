@@ -4,14 +4,16 @@
 #when using v.chr = g.chr AND v.gene = g.gene it becomes very slow
 #reports PASS only variants to the database
 
-#PBS -l walltime=10:00:00,nodes=1:ppn=1
+#PBS -l walltime=1:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
+#fname=$1
+bname=`echo $fname | sed s/.db//`;
+#sample=$2
 
-bname=`echo $1 | sed s/.db//`;
-sample=$2
+#genotype does not work (v.gts)."$sample" as genotype
 
 gemini query --header -q "select v.chrom,
 			  v.start as start0based,
@@ -22,7 +24,6 @@ gemini query --header -q "select v.chrom,
 			  v.qual,
 			  v.type,
 			  v.sub_type,
-			  (v.gts)."$sample" as genotype,
 			  v.gene,
 			  g.ensembl_gene_id,
 			  v.transcript,
@@ -33,6 +34,7 @@ gemini query --header -q "select v.chrom,
 			  v.exon,
 			  v.codon_change,
 			  v.aa_change,
+			  v.aa_length,
 			  v.biotype,
 			  v.impact,
 			  v.impact_so,
@@ -72,7 +74,7 @@ gemini query --header -q "select v.chrom,
 			  v.in_cse,
 			  v.info
 			  from variants v, gene_detailed g
-			  where v.transcript=g.transcript and v.gene=g.gene" $1 > $bname.txt;
+			  where v.transcript=g.transcript and v.gene=g.gene" $fname > $bname.txt;
 
 #head -n1 $bname.tmp | awk '{for (i=1;i<=NF;i++) printf $i"\t";printf "exac_pLi\texac_mis_z\told_call\tomim\n"}' > $bname.txt
 #cat $bname.tmp | sed 1d > $bname.body;
