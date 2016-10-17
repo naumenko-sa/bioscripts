@@ -21,11 +21,6 @@ ss=soltub.noncons[,"R4227"]
 sg=soltub.noncons[,"R4226"]
 
 tt=ss
-j=0
-for (i in 1:length(tt)) 
-  if (tt[i]>0)
-    j=j+1
-print(j)
 
 plot(soltub.noncons[,"R4226"])
 
@@ -36,6 +31,9 @@ g.control=glymax.noncons[c("R4226","R4227")]
 s.control=soltub.noncons[c("R4226","R4227")]
 x=s.control
 
+x = soltub.noncons[c("R4226","R4227","R4228")]
+x = glymax.noncons[c("R4226","R4227","R4228")]
+
 #x=all_counts[c("X1T1R1","X1T1R2","X1T1R3","X1T2R1","X1T2R2","X1T2R3")]
 #x=all_counts[c("X1T1R1","X1T1R2","X1T1R3","X1T3R1","X1T3R2","X1T3R3")]
 x=all_counts[c("R4215", "R4216", "R4217", "R4218")]
@@ -43,7 +41,7 @@ x=all_counts[c("R4215", "R4216", "R4217", "R4218","R4219","R4220")]
 x=all_counts[c("R4226", "R4227", "R4228", "R4229","R4230","R4231")]
 
 
-group=factor(c(1,2))
+group=factor(c(1,1,1))
 group=factor(c(1,1,2,2))
 group=factor(c(1,1,1,1))
 group=factor(c(1,1,1,1,1,1))
@@ -70,8 +68,8 @@ topTags(lrt,n=262)
 
 top_tags=topTags(lrt,n=262)$table
 
-write.table(top_tags,"glymax.control.txt",quote=F,col.names=NA)
-write.table(top_tags,"soltub.control.txt",quote=F,col.names=NA)
+write.table(top_tags,"R4228.soltub.txt",quote=F,col.names=NA)
+write.table(top_tags,"R4228.glymax.txt",quote=F,col.names=NA)
 
 
 
