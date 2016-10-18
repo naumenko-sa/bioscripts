@@ -21,10 +21,11 @@ exploratory_analysis = function()
 {
   #test
   all.counts = glymax.noncons
-  samples = c("R4226","R4227","R4228","R4230")
+  samples = c("R4226","R4227","R4229","R4231")
   samples=colnames(all.counts)
   raw_counts = all.counts[samples]
   
+  group=factor(c(1,1,1,1))
   group=factor(c(1,1,1,1,1,1,1,1,1,1,1,1))
   
   y=DGEList(counts=raw_counts,group=group)
@@ -89,8 +90,8 @@ pairwise_comparison = function(sample1,sample2,all.counts,background)
 fourfold_comparison = function(samples,all.counts,background)
 {
   #test
-  samples = c("R4226","R4228","R4227","R4230")
-  #all.counts=soltub.noncons
+  #samples = c("R4226","R4228","R4227","R4230")
+  #all.counts=glymax.noncons
   #background="soltub"
   
   raw_counts = all.counts[samples]
@@ -142,3 +143,5 @@ pairwise_comparison("R4229","R4226",glymax.noncons,"glymax")
 
 pairwise_comparison("R4227","R4231",glymax.noncons,"glymax")
 pairwise_comparison("R4231","R4226",glymax.noncons,"glymax")
+
+fourfold_comparison(c("R4226","R4227","R4229","R4231"),glymax.noncons,"glymax")
