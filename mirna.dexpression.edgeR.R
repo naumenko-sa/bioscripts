@@ -20,18 +20,19 @@ create_nonconservative_sets = function ()
 exploratory_analysis = function()
 {
   #test
-  all.counts = soltub.noncons
+  all.counts = glymax.noncons
   samples = c("R4226","R4227","R4228","R4230")
+  samples=colnames(all.counts)
   raw_counts = all.counts[samples]
   
-  group=factor(c(1,1,1,1))
+  group=factor(c(1,1,1,1,1,1,1,1,1,1,1,1))
   
   y=DGEList(counts=raw_counts,group=group)
   
   keep = rowSums(cpm(y)>2) >=4
   table(keep)
   
-  y= y[keep,,keep.lib.sizes=F]
+  y = y[keep,,keep.lib.sizes=F]
   
   plotMDS(y)
 }
@@ -135,3 +136,9 @@ pairwise_comparison("R4226","R4228",soltub.noncons,"soltub")
 
 pairwise_comparison("R4230","R4227",soltub.noncons,"soltub")
 pairwise_comparison("R4226","R4230",soltub.noncons,"soltub")
+
+pairwise_comparison("R4227","R4229",glymax.noncons,"glymax")
+pairwise_comparison("R4229","R4226",glymax.noncons,"glymax")
+
+pairwise_comparison("R4227","R4231",glymax.noncons,"glymax")
+pairwise_comparison("R4231","R4226",glymax.noncons,"glymax")
