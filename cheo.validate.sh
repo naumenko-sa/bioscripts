@@ -20,7 +20,8 @@ export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin:$PATH &&
    --bed-regions /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/eval_genap/NA12878-sort-callable_sample-NA12878-wrm.bed \
    -c $1 \
    -t /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rtg/GRCh37.sdf \
-   -o /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/eval_genap/rtg --vcf-score-field='GQ'
+   -o /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/eval_genap/rtg --vcf-score-field='GQ' 
+#   --all-records
 
 module load bcftools
 for f in {tp,fp,fn};
