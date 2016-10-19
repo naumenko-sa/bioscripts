@@ -9,7 +9,8 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-#fname=$1
+fname=$1
+sample=$2
 bname=`echo $fname | sed s/.db//`;
 #sample=$2
 
@@ -20,7 +21,7 @@ gemini query --header -q "select v.chrom,
 			  v.start+1  as start1based,
 			  v.end as end1based,
 			  v.ref,
-			  v.alt,
+			  v.alt,gts."$sample",
 			  v.qual,
 			  v.type,
 			  v.sub_type,
