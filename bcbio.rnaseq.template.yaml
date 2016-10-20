@@ -1,0 +1,13 @@
+details:
+- algorithm:
+    aligner: star
+    effects: vep
+    variantcaller: gatk
+  analysis: RNA-seq
+  description: MD
+  files:
+  - ../input/dmd.r1.fq.gz
+  - ../input/dmd.r2.fq.gz
+  genome_build: GRCh37
+upload:
+  dir: ../final
