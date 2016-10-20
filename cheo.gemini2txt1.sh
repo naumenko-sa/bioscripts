@@ -14,7 +14,6 @@ sample=$2
 bname=`echo $fname | sed s/.db//`;
 #sample=$2
 
-#genotype does not work (v.gts)."$sample" as genotype
 
 gemini query --header -q "select v.chrom,
 			  v.start as start0based,

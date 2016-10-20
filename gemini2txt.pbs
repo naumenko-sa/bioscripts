@@ -5,6 +5,6 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-cd $sample/final/2016-08-30_mh;
-cheo.gemini2txt1.sh $sample-gatk-haplotype.db;
+cd $sample/final/2016-08-30_mh
+cheo.gemini2txt1.sh $sample-gatk-haplotype.db $sample
 cd ../../../
