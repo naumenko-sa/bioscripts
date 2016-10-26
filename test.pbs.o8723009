@@ -1,0 +1,14 @@
+START:date
+'import site' failed; use -v for traceback
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/naumenko/work/tools/bcbio/anaconda/lib/python2.7/socket.py", line 86, in <module>
+    import os, sys, warnings
+  File "/home/naumenko/work/tools/bcbio/anaconda/lib/python2.7/os.py", line 400, in <module>
+    import UserDict
+  File "/home/naumenko/work/tools/bcbio/anaconda/lib/python2.7/UserDict.py", line 116, in <module>
+    import _abcoll
+  File "/home/naumenko/work/tools/bcbio/anaconda/lib/python2.7/_abcoll.py", line 456, in <module>
+    KeysView.register(type({}.viewkeys()))
+AttributeError: 'dict' object has no attribute 'viewkeys'
+END:date
