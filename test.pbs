@@ -4,6 +4,7 @@
 
 echo "START:"date;
 /hpf/largeprojects/ccmbio/naumenko/tools/bin/py2.7 -c 'import socket; print(socket.gethostbyname(socket.gethostname()))'
+echo $PBS_O_WORKDIR
 sleep 5
 echo "END:"date;
 
