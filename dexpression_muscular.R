@@ -1,7 +1,8 @@
 library(edgeR)
 setwd("~/Desktop/project_muscular/")
 
-all_counts=read.delim("annotated_combined.counts")
+all_counts = read.delim("annotated_combined.counts", row.names=1, stringsAsFactors=FALSE)
+
 #x=all_counts[c("blood1","blood2","fibroblast5","muscle1","muscle2","myotubes5")]
 x=all_counts[c("muscle1","muscle2")]
 group=factor(c(1,2))
@@ -31,11 +32,16 @@ write.table(nc,paste0(output,".normalized_counts.txt"),col.names=NA)
   
   write.table(y$samples,paste0(output,".norm.factors.txt"),col.names=NA)
   
-  design=model.matrix(~group)
-  y=estimateDisp(y,design)
   
-  fit=glmFit(y,design)
-  lrt=glmLRT(fit)
+  bcv=0.2
+  #from A.thaliana experiment
+  dispersion=0.04
+  
+  design=model.matrix(~group)
+  fit=glmFit(y,design,dispersion)
+  lrt=glmLRT(fit,coef=2)
+  topTags(lrt,n=100)
+  
   #prints top 50 genes with p.value<0.05, check if there are more
   write.table(topTags(lrt,p.value=0.05,n=50),paste0(output,".significant_genes.txt"),col.names=NA)
   write.table(lrt$table,paste0(output,".all_genes.txt"),col.names=NA)
