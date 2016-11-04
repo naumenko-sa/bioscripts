@@ -3,6 +3,27 @@ setwd("~/Desktop/project_muscular/")
 
 all_counts = read.delim("annotated_combined.counts", row.names=1, stringsAsFactors=FALSE)
 
+work_counts=all_counts
+work_counts$ratio = with(work_counts,muscle1/muscle2)
+attach(work_counts)
+work_counts=work_counts[order(ratio),]
+
+write.table(work_counts,"muscular_work_counts.txt",quote=F,col.names = NA)
+
+
+genes = read.delim("muscular_genes.csv",stringsAsFactors=F)
+
+muscular_genes = all_counts[all_counts$symbol %in% unlist(genes),]
+row.names(muscular_genes) = muscular_genes$symbol
+
+muscular_genes = muscular_genes[-7]
+
+muscular_genes = muscular_genes[order(row.names(muscular_genes)),]
+
+write.table(muscular_genes,"muscular_genes_expression.txt",quote=F,col.names = NA)
+
+cpm(muscular_genes)
+
 #x=all_counts[c("blood1","blood2","fibroblast5","muscle1","muscle2","myotubes5")]
 x=all_counts[c("muscle1","muscle2")]
 group=factor(c(1,2))

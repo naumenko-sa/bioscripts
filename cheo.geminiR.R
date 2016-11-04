@@ -1,4 +1,4 @@
-#using gemini database in R
+#Report for CHEO project according to project_cheo/report/cheo_report_format.doc
 
 #moves last column to the position number
 move_column=function (variants,number)
@@ -16,6 +16,7 @@ add_placeholder=function(variants,column_name,placeholder,number)
    variants[,column_name]=with(variants,placeholder)
    return(move_column(variants,number))
 }
+
 setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
 library(RSQLite)
 library(stringr)
@@ -93,6 +94,7 @@ variants=add_placeholder(variants,"Alt_depth","Alt_depth",10)
 
 #field13 - from biomart
 variants=add_placeholder(variants,"Gene_description","Gene_description",13)
+
 
 #field14 - from omim text file
 variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)

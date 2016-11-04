@@ -1,3 +1,6 @@
+# project: CHEO
+# biomart wrappers to get gene information and exon coordinates
+
 init = function()
 {
   library("biomaRt")  
@@ -13,6 +16,12 @@ init = function()
   grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
   datasets = listDatasets(grch38)
   grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
+}
+
+get_gene_descriptions = function()
+{
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','description'),mart=grch37)
+    write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
 }
 
 #use chromosomes because of biomart webservice timeout
@@ -47,6 +56,7 @@ get_exon_coordinates = function()
   write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+#exon coordinates given ENS ids
 get_omim_orphanet_exon_coordinates = function()
 { 
   omim_orphanet_ens_ids = read.table("omim.orphanet.v2.ENS")
