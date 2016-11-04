@@ -24,13 +24,12 @@ details:
       effects: vep
       remove_lcr
       tools_on: [svplots, qualimap]
+      clinical_reporting: true
 resources:
   default:
-    memory: 2G
-    cores: 16
-    jvm_opts: ["-Xms750m", "-Xmx2000m"]
-  gatk:
-      keyfile: /home/naumenko/tools/evolgenomicslab_gmail.com.key
+    memory: 10G
+    cores: 5
+    jvm_opts: ["-Xms750m", "-Xmx10000m"]
   tmp:
       dir: /scratch
 
