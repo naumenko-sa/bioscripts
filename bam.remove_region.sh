@@ -13,4 +13,4 @@
 
 module load bedtools
 
-bedtools intersect -abam $bam -b $bed -v > `echo $bam | s s/filtered.bam/`
+bedtools intersect -abam $bam -b $bed -v > `echo $bam | sed s/bam/filtered.bam//`
