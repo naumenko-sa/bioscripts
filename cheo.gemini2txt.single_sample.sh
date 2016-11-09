@@ -41,9 +41,9 @@ gemini query --header -q "select
         v.chrom as Chrom,
         v.start+1  as Pos,
         v.aa_change as AA_change,
-        v.vep_hgvsc Protein_change,
-        v.vep_hgvsp,
+        v.vep_hgvsc as Codon_change,
+        v.vep_hgvsp as Protein_change,
 	gts."$sample",
 	gt_alt_depths."$sample"
         from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.chrom = \"chr20\"" $file > ${file}.txt;
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and max_aaf_all <0.01" $file > ${file}.txt;
