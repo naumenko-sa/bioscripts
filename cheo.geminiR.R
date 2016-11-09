@@ -76,8 +76,13 @@ library(RSQLite)
 library(stringr)
 
 #variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
-variants = get_variants_from_file("417-ensemble.db.txt")
-sample="417_120882D"
+
+create_report = function (file,sample)
+{
+  file="417-ensemble.db.txt"
+  sample="417_120882D"
+  variants = get_variants_from_file(file)
+
 
 #field1 - Position
 variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
@@ -85,8 +90,8 @@ columns = ncol(variants)
 variants=variants[c(columns,1:columns-1)]
 
 #field2 - UCSC link
-sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position=\""
-sUCSC2=",\"UCSC link\""
+sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
+sUCSC2="\",\"UCSC link\""
 variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
 variants=move_column(variants,2)
 
@@ -116,12 +121,12 @@ variants = merge(variants,ensembl_refseq,all.x=T)
 library(stringr)
 library(plyr)
 variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
-variants = rename(variants,c("1"="Junk1","2"="Info_protein_change"))
+variants = rename(variants,c("1"="Junk1","Protein_change"="Junk2","2"="Protein_change"))
 
 variants = cbind(variants,str_split_fixed(variants$Codon_change,":",2))
-variants = rename(variants,c("1"="Junk2","2"="Info_codon_change"))
+variants = rename(variants,c("1"="Junk3","2"="Info_codon_change"))
 
-variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Info_protein_change,sep=':'))
+variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Protein_change,sep=':'))
 
 #fields 8,9 - Depth, Qual_depth
 
@@ -132,11 +137,9 @@ alt_column_name = paste0("gt_alt_depths.",sample)
 #fields 11,12 - Gene, ENS_ID
 
 #field13 - from biomart
-variants=add_placeholder(variants,"Gene_description","Gene_description",13)
-gene_descriptions = read.delim2("ensembl_w_description.txt", stringsAsFactors=FALSE)
+#variants=add_placeholder(variants,"Gene_description","Gene_description",13)
+gene_descriptions = read.delim2("ensembl_w_description.txt", stringsAsFactors=FALSE,quote = )
 variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ensembl_gene_id",all.x=T)
-variants$Gene_description = with(variants,description)
-variants = within(variants,rm(description))
 
 #field14 - from omim text file
 #variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)
@@ -193,4 +196,9 @@ variants = variants[c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation",
                       "Polyphen_score","Cadd_score","Trio_coverage","Imprinting_status","Imprinting_expressed_allele",
                       "Pseudoautosomal")]
 
+write.table(variants,paste0(sample,".txt"),col.names=NA,quote=F,sep = ";;")  
 #close_database()
+}
+
+create_report("417-ensemble.db.txt","417_120882D")
+
