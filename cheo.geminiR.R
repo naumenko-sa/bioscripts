@@ -63,7 +63,7 @@ close_database = function()
   dbDisconnect(con)
 }
 
-#in the meanwhile using gemini query in bash to decode 
+#in the meanwhile using cheo.gemini2txt.single_sample.sh query in bash to decode 
 #blob fields
 get_variants_from_file = function (filename)
 {
@@ -76,7 +76,8 @@ library(RSQLite)
 library(stringr)
 
 #variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
-variants = get_variants_from_file("NA12878-1-ensemble.db.txt")
+variants = get_variants_from_file("417-ensemble.db.txt")
+sample="417_120882D"
 
 #field1 - Position
 variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
@@ -108,13 +109,25 @@ variants$Zygocity = with(variants,gts)
 #1-3 bases of exon, 3-8 bases of intron
 
 #field 7 - Info
-variants=add_placeholder(variants,"Info",paste("Gene","NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'),7)
-variants$Info = with(variants,paste(Gene,"NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'))
+#variants=add_placeholder(variants,"Info",paste("Gene","NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'),7)
+ensembl_refseq = read.delim("ensembl_refseq.txt", stringsAsFactors=FALSE)
+variants = merge(variants,ensembl_refseq,all.x=T)
+
+library(stringr)
+library(plyr)
+variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
+variants = rename(variants,c("1"="Junk1","2"="Info_protein_change"))
+
+variants = cbind(variants,str_split_fixed(variants$Codon_change,":",2))
+variants = rename(variants,c("1"="Junk2","2"="Info_codon_change"))
+
+variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Info_protein_change,sep=':'))
 
 #fields 8,9 - Depth, Qual_depth
 
 #field 10 - Alt_depth - from v.gt_alt_depth
-variants=add_placeholder(variants,"Alt_depth","Alt_depth",10)
+alt_column_name = paste0("gt_alt_depths.",sample)
+#vriants = rename(variants,replace=c(column_name="Alt_depth"))
 
 #fields 11,12 - Gene, ENS_ID
 
@@ -131,7 +144,7 @@ omim = read.delim2("omim.forannotation1", stringsAsFactors=FALSE)
 variants = merge(variants,omim,all.x=T)
 
 #field15 - from Kristin xls
-variants = add_placeholder(variants,"Omim_inheritance","Omim_inheritance",15)
+#variants = add_placeholder(variants,"Omim_inheritance","Omim_inheritance",15)
 omim_inheritance = read.delim("omim_inheritance.txt", stringsAsFactors=FALSE)
 variants = merge(variants,omim_inheritance,all.x=T)
 
@@ -141,8 +154,8 @@ variants = add_placeholder(variants,"Orphanet","Orphanet",16)
 #fields17-18
 
 #field19 - protein change
-variants = add_placeholder(variants,"Protein_change","Protein_change",19)
-variants$Protein_change = with(variants,paste("p.",AA_change,AA_position,sep=' '))
+#variants = add_placeholder(variants,"Protein_change","Protein_change",19)
+#variants$Protein_change = with(variants,paste("p.",AA_change,AA_position,sep=' '))
 
 #fields 23-24
 variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R",23)
@@ -153,16 +166,31 @@ variants = add_placeholder(variants,"EVS_maf","EVS_maf",27)
 variants = add_placeholder(variants,"EVS_genotype_counts","EVS_genotype_counts",28)
 
 #fields 31-32
-variants = add_placeholder(variants,"Exac_pLi_score","Exac_pLi_score",31)
-variants = add_placeholder(variants,"Exac_missense_score","Exac_missense_score",32)
+exac_scores = read.delim("exac_scores.txt", stringsAsFactors=FALSE)
+#variants = add_placeholder(variants,"Exac_pLi_score","Exac_pLi_score",31)
+#variants = add_placeholder(variants,"Exac_missense_score","Exac_missense_score",32)
+variants = merge(variants,exac_scores,all.x=T)
 
 #field 35
+#https://www.biostars.org/p/150152/
 variants = add_placeholder(variants,"Phast_cons_score","Phast_cons_score",35)
 
 #fields39-42
 variants = add_placeholder(variants,"Trio_coverage","Trio_coverage",39)
-variants = add_placeholder(variants,"Imprinting_status","Imprinting_status",40)
-variants = add_placeholder(variants,"Imprinting_expressed_allele","Imprinting_expressed_allele",41)
+
+#variants = add_placeholder(variants,"Imprinting_status","Imprinting_status",40)
+#variants = add_placeholder(variants,"Imprinting_expressed_allele","Imprinting_expressed_allele",41)
+imprinting = read.delim("imprinting.txt", stringsAsFactors=FALSE)
+variants = merge(variants,imprinting,all.x=T)
+
 variants = add_placeholder(variants,"Pseudoautosomal","Pseudoautosomal",42)
+
+variants = variants[c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Info","Depth","Qual_depth",alt_column_name,
+                      "Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance","Orphanet",
+                      "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain","Frequency_in_C4R",
+                      "Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf","EVS_genotype_counts","Exac_maf","Maf_all",
+                      "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt","Phast_cons_score","Sift_score",
+                      "Polyphen_score","Cadd_score","Trio_coverage","Imprinting_status","Imprinting_expressed_allele",
+                      "Pseudoautosomal")]
 
 #close_database()

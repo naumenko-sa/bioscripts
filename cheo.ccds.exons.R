@@ -24,6 +24,12 @@ get_gene_descriptions = function()
     write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
 }
 
+get_refseq_transcript_ids = function()
+{
+    refseq_transcripts = getBM(attributes=c('ensembl_transcript_id','refseq_mrna'),mart=grch37)
+    write.table(refseq_transcripts[refseq_transcripts$refseq_mrna!='',],file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
+}
+
 #use chromosomes because of biomart webservice timeout
 get_exon_coordinates_chr = function(chromosome)
 {
