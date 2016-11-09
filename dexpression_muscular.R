@@ -2,6 +2,7 @@ library(edgeR)
 setwd("~/Desktop/project_muscular/")
 
 all_counts = read.delim("annotated_combined.counts", row.names=1, stringsAsFactors=FALSE)
+norm_counts = cpm(all_counts[,c(1,2,3,4,5,6)])
 gene_panel = read.delim("muscle2_genes.txt",stringsAsFactors = F,header=T)
 
 muscular_genes = all_counts[all_counts$symbol %in% unlist(gene_panel),]
