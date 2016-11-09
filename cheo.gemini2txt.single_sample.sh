@@ -41,6 +41,8 @@ gemini query --header -q "select
         v.chrom as Chrom,
         v.start+1  as Pos,
         v.aa_change as AA_change,
+        v.vep_hgvsc Protein_change,
+        v.vep_hgvsp,
 	gts."$sample",
 	gt_alt_depths."$sample"
         from variants v, gene_detailed g
