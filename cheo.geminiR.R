@@ -56,6 +56,9 @@ qryReport=paste0("select
         where v.transcript=g.transcript and v.gene=g.gene and v.chrom = \"chr20\"");
 
 variants = dbGetQuery(con,qryReport)
+#in the meanwhile using gemini query in bash to decode 
+#blob fields
+variants = read.table()
 
 #field1 - Position
 variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
@@ -70,7 +73,10 @@ variants=move_column(variants,2)
 
 #fields 3,4
 
-# field5 - Zygocity - have to decode BLOB 
+# field5 - Zygocity - 
+# use new loader vcf2db.py - with flag  to load plain text
+# for genotype and depth - Noah
+# otherwise have to decode BLOB 
 # snappy decompression
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
@@ -84,6 +90,7 @@ variants=add_placeholder(variants,"Zygocity","Zygocity",5)
 
 #field 7 - Info
 variants=add_placeholder(variants,"Info",paste("Gene","NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'),7)
+variants$Info = with(variants,paste(Gene,"NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'))
 
 #fields 8,9 - Depth, Qual_depth
 
