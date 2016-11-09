@@ -17,15 +17,13 @@ add_placeholder=function(variants,column_name,placeholder,number)
    return(move_column(variants,number))
 }
 
-setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
-library(RSQLite)
-library(stringr)
+get_variants_from_db = function (dbname)
+{
+    con = dbConnect(RSQLite::SQLite(),dbname=dbname)
+    dbListTables(con)
 
-con = dbConnect(RSQLite::SQLite(),dbname="nu7823.db")
-dbListTables(con)
-
-qrySample="select name from samples"
-sample = dbGetQuery(con,qrySample)[1,1]
+    qrySample="select name from samples"
+    sample = dbGetQuery(con,qrySample)[1,1]
 
 qryReport=paste0("select 
         v.ref as Ref,
@@ -55,10 +53,30 @@ qryReport=paste0("select
         from variants v, gene_detailed g
         where v.transcript=g.transcript and v.gene=g.gene and v.chrom = \"chr20\"");
 
-variants = dbGetQuery(con,qryReport)
+        variants = dbGetQuery(con,qryReport)
+    return (variants)
+}
+
+close_database = function()
+{
+  dbClearResult(variants)
+  dbDisconnect(con)
+}
+
 #in the meanwhile using gemini query in bash to decode 
 #blob fields
-variants = read.table()
+get_variants_from_file = function (filename)
+{
+    variants = read.delim(filename, stringsAsFactors=FALSE)
+    return(variants)
+}
+
+setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
+library(RSQLite)
+library(stringr)
+
+#variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
+variants = get_variants_from_file("NA12878-1-ensemble.db.txt")
 
 #field1 - Position
 variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
@@ -81,6 +99,7 @@ variants=move_column(variants,2)
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
 variants=add_placeholder(variants,"Zygocity","Zygocity",5)
+variants$Zygocity = with(variants,gts)
 
 #field 6 - Variation
 #add splicing and splicing extended annotation - just use RefSeq annotation and chr:pos
@@ -101,13 +120,20 @@ variants=add_placeholder(variants,"Alt_depth","Alt_depth",10)
 
 #field13 - from biomart
 variants=add_placeholder(variants,"Gene_description","Gene_description",13)
-
+gene_descriptions = read.delim2("ensembl_w_description.txt", stringsAsFactors=FALSE)
+variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ensembl_gene_id",all.x=T)
+variants$Gene_description = with(variants,description)
+variants = within(variants,rm(description))
 
 #field14 - from omim text file
-variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)
+#variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)
+omim = read.delim2("omim.forannotation1", stringsAsFactors=FALSE)
+variants = merge(variants,omim,all.x=T)
 
 #field15 - from Kristin xls
 variants = add_placeholder(variants,"Omim_inheritance","Omim_inheritance",15)
+omim_inheritance = read.delim("omim_inheritance.txt", stringsAsFactors=FALSE)
+variants = merge(variants,omim_inheritance,all.x=T)
 
 #field16 - Orphanet
 variants = add_placeholder(variants,"Orphanet","Orphanet",16)
@@ -139,5 +165,4 @@ variants = add_placeholder(variants,"Imprinting_status","Imprinting_status",40)
 variants = add_placeholder(variants,"Imprinting_expressed_allele","Imprinting_expressed_allele",41)
 variants = add_placeholder(variants,"Pseudoautosomal","Pseudoautosomal",42)
 
-dbClearResult(variants)
-dbDisconnect(con)
+#close_database()
