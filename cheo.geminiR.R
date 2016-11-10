@@ -77,10 +77,14 @@ library(stringr)
 
 #variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
 
-create_report = function (file,sample)
+create_report = function(family,samples)
 {
-  file="417-ensemble.db.txt"
-  sample="417_120882D"
+  #file="417-ensemble.db.txt"
+  #sample="417_120882D"
+  
+  #samples=c("166_3_5","166_4_10","166_4_8")
+  #family="166"
+  file=paste0(family,"-ensemble.db.txt")
   variants = get_variants_from_file(file)
 
 
@@ -188,17 +192,27 @@ variants = merge(variants,imprinting,all.x=T)
 
 variants = add_placeholder(variants,"Pseudoautosomal","Pseudoautosomal",42)
 
-variants = variants[c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Info","Depth","Qual_depth",alt_column_name,
-                      "Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance","Orphanet",
-                      "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain","Frequency_in_C4R",
-                      "Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf","EVS_genotype_counts","Exac_maf","Maf_all",
-                      "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt","Phast_cons_score","Sift_score",
-                      "Polyphen_score","Cadd_score","Trio_coverage","Imprinting_status","Imprinting_expressed_allele",
-                      "Pseudoautosomal")]
+#full set
+#variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Info","Depth","Qual_depth"),paste0("gts.",samples),
+#                      c("Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance","Orphanet",
+#                      "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain","Frequency_in_C4R",
+#                      "Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf","EVS_genotype_counts","Exac_maf","Maf_all",
+#                      "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt","Phast_cons_score","Sift_score",
+#                      "Polyphen_score","Cadd_score","Trio_coverage","Imprinting_status","Imprinting_expressed_allele",
+#                      "Pseudoautosomal"))]
 
-write.table(variants,paste0(sample,".txt"),col.names=NA,quote=F,sep = ";")  
+#do not report placeholders
+variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Info","Depth"),paste0("gts.",samples),
+                      c("Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
+                        "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
+                        "rsIDs","Maf_1000g","Exac_maf","Maf_all",
+                        "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt","Sift_score",
+                        "Polyphen_score","Cadd_score","Imprinting_status","Imprinting_expressed_allele"))]
+
+
+write.table(variants,paste0(family,".txt"),col.names=NA,quote=F,sep = ";")  
 #close_database()
 }
 
-create_report("417-ensemble.db.txt","417_120882D")
+create_report("417",c("417_120882D"))
 
