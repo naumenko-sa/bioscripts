@@ -143,7 +143,7 @@ variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ens
 
 #field14 - from omim text file
 #variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)
-omim = read.delim2("omim.forannotation1", stringsAsFactors=FALSE)
+omim = read.delim2("omim.forannotation2", stringsAsFactors=FALSE)
 variants = merge(variants,omim,all.x=T)
 
 #field15 - from Kristin xls
@@ -196,7 +196,7 @@ variants = variants[c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation",
                       "Polyphen_score","Cadd_score","Trio_coverage","Imprinting_status","Imprinting_expressed_allele",
                       "Pseudoautosomal")]
 
-write.table(variants,paste0(sample,".txt"),col.names=NA,quote=F,sep = ";;")  
+write.table(variants,paste0(sample,".txt"),col.names=NA,quote=F,sep = ";")  
 #close_database()
 }
 
