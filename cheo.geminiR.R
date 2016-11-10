@@ -214,5 +214,13 @@ write.table(variants,paste0(family,".txt"),col.names=NA,quote=F,sep = ";")
 #close_database()
 }
 
+create_report("166",c("166_3_5","166_4_10","166_4_8"))
+create_report("181",c("181_121141J","181_WG0927"))
+create_report("241",c("241_44845","241_52062","241_52063"))
+create_report("246",c("246_90137","246_CH0015","246_CH0016"))
+create_report("380",c("380_120890B","380_120891B"))
+create_report("391",c("391_121031C","391_CH0073"))
+create_report("394",c("394_60638BD"))
+create_report("411",c("411_G0071AG","411_G0091AG"))
+create_report("412",c("412_120880N","412_120886B","412_120887D"))
 create_report("417",c("417_120882D"))
-
