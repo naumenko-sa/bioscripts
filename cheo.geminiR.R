@@ -77,6 +77,19 @@ library(stringr)
 
 #variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
 
+get_DNM(variants)
+
+test = function()
+{
+  samples=c("166_3_5","166_4_10","166_4_8")
+  family="166"
+  file=paste0(family,"-ensemble.db.txt")
+  variants = get_variants_from_file(file)
+  
+  
+  
+}
+
 create_report = function(family,samples)
 {
   #file="417-ensemble.db.txt"
