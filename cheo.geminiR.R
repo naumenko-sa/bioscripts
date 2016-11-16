@@ -81,12 +81,20 @@ get_DNM(variants)
 
 test = function()
 {
+  library(stringr)
   samples=c("166_3_5","166_4_10","166_4_8")
   family="166"
   file=paste0(family,"-ensemble.db.txt")
   variants = get_variants_from_file(file)
+  variants$allele_pool = paste(variants$gts.166_4_8,variants$gts.166_4_10)
+  variants$allele_pool = gsub("/"," ",variants$test,fixed=T)
+  variants$allele_pool = gsub("|"," ",variants$test,fixed=T)
+  variants$allele_pool = gsub("."," ",variants$test,fixed=T)
+  #variants$allele_pool = gsub("  "," ",variants$test,fixed=T)
   
+  variants$allele1 = str_split_fixed(variants$gts.166_3_5,"/",2)
   
+  variants$inherited = with(variants,{t=strsplit(allele_pool," ",fixed=T);t[2]})
   
 }
 

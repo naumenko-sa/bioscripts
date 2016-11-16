@@ -1,11 +1,65 @@
 # https://bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf
-library(edgeR)
-setwd("~/Desktop/project_katie_csc")
-#1T4R2,1T4R3 - no 1T4T1
-TPOINT=12
-TR1=2
-TR2=4
 
+calc_de = function(all_counts,samples)
+{
+    ####    test: ###################
+    #samples = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
+    #            "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
+    #            "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+    #            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
+    #################################
+    
+    #samples = c("SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
+    #          "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
+    n_samples = length(samples)
+    group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
+    #patient = factor(c("511","511","511","523","523","523",
+    #                  "511","511","511","523","523","523"))
+    
+    x=all_counts[samples]
+    y=DGEList(counts=x,group=group)
+
+    plotMDS(y)
+    keep=rowSums(cpm(y)>1) >= n_samples/2
+    y=y[keep,,keep.lib.sizes=F]
+
+    #normalization for RNA composition (2.7.3)
+    y=calcNormFactors(y)
+
+#nc=cpm(y,normalized.lib.sizes=F)
+#write.table(nc,"filtered.normalized_counts.txt",col.names=NA)
+
+    plotMDS(y)
+
+    design=model.matrix(~group)
+
+    y=estimateDisp(y,design)
+    
+    fit=glmFit(y,design)
+    lrt=glmLRT(fit)
+
+    efilename="all_hi_vs_lo.genes.txt"
+    write.table(topTags(lrt,p.value=0.1,n=100),efilename,quote=F)
+
+    de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
+    #de_results = lrt$table
+    
+    gene_descriptions = read.delim2("ensembl_w_description.txt", stringsAsFactors=FALSE)
+    
+    de_results = merge(de_results,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
+    de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
+    de_results = merge(de_results,x,by.x = "ensembl_gene_id", by.y="row.names",all.x=T)
+
+    return(de_results)
+}
+
+library(edgeR)
+library(stringr)
+library(plyr)
+
+setwd("~/Desktop/project_katie_csc")
+
+#samples
 #SG511_ven_hi_2_26
 #SG511_ven_hi_4_13
 #SG511_ven_hi_4_27
@@ -19,51 +73,11 @@ TR2=4
 #SG523_ven_lo_4_10
 #SG523_ven_lo_4_24
 
-
 all_counts=read.delim("combined.counts",row.names="id")
 
+#no outliers
+#just 523
+samples = c("SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
+            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
 
-#x=all_counts[c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-#               "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27")]
-
-#x=all_counts[c("SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
- #              "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24")]
-
-#x=all_counts[c("SG511_ven_hi_2_26","SG523_ven_hi_2_27",
-#               "SG511_ven_lo_2_26","SG523_ven_lo_2_27")]
-
-#x=all_counts[c("SG511_ven_hi_4_13","SG523_ven_hi_4_10",
-#               "SG511_ven_lo_4_13","SG523_ven_lo_4_10")]
-
-#x=all_counts[c("SG511_ven_hi_4_27","SG523_ven_hi_4_24",
-#               "SG511_ven_lo_4_27","SG523_ven_lo_4_24")]
-
-#x=all_counts[c("X1T3R1","X1T3R2","X1T3R3","X1T4R2","X1T4R3")]
-
-x=all_counts[c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-"SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-               "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-              "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24")]
-
-
-#group=factor(c(1,1,1,2,2,2))
-#group=factor(c(1,1,2,2))
-group=factor(c(1,1,1,1,1,1,2,2,2,2,2,2))
-
-y=DGEList(counts=x,group=group)
-
-y=calcNormFactors(y)
-
-design=model.matrix(~group)
-
-y=estimateDisp(y,design)
-
-nfilename="all_hi_vs_lo.txt"
-write.table(y$counts,nfilename)
-
-fit=glmFit(y,design)
-lrt=glmLRT(fit)
-topTags(lrt,p.value=0.05,n=50)
-
-efilename="all_hi_vs_lo.genes.txt"
-write.table(topTags(lrt,p.value=0.05,n=50),efilename)
+results523=calc_de(all_counts,samples)
