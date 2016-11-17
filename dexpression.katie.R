@@ -134,7 +134,7 @@ calc_de_w_batch_effect = function()
     gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
     final_set = gene_descriptions[gene_descriptions$ensembl_gene_id %in% DEnames,]
     final_counts = x[DEnames,]
-}
+  }
 
 library(edgeR)
 library(stringr)
