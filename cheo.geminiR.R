@@ -71,14 +71,6 @@ get_variants_from_file = function (filename)
     return(variants)
 }
 
-setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
-library(RSQLite)
-library(stringr)
-
-#variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
-
-get_DNM(variants)
-
 test = function()
 {
   library(stringr)
@@ -103,8 +95,11 @@ create_report = function(family,samples)
   #file="417-ensemble.db.txt"
   #sample="417_120882D"
   
-  samples=c("166_3_5","166_4_10","166_4_8")
-  family="166"
+  #samples=c("166_3_5","166_4_10","166_4_8")
+  #family="166"
+  
+  family = "b100940"
+  samples = c("b100940")
   file=paste0(family,"-ensemble.db.txt")
   variants = get_variants_from_file(file)
 
@@ -234,6 +229,14 @@ variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation
 write.table(variants,paste0(family,".txt"),col.names=NA,quote=F,sep = ";")  
 #close_database()
 }
+
+setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
+setwd("~/Desktop/project_exons/")
+library(RSQLite)
+library(stringr)
+
+#variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
+
 
 create_report("166",c("166_3_5","166_4_10","166_4_8"))
 create_report("181",c("181_121141J","181_WG0927"))
