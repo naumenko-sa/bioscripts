@@ -22,8 +22,9 @@ init = function()
 
 get_gene_descriptions = function()
 {
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description'),mart=grch37)
-    write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
+    #name_1006 is GO_term
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description','name_1006'),mart=grch37)
+    write.table(ensembl_w_description,file="ensembl_w_description.txt1",quote=F,row.names=F,sep="\t")
 }
 
 get_refseq_transcript_ids = function()
