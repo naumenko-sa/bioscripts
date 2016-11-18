@@ -16,12 +16,15 @@ init = function()
   grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
   datasets = listDatasets(grch38)
   grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
+  
+  chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
 }
 
 get_gene_descriptions = function()
 {
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','description'),mart=grch37)
-    write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
+    #name_1006 is GO_term
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description','name_1006'),mart=grch37)
+    write.table(ensembl_w_description,file="ensembl_w_description.txt1",quote=F,row.names=F,sep="\t")
 }
 
 get_refseq_transcript_ids = function()
@@ -50,13 +53,14 @@ get_exon_coordinates = function()
 {
   #18710 genes
   exon_coordinates=get_exon_coordinates_chr(1)
+  #MT is problematic in ccds
   for (chr in c(seq(2,22),"X","Y"))
   {
     buffer = get_exon_coordinates_chr(chr)
     exon_coordinates=rbind(buffer,exon_coordinates)
   }
   exon_coordinates=na.omit(exon_coordinates)
-  write.table(exon_coordinates,"ccds.codins.exons",quote=F,row.names=F,col.names=F)
+  write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
   write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.codins.genes.ENS",quote=F,row.names=F,col.names=F)
   exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end"))
   write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)

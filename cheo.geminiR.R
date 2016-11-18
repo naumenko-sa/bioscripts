@@ -71,19 +71,33 @@ get_variants_from_file = function (filename)
     return(variants)
 }
 
-setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
-library(RSQLite)
-library(stringr)
-
-#variants = get_variants_from_db("NA12878-1-ensemble.db.txt")
+test = function()
+{
+  library(stringr)
+  samples=c("166_3_5","166_4_10","166_4_8")
+  family="166"
+  file=paste0(family,"-ensemble.db.txt")
+  variants = get_variants_from_file(file)
+  variants$allele_pool = paste(variants$gts.166_4_8,variants$gts.166_4_10)
+  variants$allele_pool = gsub("/"," ",variants$test,fixed=T)
+  variants$allele_pool = gsub("|"," ",variants$test,fixed=T)
+  variants$allele_pool = gsub("."," ",variants$test,fixed=T)
+  #variants$allele_pool = gsub("  "," ",variants$test,fixed=T)
+  
+  variants$allele1 = str_split_fixed(variants$gts.166_3_5,"/",2)
+  
+  variants$inherited = with(variants,{t=strsplit(allele_pool," ",fixed=T);t[2]})
+  
+}
 
 create_report = function(family,samples)
 {
   #file="417-ensemble.db.txt"
   #sample="417_120882D"
   
-  samples=c("166_3_5","166_4_10","166_4_8")
-  family="166"
+  #samples=c("166_3_5","166_4_10","166_4_8")
+  #family="166"
+  
   file=paste0(family,"-ensemble.db.txt")
   variants = get_variants_from_file(file)
 
@@ -119,40 +133,40 @@ variants$Zygocity = with(variants,gts)
 
 #field 7 - Info
 #variants=add_placeholder(variants,"Info",paste("Gene","NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'),7)
-ensembl_refseq = read.delim("ensembl_refseq.txt", stringsAsFactors=FALSE)
-variants = merge(variants,ensembl_refseq,all.x=T)
+ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq.txt"), stringsAsFactors=FALSE)
+#variants = merge(variants,ensembl_refseq,all.x=T)
 
-library(stringr)
-library(plyr)
-variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
-variants = rename(variants,c("1"="Junk1","Protein_change"="Junk2","2"="Protein_change"))
+#library(stringr)
+#library(plyr)
+#variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
+#variants = rename(variants,c("1"="Junk1","Protein_change"="Junk2","2"="Protein_change"))
 
-variants = cbind(variants,str_split_fixed(variants$Codon_change,":",2))
-variants = rename(variants,c("1"="Junk3","2"="Info_codon_change"))
+#variants = cbind(variants,str_split_fixed(variants$Codon_change,":",2))
+#variants = rename(variants,c("1"="Junk3","2"="Info_codon_change"))
 
-variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Protein_change,sep=':'))
+#variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Protein_change,sep=':'))
 
 #fields 8,9 - Depth, Qual_depth
 
 #field 10 - Alt_depth - from v.gt_alt_depth
-alt_column_name = paste0("gt_alt_depths.",sample)
+#alt_column_name = paste0("gt_alt_depths.",sample)
 #vriants = rename(variants,replace=c(column_name="Alt_depth"))
 
 #fields 11,12 - Gene, ENS_ID
 
 #field13 - from biomart
 #variants=add_placeholder(variants,"Gene_description","Gene_description",13)
-gene_descriptions = read.delim2("ensembl_w_description.txt", stringsAsFactors=FALSE,quote = )
+gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
 variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ensembl_gene_id",all.x=T)
 
 #field14 - from omim text file
 #variants = add_placeholder(variants,"Omim_gene_description","Omim_gene_description",14)
-omim = read.delim2("omim.forannotation2", stringsAsFactors=FALSE)
+omim = read.delim2(paste0(reference_tables_path,"/omim.forannotation2"), stringsAsFactors=FALSE)
 variants = merge(variants,omim,all.x=T)
 
 #field15 - from Kristin xls
 #variants = add_placeholder(variants,"Omim_inheritance","Omim_inheritance",15)
-omim_inheritance = read.delim("omim_inheritance.txt", stringsAsFactors=FALSE)
+omim_inheritance = read.delim(paste0(reference_tables_path,"/omim_inheritance.txt"), stringsAsFactors=F)
 variants = merge(variants,omim_inheritance,all.x=T)
 
 #field16 - Orphanet
@@ -173,7 +187,7 @@ variants = add_placeholder(variants,"EVS_maf","EVS_maf",27)
 variants = add_placeholder(variants,"EVS_genotype_counts","EVS_genotype_counts",28)
 
 #fields 31-32
-exac_scores = read.delim("exac_scores.txt", stringsAsFactors=FALSE)
+exac_scores = read.delim(paste0(reference_tables_path,"/exac_scores.txt"), stringsAsFactors=F)
 #variants = add_placeholder(variants,"Exac_pLi_score","Exac_pLi_score",31)
 #variants = add_placeholder(variants,"Exac_missense_score","Exac_missense_score",32)
 variants = merge(variants,exac_scores,all.x=T)
@@ -187,7 +201,7 @@ variants = add_placeholder(variants,"Trio_coverage","Trio_coverage",39)
 
 #variants = add_placeholder(variants,"Imprinting_status","Imprinting_status",40)
 #variants = add_placeholder(variants,"Imprinting_expressed_allele","Imprinting_expressed_allele",41)
-imprinting = read.delim("imprinting.txt", stringsAsFactors=FALSE)
+imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
 variants = merge(variants,imprinting,all.x=T)
 
 variants = add_placeholder(variants,"Pseudoautosomal","Pseudoautosomal",42)
@@ -202,7 +216,7 @@ variants = add_placeholder(variants,"Pseudoautosomal","Pseudoautosomal",42)
 #                      "Pseudoautosomal"))]
 
 #do not report placeholders
-variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Info","Depth"),paste0("gts.",samples),
+variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation","Depth"),paste0("gts.",samples),
                       c("Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                         "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
                         "rsIDs","Maf_1000g","Exac_maf","Maf_all",
@@ -214,6 +228,13 @@ write.table(variants,paste0(family,".txt"),col.names=NA,quote=F,sep = ";")
 #close_database()
 }
 
+setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
+
+reference_tables_path="~/Desktop/reference_tables"
+library(RSQLite)
+library(stringr)
+
+
 create_report("166",c("166_3_5","166_4_10","166_4_8"))
 create_report("181",c("181_121141J","181_WG0927"))
 create_report("241",c("241_44845","241_52062","241_52063"))
@@ -224,3 +245,8 @@ create_report("394",c("394_60638BD"))
 create_report("411",c("411_G0071AG","411_G0091AG"))
 create_report("412",c("412_120880N","412_120886B","412_120887D"))
 create_report("417",c("417_120882D"))
+
+setwd("~/Desktop/project_exomes/2_n/2016-11-17_ensemble_calls/")
+create_report("b100940",c("100940"))
+
+
