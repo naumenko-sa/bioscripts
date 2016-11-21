@@ -2,6 +2,7 @@
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4387895/
 # https://cran.r-project.org/web/packages/gplots/gplots.pdf
 # ftp://cran.r-project.org/pub/R/web/packages/pheatmap/pheatmap.pdf
+#http://www.stat.purdue.edu/~jrounds/weake/sig_10_40/03_edgeR_examine_time.R
 
 calc_de = function(all_counts,samples,result_file)
 {
@@ -31,19 +32,40 @@ calc_de = function(all_counts,samples,result_file)
     #                  "511","511","511","523","523","523"))
     
     x=all_counts[samples]
-    y=DGEList(counts=x,group=group)
+    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros=0)
 
     plotMDS(y)
     keep=rowSums(cpm(y)>1) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
+    idfound = y$genes$genes %in% mappedRkeys(org.Hs.egENSEMBL)
+    y = y[idfound,]
+    
+    egENSEMBL=toTable(org.Hs.egENSEMBL)
+    m = match (y$genes$genes,egENSEMBL$ensembl_id)
+    y$genes$EntrezGene = egENSEMBL$gene_id[m]
+    egSYMBOL = toTable(org.Hs.egSYMBOL)
+    m = match (y$genes$EntrezGene,egSYMBOL$gene_id)
+    y$genes$Symbol = egSYMBOL$symbol[m]
+    
+    #remove duplications - just 1 gene in this dataset
+    o = order(rowSums(y$counts),decreasing = T)
+    y = y[o,]
+    d = duplicated(y$genes$Symbol)
+    y = y[!d,]
+    nrow(y)
+    y$samples$lib.size = colSums(y$counts)
+    
+    rownames(y$counts) = rownames(y$genes) = y$genes$EntrezGene
+    y$genes$EntrezGene = NULL
+    
     #normalization for RNA composition (2.7.3)
     y=calcNormFactors(y)
 
 #nc=cpm(y,normalized.lib.sizes=F)
 #write.table(nc,"filtered.normalized_counts.txt",col.names=NA)
 
-    plotMDS(y)
+    plotMDS(y,las=1)
 
     design=model.matrix(~group)
 
@@ -52,6 +74,10 @@ calc_de = function(all_counts,samples,result_file)
     fit=glmFit(y,design)
     lrt=glmLRT(fit)
 
+    #o=order(lrt$table$PValue)
+    #cpm(y)[o[1:10],]
+    #write.table(cpm(y)[o[1:12566],],"allgenes.cpm")
+    
     efilename="all_hi_vs_lo.genes.txt"
     write.table(topTags(lrt,p.value=0.05,n=10000),efilename,quote=F)
 
@@ -75,7 +101,7 @@ calc_de = function(all_counts,samples,result_file)
     rownames(s40) = de_results$external_gene_name
     library(pheatmap)
     library(grid)  
-    png("SG523_new.png",width=2000)
+    png("SG523_new1.png",width=2000)
     ph=pheatmap(t(s40)[c(3,4,1,2),],kmeans_k = 2,show_rownames = F,treeheight_row = 0,
              treeheight_col = 0, cellheight = 60, cellwidth = 20,
              fontsize=20,scale="column", cluster_rows = T,
@@ -89,6 +115,54 @@ calc_de = function(all_counts,samples,result_file)
               rot=rep(90,length(labels)),
               just = "left")
     dev.off()
+    
+    #go analysis
+    library("org.Hs.eg.db")
+    go = goana(lrt,species="Hs")
+    
+    for(on in c("BP","CC","MF"))
+    {
+        go.up = topGO(go,on=on,sort="Up",n=4)
+        go.up$log2pvalue = -log2(go.up$P.Up)
+    
+        go.down = topGO(go,ont=on,sort="Down",n=4)
+        go.down$log2pvalue = -log2(go.down$P.Down)
+    
+        png(paste0("HI.",on,".png"),width=1000)
+        barplot(go.up$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+        labels = go.up$Term
+        text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+        dev.off()
+    
+        png(paste0("LO.",on,".png"),width=1000)
+        barplot(go.down$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+        labels = go.down$Term
+        text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+        dev.off()
+    }
+    
+    kegg = kegga(lrt,species="Hs")
+    kegg.up = topKEGG(kegg,sort="Up",number = 4)
+    kegg.up$log2pvalue = -log2(kegg.up$P.Up)
+    kegg.down = topKEGG(kegg,sort="Down",number = 4)
+    kegg.down$log2pvalue = -log2(kegg.down$P.Down)
+    
+    png("HI.kegg.png",width=1000)
+    barplot(kegg.up$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    labels = kegg.up$Pathway
+    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+    dev.off()
+    
+    png("LO.kegg.png",width=1000)
+    barplot(kegg.down$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    labels = kegg.down$Pathway
+    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+    dev.off()
+    
 }
 
 calc_de_w_batch_effect = function()
@@ -179,12 +253,14 @@ calc_de_w_batch_effect = function()
     final_counts = x[DEnames,]
   }
 
-library(edgeR)
-library(stringr)
-library(plyr)
-reference_tables_path = "~/Desktop/reference_tables"
-
-setwd("~/Desktop/project_katie_csc")
+init = function()
+{
+  library(edgeR)
+  library(stringr)
+  #library(plyr)
+  library(GO.db)
+  reference_tables_path = "~/Desktop/reference_tables"
+  setwd("~/Desktop/project_katie_csc")
 
 #samples
 #SG511_ven_hi_2_26
@@ -197,11 +273,14 @@ setwd("~/Desktop/project_katie_csc")
 #SG523_ven_hi_4_10
 #SG523_ven_hi_4_24
 #SG523_ven_lo_2_27
-samples
 #SG523_ven_lo_4_10
 #SG523_ven_lo_4_24
 
-all_counts=read.delim("combined.counts",row.names="id")
+  all_counts=read.delim("combined.counts",row.names="id")
+
+}
+
+init()
 
 #no outliers
 #just 523
@@ -224,6 +303,3 @@ samples511_4_13 = c("SG511_ven_hi_4_13","SG511_ven_lo_4_13","SG511_ven_lo_4_27")
 results511 = calc_de(all_counts,samples511,"511.txt")
 
 
-#http://www.stat.purdue.edu/~jrounds/weake/sig_10_40/03_edgeR_examine_time.R
-cpm0 = log(cpm(y$counts+1))
-colSums(cpm0)
