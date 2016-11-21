@@ -90,13 +90,38 @@ test = function()
   
 }
 
+# return Homozygous Heterozygous or Multiple het
+genotype2zygocity = function (genotype_str)
+{
+      #genotype_str = "A|A"
+      #genotype_str = "./."
+      #genotype_str = "TCA/."
+      #genotype_str = "G"
+      genotype_str = gsub("|","/",genotype_str,fixed=T)
+      
+      #if cannot convert to genotype
+      if (nchar(genotype_str)<3){
+          result = genotype_str
+      }else{
+        g = genotype(genotype_str)
+        if (heterozygote(g)){
+          result = "Heterozygous"
+        }else if (homozygote(g)){
+          result = "Homozygous"
+        }else{
+          result = genotype_str 
+        }
+      }
+      return(result)
+}
+
 create_report = function(family,samples)
 {
   #file="417-ensemble.db.txt"
   #sample="417_120882D"
   
-  #samples=c("166_3_5","166_4_10","166_4_8")
-  #family="166"
+  samples=c("166_3_5","166_4_10","166_4_8")
+  family="166"
   
   file=paste0(family,"-ensemble.db.txt")
   variants = get_variants_from_file(file)
@@ -123,7 +148,13 @@ variants=move_column(variants,2)
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
 variants=add_placeholder(variants,"Zygocity","Zygocity",5)
-variants$Zygocity = with(variants,gts)
+library(data.table)
+for(sample in samples)
+{
+    new_name = paste0("Zygocity.",samples[1])
+    #setnames(variants, paste0("gts.",sample),new_name)
+    variants$new_name = with(variants,genotype2zygocity(Zygocity.166_3_5))
+}
 
 #field 6 - Variation
 #add splicing and splicing extended annotation - just use RefSeq annotation and chr:pos
@@ -136,8 +167,7 @@ variants$Zygocity = with(variants,gts)
 ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq.txt"), stringsAsFactors=FALSE)
 #variants = merge(variants,ensembl_refseq,all.x=T)
 
-#library(stringr)
-#library(plyr)
+
 #variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
 #variants = rename(variants,c("1"="Junk1","Protein_change"="Junk2","2"="Protein_change"))
 
@@ -224,7 +254,7 @@ variants = variants[c(c("Position","UCSC_Link","Ref","Alt","Zygocity","Variation
                         "Polyphen_score","Cadd_score","Imprinting_status","Imprinting_expressed_allele"))]
 
 
-write.table(variants,paste0(family,".txt"),col.names=NA,quote=F,sep = ";")  
+write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)  
 #close_database()
 }
 
@@ -233,7 +263,7 @@ setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
 reference_tables_path="~/Desktop/reference_tables"
 library(RSQLite)
 library(stringr)
-
+library(genetics)
 
 create_report("166",c("166_3_5","166_4_10","166_4_8"))
 create_report("181",c("181_121141J","181_WG0927"))
