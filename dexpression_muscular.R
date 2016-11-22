@@ -22,7 +22,23 @@ gene_panel = read.delim("genes_muscular.txt",stringsAsFactors = F,header=T)
 muscular_genes = all_counts[all_counts$symbol %in% unlist(gene_panel),]
 
 work_counts=muscular_genes
+work_counts = all_counts
+
+#exploration
+row.names(work_counts) = work_counts$symbol
+work_counts$id = NULL
+work_counts$symbol = NULL
+total_counts = colSums(work_counts)
+barplot(total_counts)
+log_counts = log2(work_counts)
+png("all_genes_counts.png")
+par(mar=c(10,3,1,1))
+boxplot(log_counts,las=2)
+dev.off()
+
 attach(work_counts)
+
+
 
 x=muscular_genes[c("muscle1","X1130.BD.B175")]
 
