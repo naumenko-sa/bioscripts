@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#PBS -l walltime=10:00:00,nodes=1:ppn=1
+#PBS -l walltime=15:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=10g,mem=10g
+#PBS -l vmem=30g,mem=30g
 
 
 if [ -z left ]
