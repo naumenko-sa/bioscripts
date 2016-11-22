@@ -2,7 +2,8 @@
 # https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4387895/
 # https://cran.r-project.org/web/packages/gplots/gplots.pdf
 # ftp://cran.r-project.org/pub/R/web/packages/pheatmap/pheatmap.pdf
-#http://www.stat.purdue.edu/~jrounds/weake/sig_10_40/03_edgeR_examine_time.R
+# http://www.stat.purdue.edu/~jrounds/weake/sig_10_40/03_edgeR_examine_time.R
+# https://cgrlucb.wikispaces.com/edgeR+fall2013
 
 calc_de = function(all_counts,samples,result_file)
 {
@@ -22,9 +23,12 @@ calc_de = function(all_counts,samples,result_file)
     samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
                 "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
 
-    #samples = c("SG511_ven_lo_4_13","SG511_ven_hi_4_13",
-    #            "SG511_ven_lo_2_26","SG511_ven_hi_2_26");
+    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_2_26",
+                "SG511_ven_hi_4_13","SG511_ven_hi_2_26");
 
+    
+    samples = c("SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+        "SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27");
   
     n_samples = length(samples)
     group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
@@ -32,12 +36,13 @@ calc_de = function(all_counts,samples,result_file)
     #                  "511","511","511","523","523","523"))
     
     x=all_counts[samples]
-    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros=0)
+    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
 
     plotMDS(y)
     keep=rowSums(cpm(y)>1) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
+    #necessary for goana
     idfound = y$genes$genes %in% mappedRkeys(org.Hs.egENSEMBL)
     y = y[idfound,]
     
@@ -52,11 +57,13 @@ calc_de = function(all_counts,samples,result_file)
     o = order(rowSums(y$counts),decreasing = T)
     y = y[o,]
     d = duplicated(y$genes$Symbol)
+    dy = y[d,]$genes
     y = y[!d,]
     nrow(y)
-    y$samples$lib.size = colSums(y$counts)
     
-    rownames(y$counts) = rownames(y$genes) = y$genes$EntrezGene
+    y$samples$lib.size = colSums(y$counts)
+    rownames(y$counts) = y$genes$EntrezGene 
+    rownames(y$genes) = y$genes$EntrezGene
     y$genes$EntrezGene = NULL
     
     #normalization for RNA composition (2.7.3)
@@ -82,46 +89,55 @@ calc_de = function(all_counts,samples,result_file)
     write.table(topTags(lrt,p.value=0.05,n=10000),efilename,quote=F)
 
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
+    s_rownames = row.names(de_results)
+    setnames(de_results,"genes","ensembl_gene_id")
     #de_results = lrt$table
     
     gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
     
-    de_results = merge(de_results,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
-    de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
+    de_results = merge(de_results,gene_descriptions,by.x="ensembl_gene_id",by.y="ensembl_gene_id",all.x=T)
+    #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "ensembl_gene_id", by.y="row.names",all.x=T)
+    de_results = de_results[order(de_results$PValue),]
+    rownames(de_results) = s_rownames
 
-    result_file="523.2points.txt"
+    result_file="523.3points.txt"
     write.table(de_results,result_file,quote=F,sep=';')
     
     return(de_results)
     
     logcpm = cpm (y,prior.count=2,log=T)
     #cpm0  = log(cpm(y$counts+1))
-    s40 = logcpm[de_results$ensembl_gene_id,]
-    rownames(s40) = de_results$external_gene_name
-    library(pheatmap)
-    library(grid)  
+    top_genes_cpm = logcpm[row.names(de_results),]
+    rownames(top_genes_cpm) = de_results$external_gene_name
+    
     png("SG523_new1.png",width=2000)
-    ph=pheatmap(t(s40)[c(3,4,1,2),],kmeans_k = 2,show_rownames = F,treeheight_row = 0,
-             treeheight_col = 0, cellheight = 60, cellwidth = 20,
-             fontsize=20,scale="column", cluster_rows = T,
-             color = colorRampPalette(c("green", "black", "red"))(20),
-             show_colnames = F, rot=90)
+    ph=pheatmap(t(top_genes_cpm), kmeans_k=2, scale="column", show_rownames=F,
+             treeheight_row = 0, treeheight_col = 0, fontsize = 20,
+             cellheight = 60, cellwidth = 20,rot=90,cluster_rows = T,
+             show_colnames = F)
+    
+    #ph=pheatmap(t(top_genes_cpm)[c(3,4,1,2),],kmeans_k = 2,show_rownames = F,treeheight_row = 0,
+    #         treeheight_col = 0, cellheight = 60, cellwidth = 20,
+    #         fontsize=20, scale="column", cluster_rows = T,
+    #         color = colorRampPalette(c("green", "black", "red"))(20),
+    #         show_colnames = F, rot=90)
     labels = ph$tree_col$labels[ph$tree_col$order]
+    start = 0.88 - length(labels)*0.01
              #filename="SG523.heatmap.png")
     grid.text(labels,
-              seq(0.09,0.09+(length(labels)-1)*0.01,0.01),
+              seq(start,start+(length(labels)-1)*0.01,0.01),
               rep(0.637,length(labels)),
               rot=rep(90,length(labels)),
               just = "left")
     dev.off()
     
     #go analysis
-    library("org.Hs.eg.db")
     go = goana(lrt,species="Hs")
     
     for(on in c("BP","CC","MF"))
     {
+        on = "BP"  
         go.up = topGO(go,on=on,sort="Up",n=4)
         go.up$log2pvalue = -log2(go.up$P.Up)
     
@@ -168,9 +184,9 @@ calc_de = function(all_counts,samples,result_file)
 calc_de_w_batch_effect = function()
 {
     #using the section 4.2 of the manual
-    samples = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
+    samples = c("SG511_ven_hi_4_13","SG511_ven_hi_4_27",
               "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-              "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+              "SG511_ven_lo_4_13","SG511_ven_lo_4_27",
               "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
 
     all_counts=read.delim("combined.counts",row.names="id")
@@ -232,12 +248,10 @@ calc_de_w_batch_effect = function()
     de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "ensembl_gene_id", by.y="row.names",all.x=T)
     
-    write.table(de_results,"all_sample_w_batch_effect.txt",quote=F,sep=';')
+    write.table(de_results,"5points_w_batch_effect.txt",quote=F,sep=';')
     
     top = row.names(topTags(qlf))    
     View(cpm(y)[top,])
-    
-    
     
     dt = decideTestsDGE(qlf)
     summary(dt)
@@ -259,6 +273,10 @@ init = function()
   library(stringr)
   #library(plyr)
   library(GO.db)
+  library(org.Hs.eg.db)
+  library(data.table)
+  library(pheatmap)
+  library(grid)  
   reference_tables_path = "~/Desktop/reference_tables"
   setwd("~/Desktop/project_katie_csc")
 
@@ -303,3 +321,27 @@ samples511_4_13 = c("SG511_ven_hi_4_13","SG511_ven_lo_4_13","SG511_ven_lo_4_27")
 results511 = calc_de(all_counts,samples511,"511.txt")
 
 
+#venn diagram
+library("VennDiagram")
+r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points.txt", header=T, sep=";")
+r523.3points = read.csv("~/Dropbox/project_katie_csc/523.3points.txt", header=T, sep=";")
+r523.6points = read.csv("~/Dropbox/project_katie_csc/all_sample_w_batch_effect1.txt", header=T, sep=";")
+r5points = read.csv("~/Dropbox/project_katie_csc/5points_w_batch_effect.txt", header=T, sep=";")
+overlap = calculate.overlap(x=list("523.2points" = r523.2points$Symbol,
+                                   "5points" = r5points$Symbol))
+
+png("523.2points_5points.png")
+venn.plot=draw.pairwise.venn(length(overlap$a1),
+                             length(overlap$a2),
+                             length(overlap$a3),
+                             c("523.2points","5points"),fill=c("blue","red"),
+                             lty="blank",
+                             cex = 2, cat.cex=2, 
+                             ext.length = 0.3,  
+                             ext.line.lwd=2,
+                             ext.text = F)
+dev.off()
+
+cat.just = list(c(-1,-1),c(1,1)),
+grid.draw(venn.plot)
+grid.newpage()
