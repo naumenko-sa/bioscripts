@@ -37,6 +37,7 @@ go_analysis = function (lrt,prefix)
 #pathway analysis
 kegg_analysis = function (lrt,prefix)
 {
+  lrt=qlf
   kegg = kegga(lrt,species="Hs")
   kegg.up = topKEGG(kegg,sort="Up",number = 4)
   kegg.up$log2pvalue = -log2(kegg.up$P.Up)
@@ -73,13 +74,14 @@ calc_de = function(all_counts,samples,result_file)
     #samples = c("SG523_ven_hi_2_27","SG523_ven_hi_4_24",
     #            "SG523_ven_lo_2_27","SG523_ven_lo_4_24");
     
+    #523.2points
     samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
                 "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
 
-    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_2_26",
-                "SG511_ven_hi_4_13","SG511_ven_hi_2_26");
+    #511.2points
+    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+                "SG511_ven_hi_4_13","SG511_ven_hi_4_27");
 
-    
     samples = c("SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
         "SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27");
   
@@ -92,7 +94,7 @@ calc_de = function(all_counts,samples,result_file)
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
 
     plotMDS(y)
-    keep=rowSums(cpm(y)>1) >= n_samples/2
+    keep=rowSums(cpm(y)>2) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
     #necessary for goana
@@ -159,12 +161,20 @@ calc_de = function(all_counts,samples,result_file)
     
     return(de_results)
     
-    logcpm = cpm (y,prior.count=2,log=T)
+    go_analysis(lrt,"523.2points.20gos")
+    
+    kegg_analysis(lrt,"523.2points")
+    
+}
+ 
+plot_heatmap = function (counts,de_results,prefix)
+{
+    logcpm = cpm (counts,prior.count=2,log=T)
     #cpm0  = log(cpm(y$counts+1))
-    top_genes_cpm = logcpm[row.names(de_results),]
+    top_genes_cpm = logcpm[de_results$genes,]
     rownames(top_genes_cpm) = de_results$external_gene_name
     
-    png("SG523_new1.png",width=2000)
+    png(paste0(prefix,".heatmap.png"),width=2000)
     ph=pheatmap(t(top_genes_cpm), kmeans_k=2, scale="column", show_rownames=F,
              treeheight_row = 0, treeheight_col = 0, fontsize = 20,
              cellheight = 60, cellwidth = 20,rot=90,cluster_rows = T,
@@ -184,26 +194,22 @@ calc_de = function(all_counts,samples,result_file)
               rot=rep(90,length(labels)),
               just = "left")
     dev.off()
-    
-    go_analysis(lrt,"523.2points")
-    
-    kegg_analysis(lrt,"523.2points")
-    
-}
+}   
 
-calc_de_w_batch_effect = function()
+#using the section 4.2 of edgeR manual
+calc_de_w_batch_effect = function(counts,samples,prefix)
 {
-    #using the section 4.2 of the manual
-    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-              "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
-              "SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-              "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24"
-              );
+    #samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+    #          "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+    #          "SG511_ven_hi_4_13","SG511_ven_hi_4_27",
+    #          "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24"
+    #          );
+    #counts=read.delim("combined.counts",row.names="id")
+    #prefix = "test"
+  
+    x = counts[samples]
     
-    all_counts=read.delim("combined.counts",row.names="id")
-    x = all_counts[samples]
-    
-    treat = factor(substring(colnames(x),11,12),ordered=T)
+    treat = factor(substring(colnames(x),11,12),levels=c("lo","hi"))
     
     #try 3 times
     time=factor(substring(colnames(x),14,17))
@@ -213,7 +219,7 @@ calc_de_w_batch_effect = function()
     #y=DGEList(counts=x,group=treat)
     y=DGEList(counts=x,group=treat,genes=row.names(x),remove.zeros = T)
     
-    keep = rowSums(cpm(y)>1) > 5
+    keep = rowSums(cpm(y)>0.5) >= n_samples/2
     table(keep)
  
     y = y [keep, ,keep.lib.sizes=F]   
@@ -248,10 +254,10 @@ calc_de_w_batch_effect = function()
     
     plotMDS(y)
     
-    design = model.matrix(~time+time:treat)
-    logFC = predFC(y,design,prior.count=1,dispersion=0.05)
+    #design = model.matrix(~time+time:treat)
+    #logFC = predFC(y,design,prior.count=1,dispersion=0.05)
     
-    cor(logFC[,6:10])    
+    #cor(logFC[,6:10])    
     
     design = model.matrix(~time+treat)
     rownames(design) = colnames(y)
@@ -267,16 +273,16 @@ calc_de_w_batch_effect = function()
     plotQLDisp(fit)
     
     #check DE for time - 623 genes
-    qlf=glmQLFTest(fit,coef=2:3)
-    topTags(qlf)
-    FDR = p.adjust(qlf$table$PValue, method="BH")
-    sum(FDR<0.05)
-    go_analysis(qlf,"5points.time")
+    #qlf=glmQLFTest(fit,coef=2:3)
+    #topTags(qlf)
+    #FDR = p.adjust(qlf$table$PValue, method="BH")
+    #sum(FDR<0.05)
+    #go_analysis(qlf,"5points.time")
     
     #de for HI/Lo
     qlf = glmQLFTest(fit)
-    efilename="all_hi_vs_lo.genes.txt"
-    write.table(topTags(qlf,p.value=0.05,n=10000),efilename,quote=F)
+    efilename="tmp.txt"
+    write.table(topTags(qlf,p.value=0.05,n=1000),efilename,quote=F)
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
 
     gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
@@ -285,16 +291,18 @@ calc_de_w_batch_effect = function()
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
     
-    write.table(de_results,"5points_w_batch_effect_correction.txt",quote=F,sep=';')
+    write.table(de_results,paste0(prefix,"_w_batch_effect_correction.txt"),quote=F,sep=';')
     
-    go_analysis(qlf,"5points")
-    kegg_analysis(qlf,"5points")
+    #plot_heatmap(all_counts,de_results,"5points1")
     
-    dt = decideTestsDGE(qlf)
-    summary(dt)
+    go_analysis(qlf,paste0(prefix,".batch"))
+    kegg_analysis(qlf,paste0(prefix,".batch"))
     
-    top=rownames(topTags(qlf))
-    View(cpm(y)[top,])
+    #dt = decideTestsDGE(qlf)
+    #summary(dt)
+    
+    #top=rownames(topTags(qlf))
+    #View(cpm(y)[top,])
 }
 
 init = function()
@@ -330,41 +338,48 @@ init = function()
 
 init()
 
-#no outliers
-#just 523
-samples_all = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-                "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-                "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-                "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
-result_all = calc_de(all_counts,samples_all)
+samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+          "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+          "SG511_ven_hi_4_13","SG511_ven_hi_4_27",
+          "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24"
+          )
 
-samples523 = c("SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
-results523=calc_de(all_counts,samples523,"523.txt")
+#511.2points
+samples.511.2 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+            "SG511_ven_hi_4_13","SG511_ven_hi_4_27")
 
-#no result
-samples511 = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-            "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27")
-samples511 = c("SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-               "SG511_ven_lo_4_13","SG511_ven_lo_4_27")
-samples511_4_13 = c("SG511_ven_hi_4_13","SG511_ven_lo_4_13","SG511_ven_lo_4_27")
-results511 = calc_de(all_counts,samples511,"511.txt")
+
+#523.2points
+samples.523.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
+            "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
 
 
 #venn diagram
 library("VennDiagram")
-r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points.txt", header=T, sep=";")
+
+calc_de_w_batch_effect(all_counts,samples5,"5points")
+calc_de_w_batch_effect(all_counts,samples.511.2,"511.2points")
+calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
+
+
+r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points_w_batch_effect_correction.txt", header=T, sep=";")
 r523.3points = read.csv("~/Dropbox/project_katie_csc/523.3points.txt", header=T, sep=";")
 r523.6points = read.csv("~/Dropbox/project_katie_csc/all_sample_w_batch_effect1.txt", header=T, sep=";")
 r5points = read.csv("~/Dropbox/project_katie_csc/5points_w_batch_effect.txt", header=T, sep=";")
-overlap = calculate.overlap(x=list("523.2points" = r523.2points$Symbol,
-                                   "5points" = r5points$Symbol))
+r511.2points = read.csv("511.2points_w_batch_effect_correction.txt",header=T,sep=";")
 
-png("523.2points_5points.png")
+overlap = calculate.overlap(x=list("511.2points" = r511.2points$Symbol,
+                                                 "5points" = r5points$Symbol))
+
+overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol,
+                                   "5points_batch" = r5points$Symbol,
+                                   "523.2points" = r523.2points$Symbol))
+
+png("511.2points_5points.png")
 venn.plot=draw.pairwise.venn(length(overlap$a1),
                              length(overlap$a2),
                              length(overlap$a3),
-                             c("523.2points","5points"),fill=c("blue","red"),
+                             c("511.2points","5points"),fill=c("blue","red"),
                              lty="blank",
                              cex = 2, cat.cex=2, 
                              ext.length = 0.3,  
@@ -372,6 +387,21 @@ venn.plot=draw.pairwise.venn(length(overlap$a1),
                              ext.text = F)
 dev.off()
 
-cat.just = list(c(-1,-1),c(1,1)),
-grid.draw(venn.plot)
-grid.newpage()
+png("5points.511_2points.523_2points.png",width=1000)
+venn.plot=draw.triple.venn(area1 = length(r5points$Symbol),
+                           area2 = length(r523.2points$Symbol),
+                           area3 = length(r511.2points$Symbol),
+                           n12 = length(intersect(r5points$Symbol,r523.2points$Symbol)),
+                           n23 = length(intersect(r523.2points$Symbol,r511.2points$Symbol)),
+                           n13 = length(intersect(r5points$Symbol,r511.2points$Symbol)),
+                           n123 = length(intersect(intersect(r511.2points$Symbol,r5points$Symbol),r523.2points$Symbol)),
+                           category = c("5points","523.2points","511.2points"),fill=c("blue","red","yellow"),
+                             lty="blank",
+                             cex = 2, cat.cex=2, 
+                             ext.length = 0.3,  
+                             ext.line.lwd=2,
+                             ext.text = F,
+                           scaled=F,
+                           euler.d=T)
+dev.off()
+
