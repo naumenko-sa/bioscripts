@@ -5,6 +5,59 @@
 # http://www.stat.purdue.edu/~jrounds/weake/sig_10_40/03_edgeR_examine_time.R
 # https://cgrlucb.wikispaces.com/edgeR+fall2013
 
+#plot go pictures
+go_analysis = function (lrt,prefix)
+{
+  go = goana(lrt,species="Hs")
+  
+  for(on in c("BP","CC","MF"))
+  {
+    go.up = topGO(go,on=on,sort="Up",n=4)
+    go.up$log2pvalue = -log2(go.up$P.Up)
+    
+    go.down = topGO(go,ont=on,sort="Down",n=4)
+    go.down$log2pvalue = -log2(go.down$P.Down)
+    
+    png(paste0(prefix,".HI.",on,".png"),width=1000)
+    barplot(go.up$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    labels = go.up$Term
+    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+    dev.off()
+    
+    png(paste0(prefix,".LO.",on,".png"),width=1000)
+    barplot(go.down$log2pvalue,horiz=T,
+            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    labels = go.down$Term
+    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+    dev.off()
+  }
+}
+
+#pathway analysis
+kegg_analysis = function (lrt,prefix)
+{
+  kegg = kegga(lrt,species="Hs")
+  kegg.up = topKEGG(kegg,sort="Up",number = 4)
+  kegg.up$log2pvalue = -log2(kegg.up$P.Up)
+  kegg.down = topKEGG(kegg,sort="Down",number = 4)
+  kegg.down$log2pvalue = -log2(kegg.down$P.Down)
+
+  png(paste0(prefix,".HI.kegg.png"),width=1000)
+  barplot(kegg.up$log2pvalue,horiz=T,
+        xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+  labels = kegg.up$Pathway
+  text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+  dev.off()
+
+  png(paste0(prefix,".LO.kegg.png"),width=1000)
+  barplot(kegg.down$log2pvalue,horiz=T,
+        xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+  labels = kegg.down$Pathway
+  text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
+  dev.off()
+}
+
 calc_de = function(all_counts,samples,result_file)
 {
     ####    test: ###################
@@ -132,78 +185,62 @@ calc_de = function(all_counts,samples,result_file)
               just = "left")
     dev.off()
     
-    #go analysis
-    go = goana(lrt,species="Hs")
+    go_analysis(lrt,"523.2points")
     
-    for(on in c("BP","CC","MF"))
-    {
-        on = "BP"  
-        go.up = topGO(go,on=on,sort="Up",n=4)
-        go.up$log2pvalue = -log2(go.up$P.Up)
-    
-        go.down = topGO(go,ont=on,sort="Down",n=4)
-        go.down$log2pvalue = -log2(go.down$P.Down)
-    
-        png(paste0("HI.",on,".png"),width=1000)
-        barplot(go.up$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
-        labels = go.up$Term
-        text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
-        dev.off()
-    
-        png(paste0("LO.",on,".png"),width=1000)
-        barplot(go.down$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
-        labels = go.down$Term
-        text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
-        dev.off()
-    }
-    
-    kegg = kegga(lrt,species="Hs")
-    kegg.up = topKEGG(kegg,sort="Up",number = 4)
-    kegg.up$log2pvalue = -log2(kegg.up$P.Up)
-    kegg.down = topKEGG(kegg,sort="Down",number = 4)
-    kegg.down$log2pvalue = -log2(kegg.down$P.Down)
-    
-    png("HI.kegg.png",width=1000)
-    barplot(kegg.up$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
-    labels = kegg.up$Pathway
-    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
-    dev.off()
-    
-    png("LO.kegg.png",width=1000)
-    barplot(kegg.down$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
-    labels = kegg.down$Pathway
-    text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
-    dev.off()
+    kegg_analysis(lrt,"523.2points")
     
 }
 
 calc_de_w_batch_effect = function()
 {
     #using the section 4.2 of the manual
-    samples = c("SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-              "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-              "SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-              "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
-
+    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+              "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+              "SG511_ven_hi_4_13","SG511_ven_hi_4_27",
+              "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24"
+              );
+    
     all_counts=read.delim("combined.counts",row.names="id")
     x = all_counts[samples]
     
-    treat = factor(substring(colnames(x),11,12))
+    treat = factor(substring(colnames(x),11,12),ordered=T)
     
+    #try 3 times
     time=factor(substring(colnames(x),14,17))
     
     patient = factor(substring(colnames(x),3,5))
     
-    y=DGEList(counts=x,group=treat)
+    #y=DGEList(counts=x,group=treat)
+    y=DGEList(counts=x,group=treat,genes=row.names(x),remove.zeros = T)
     
-    keep = rowSums(cpm(y)>1) > 3
+    keep = rowSums(cpm(y)>1) > 5
     table(keep)
  
     y = y [keep, ,keep.lib.sizes=F]   
+    
+    #necessary for goana
+    idfound = y$genes$genes %in% mappedRkeys(org.Hs.egENSEMBL)
+    y = y[idfound,]
+    
+    egENSEMBL=toTable(org.Hs.egENSEMBL)
+    m = match (y$genes$genes,egENSEMBL$ensembl_id)
+    y$genes$EntrezGene = egENSEMBL$gene_id[m]
+    egSYMBOL = toTable(org.Hs.egSYMBOL)
+    m = match (y$genes$EntrezGene,egSYMBOL$gene_id)
+    y$genes$Symbol = egSYMBOL$symbol[m]
+    
+    #remove duplications - just 1 gene in this dataset
+    o = order(rowSums(y$counts),decreasing = T)
+    y = y[o,]
+    d = duplicated(y$genes$Symbol)
+    dy = y[d,]$genes
+    y = y[!d,]
+    nrow(y)
+    
+    y$samples$lib.size = colSums(y$counts)
+    rownames(y$counts) = y$genes$EntrezGene 
+    rownames(y$genes) = y$genes$EntrezGene
+    y$genes$EntrezGene = NULL
     
     y = calcNormFactors(y)
     
@@ -214,10 +251,11 @@ calc_de_w_batch_effect = function()
     design = model.matrix(~time+time:treat)
     logFC = predFC(y,design,prior.count=1,dispersion=0.05)
     
-    cor(logFC[,4:6])    
+    cor(logFC[,6:10])    
     
     design = model.matrix(~time+treat)
     rownames(design) = colnames(y)
+    design
     
     y = estimateDisp(y,design,robust=T)
     
@@ -228,44 +266,36 @@ calc_de_w_batch_effect = function()
     fit=glmQLFit(y,design,robust=T)
     plotQLDisp(fit)
     
+    #check DE for time - 623 genes
     qlf=glmQLFTest(fit,coef=2:3)
     topTags(qlf)
-    
     FDR = p.adjust(qlf$table$PValue, method="BH")
     sum(FDR<0.05)
+    go_analysis(qlf,"5points.time")
     
+    #de for HI/Lo
     qlf = glmQLFTest(fit)
-    
-    result=topTags(qlf)
-    
     efilename="all_hi_vs_lo.genes.txt"
     write.table(topTags(qlf,p.value=0.05,n=10000),efilename,quote=F)
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
 
     gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
     
-    de_results = merge(de_results,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
-    de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
-    de_results = merge(de_results,x,by.x = "ensembl_gene_id", by.y="row.names",all.x=T)
+    de_results = merge(de_results,gene_descriptions,by.x="genes",by.y="ensembl_gene_id",all.x=T)
+    #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
+    de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
     
-    write.table(de_results,"5points_w_batch_effect.txt",quote=F,sep=';')
+    write.table(de_results,"5points_w_batch_effect_correction.txt",quote=F,sep=';')
     
-    top = row.names(topTags(qlf))    
-    View(cpm(y)[top,])
+    go_analysis(qlf,"5points")
+    kegg_analysis(qlf,"5points")
     
     dt = decideTestsDGE(qlf)
     summary(dt)
     
-    isDE= as.logical(dt)
-    DEnames = rownames(y)[isDE]
-    
-    plotSmear(qlf,de.tags=DEnames)
-    abline(h=c(-1,1),col="blue")
-    
-    gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
-    final_set = gene_descriptions[gene_descriptions$ensembl_gene_id %in% DEnames,]
-    final_counts = x[DEnames,]
-  }
+    top=rownames(topTags(qlf))
+    View(cpm(y)[top,])
+}
 
 init = function()
 {
