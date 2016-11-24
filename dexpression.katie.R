@@ -37,7 +37,6 @@ go_analysis = function (lrt,prefix)
 #pathway analysis
 kegg_analysis = function (lrt,prefix)
 {
-  lrt=qlf
   kegg = kegga(lrt,species="Hs")
   kegg.up = topKEGG(kegg,sort="Up",number = 4)
   kegg.up$log2pvalue = -log2(kegg.up$P.Up)
@@ -68,23 +67,9 @@ calc_de = function(all_counts,samples,result_file)
     #            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
     #################################
     
-    #samples = c("SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-    #          "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
+    samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+                "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24");
     
-    #samples = c("SG523_ven_hi_2_27","SG523_ven_hi_4_24",
-    #            "SG523_ven_lo_2_27","SG523_ven_lo_4_24");
-    
-    #523.2points
-    samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
-                "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
-
-    #511.2points
-    samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-                "SG511_ven_hi_4_13","SG511_ven_hi_4_27");
-
-    samples = c("SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-        "SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27");
-  
     n_samples = length(samples)
     group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
     #patient = factor(c("511","511","511","523","523","523",
@@ -94,7 +79,7 @@ calc_de = function(all_counts,samples,result_file)
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
 
     plotMDS(y)
-    keep=rowSums(cpm(y)>2) >= n_samples/2
+    keep=rowSums(cpm(y)>1) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
     #necessary for goana
@@ -161,9 +146,9 @@ calc_de = function(all_counts,samples,result_file)
     
     return(de_results)
     
-    go_analysis(lrt,"523.2points.20gos")
+    go_analysis(lrt,"523.3points")
     
-    kegg_analysis(lrt,"523.2points")
+    kegg_analysis(lrt,"523.3points")
     
 }
  
@@ -363,7 +348,10 @@ calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
 
 
 r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points_w_batch_effect_correction.txt", header=T, sep=";")
+
 r523.3points = read.csv("~/Dropbox/project_katie_csc/523.3points.txt", header=T, sep=";")
+r523.2points_no_batch = read.csv("~/Dropbox/project_katie_csc/523.2points.txt", header=T, sep=";")
+
 r523.6points = read.csv("~/Dropbox/project_katie_csc/all_sample_w_batch_effect1.txt", header=T, sep=";")
 r5points = read.csv("~/Dropbox/project_katie_csc/5points_w_batch_effect.txt", header=T, sep=";")
 r511.2points = read.csv("511.2points_w_batch_effect_correction.txt",header=T,sep=";")
@@ -375,11 +363,16 @@ overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol,
                                    "5points_batch" = r5points$Symbol,
                                    "523.2points" = r523.2points$Symbol))
 
-png("511.2points_5points.png")
+overlap = calculate.overlap(x=list("523.3points" = r523.3points$Symbol,
+                                   "523.2points" = r523.2points_no_batch$Symbol))
+
+
+
+png("523.2points_3points.png",width=1500)
 venn.plot=draw.pairwise.venn(length(overlap$a1),
                              length(overlap$a2),
                              length(overlap$a3),
-                             c("511.2points","5points"),fill=c("blue","red"),
+                             c("523.3points","523.2points"),fill=c("blue","red"),
                              lty="blank",
                              cex = 2, cat.cex=2, 
                              ext.length = 0.3,  
