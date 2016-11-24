@@ -19,6 +19,7 @@ add_placeholder=function(variants,column_name,placeholder,number)
 
 get_variants_from_db = function (dbname)
 {
+    #dbname=
     con = dbConnect(RSQLite::SQLite(),dbname=dbname)
     dbListTables(con)
 
@@ -92,13 +93,15 @@ test = function()
 # return Homozygous Heterozygous or Multiple het
 genotype2zygocity = function (genotype_str)
 {
-      #genotype_str = "A|A"
+      genotype_str = "A|A|B"
       #genotype_str = "./."
       #genotype_str = "TCA/."
       #genotype_str = "G"
+      #greedy
       genotype_str = gsub("|","/",genotype_str,fixed=T)
       
-      
+      ar = strsplit(genotype_str,"/",fixed=T)
+      result = genotype_str
       return(result)
 }
 
@@ -139,12 +142,12 @@ variants=move_column(variants,2)
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
 variants=add_placeholder(variants,new_name,"test",7)
-variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
+#variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
 for(sample in samples)
 {
-    new_name = paste0("Zygocity.",samples[1])
+    new_name = paste0("Zygocity.",sample)
     #setnames(variants, paste0("gts.",sample),new_name)
-    variants$new_name = with(variants,genotype2zygocity(paste0("gts.",sample)))
+    variants[,new_name] = with(variants,genotype2zygocity(paste0("gts.",sample)))
 }
 
 #field 6 - Variation
