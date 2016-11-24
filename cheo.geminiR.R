@@ -87,7 +87,6 @@ test = function()
   variants$allele1 = str_split_fixed(variants$gts.166_3_5,"/",2)
   
   variants$inherited = with(variants,{t=strsplit(allele_pool," ",fixed=T);t[2]})
-  
 }
 
 # return Homozygous Heterozygous or Multiple het
@@ -99,19 +98,7 @@ genotype2zygocity = function (genotype_str)
       #genotype_str = "G"
       genotype_str = gsub("|","/",genotype_str,fixed=T)
       
-      #if cannot convert to genotype
-      if (nchar(genotype_str)<3){
-          result = genotype_str
-      }else{
-        g = genotype(genotype_str)
-        if (heterozygote(g)){
-          result = "Heterozygous"
-        }else if (homozygote(g)){
-          result = "Homozygous"
-        }else{
-          result = genotype_str 
-        }
-      }
+      
       return(result)
 }
 
@@ -123,7 +110,11 @@ create_report = function(family,samples)
   samples=c("166_3_5","166_4_10","166_4_8")
   family="166"
   
+  samples=c("100940")
+  family = "b100940"
+  
   file=paste0(family,"-ensemble.db.txt")
+  
   variants = get_variants_from_file(file)
 
 
@@ -147,13 +138,13 @@ variants=move_column(variants,2)
 # snappy decompression
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
-variants=add_placeholder(variants,"Zygocity","Zygocity",5)
-library(data.table)
+variants=add_placeholder(variants,new_name,"test",7)
+variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
 for(sample in samples)
 {
     new_name = paste0("Zygocity.",samples[1])
     #setnames(variants, paste0("gts.",sample),new_name)
-    variants$new_name = with(variants,genotype2zygocity(Zygocity.166_3_5))
+    variants$new_name = with(variants,genotype2zygocity(paste0("gts.",sample)))
 }
 
 #field 6 - Variation
@@ -264,6 +255,7 @@ reference_tables_path="~/Desktop/reference_tables"
 library(RSQLite)
 library(stringr)
 library(genetics)
+library(data.table)
 
 create_report("166",c("166_3_5","166_4_10","166_4_8"))
 create_report("181",c("181_121141J","181_WG0927"))
@@ -277,6 +269,5 @@ create_report("412",c("412_120880N","412_120886B","412_120887D"))
 create_report("417",c("417_120882D"))
 
 setwd("~/Desktop/project_exomes/2_n/2016-11-17_ensemble_calls/")
+setwd("~/Desktop/project_exomes")
 create_report("b100940",c("100940"))
-
-
