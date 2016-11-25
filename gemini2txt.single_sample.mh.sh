@@ -4,6 +4,8 @@
 #   when using v.chr = g.chr AND v.gene = g.gene it becomes very slow
 #   by default bcbio writes PASS only variants to the database
 
+# for mh project - it does not have hgvsc/hgvsp
+
 #PBS -l walltime=1:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
@@ -41,9 +43,9 @@ gemini query --header -q "select
         v.chrom as Chrom,
         v.start+1  as Pos,
         v.aa_change as AA_change,
-        v.vep_hgvsc as Codon_change,
-        v.vep_hgvsp as Protein_change,
-	gts."$sample",
-	gt_alt_depths."$sample"
+        v.codon_change as Codon_change,
+	gts."$sample"
         from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all <0.01" $file > ${file}.txt;
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01 and
+          (v.gene='CACNA1S' or v.gene='RYR1' or v.gene='STAC3' or v.gene='TRDN' or v.gene='ASPH' or v.gene='JPH2' or 
+          v.gene='CASQ1' or v.gene='ATP2A1' or v.gene='ATP2A2' or v.gene='CALM1' or v.gene='FKBP1A')" $file > ${file}.txt;
