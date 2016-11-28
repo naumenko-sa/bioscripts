@@ -19,7 +19,7 @@ add_placeholder=function(variants,column_name,placeholder,number)
 
 get_variants_from_db = function (dbname)
 {
-    #dbname=
+    dbname="NA12878-1-ensemble.db"
     con = dbConnect(RSQLite::SQLite(),dbname=dbname)
     dbListTables(con)
 
