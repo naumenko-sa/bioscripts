@@ -30,6 +30,8 @@ get_gene_descriptions = function()
 get_refseq_transcript_ids = function()
 {
     refseq_transcripts = getBM(attributes=c('ensembl_transcript_id','refseq_mrna'),mart=grch37)
+    refseq_transcripts = getBM(attributes=c('ensembl_transcript_id','external_transcript_name'),mart=grch37)
+    
     write.table(refseq_transcripts[refseq_transcripts$refseq_mrna!='',],file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
 }
 

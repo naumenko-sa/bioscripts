@@ -14,7 +14,7 @@ move_column=function (variants,number)
 add_placeholder=function(variants,column_name,placeholder,number)
 {
    variants[,column_name]=with(variants,placeholder)
-   return(move_column(variants,number))
+   return(variants)
 }
 
 get_variants_from_db = function (dbname)
@@ -166,25 +166,23 @@ for(sample in samples)
 #http://sequenceontology.org/browser/current_svn/term/SO:0001630
 #1-3 bases of exon, 3-8 bases of intron
 
-#field 7 - Info
+#field 7 - Info, we want all transcripts
 #variants=add_placeholder(variants,"Info",paste("Gene","NCBI_TRANSCRIPT","NUC_CHANGE","PROT_CHANGE",sep=':'),7)
-ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq.txt"), stringsAsFactors=FALSE)
-#variants = merge(variants,ensembl_refseq,all.x=T)
-
-
-#variants = cbind(variants,str_split_fixed(variants$Protein_change,":",2))
-#variants = rename(variants,c("1"="Junk1","Protein_change"="Junk2","2"="Protein_change"))
-
-#variants = cbind(variants,str_split_fixed(variants$Codon_change,":",2))
-#variants = rename(variants,c("1"="Junk3","2"="Info_codon_change"))
-
-#variants$Info = with(variants,paste(Gene,Refseq_mrna,Info_codon_change,Protein_change,sep=':'))
+ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq_no_duplicates.txt"), stringsAsFactors=FALSE)
+variants = merge(variants,ensembl_refseq,all.x=T)
+variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
 
 #fields 8,9 - Depth, Qual_depth
 
 #field 10 - Alt_depth - from v.gt_alt_depth
-#alt_column_name = paste0("gt_alt_depths.",sample)
-#vriants = rename(variants,replace=c(column_name="Alt_depth"))
+#when multiple callers used, AD is not set
+for(sample in samples)
+{
+  new_name = paste0("Alt_depth.",sample)
+  setnames(variants, paste0("gt_alt_depths.",sample),new_name)
+  variants[,new_name] = with(variants,gsub("-1","Multiple_callers",get(new_name),fixed=T))
+}
+
 
 #fields 11,12 - Gene, ENS_ID
 
@@ -204,13 +202,12 @@ omim_inheritance = read.delim(paste0(reference_tables_path,"/omim_inheritance.tx
 variants = merge(variants,omim_inheritance,all.x=T)
 
 #field16 - Orphanet
-variants = add_placeholder(variants,"Orphanet","Orphanet",16)
+orphanet = read.delim(paste0(reference_tables_path,"/orphanet.deduplicated.txt"), stringsAsFactors=F)
+variants = merge(variants,orphanet,all.x=T)
 
-#fields17-18
+#fields17-18 Clinvar, Ensembl Transcript ID
 
-#field19 - protein change
-#variants = add_placeholder(variants,"Protein_change","Protein_change",19)
-#variants$Protein_change = with(variants,paste("p.",AA_change,AA_position,sep=' '))
+#field19 - protein change, aa_position
 
 #fields 23-24
 variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R",23)
