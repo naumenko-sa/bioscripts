@@ -125,8 +125,6 @@ dev.off()
 
 attach(work_counts)
 
-
-
 x=muscular_genes[c("muscle1","X1130.BD.B175")]
 
 x=muscular_genes[c(2,3,4,5,6,7,9,10,11,12,13,14,15)]

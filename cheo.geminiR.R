@@ -93,7 +93,7 @@ test = function()
 # return Homozygous Heterozygous or Multiple het
 genotype2zygocity = function (genotype_str)
 {
-      genotype_str = "A|A|B"
+      #genotype_str = "A|A|B"
       #genotype_str = "./."
       #genotype_str = "TCA/."
       #genotype_str = "G"
@@ -101,7 +101,16 @@ genotype2zygocity = function (genotype_str)
       genotype_str = gsub("|","/",genotype_str,fixed=T)
       
       ar = strsplit(genotype_str,"/",fixed=T)
-      result = genotype_str
+      len = length(ar[[1]])
+      if (len == 2)
+      {
+          if (ar[[1]][1] == ar[[1]][2])
+            result = "Hom"
+          else
+            result = "Het"
+      }else{
+          result = "Multiple_het"
+      }
       return(result)
 }
 
@@ -118,6 +127,9 @@ create_report = function(family,samples)
   
   file=paste0(family,"-ensemble.db.txt")
   
+  file="NA12878-1-ensemble.db.txt"
+  samples=c("NA12878.1")
+  
   variants = get_variants_from_file(file)
 
 
@@ -130,7 +142,6 @@ variants=variants[c(columns,1:columns-1)]
 sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
 sUCSC2="\",\"UCSC link\""
 variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
-variants=move_column(variants,2)
 
 #fields 3,4
 
@@ -141,13 +152,12 @@ variants=move_column(variants,2)
 # snappy decompression
 # https://github.com/arq5x/gemini/issues/700
 # https://github.com/lulyon/R-snappy
-variants=add_placeholder(variants,new_name,"test",7)
 #variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
 for(sample in samples)
 {
     new_name = paste0("Zygocity.",sample)
     #setnames(variants, paste0("gts.",sample),new_name)
-    variants[,new_name] = with(variants,genotype2zygocity(paste0("gts.",sample)))
+    variants[,new_name] = with(variants,genotype2zygocity(get(paste0("gts.",sample))))
 }
 
 #field 6 - Variation
@@ -252,9 +262,11 @@ write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)
 #close_database()
 }
 
-setwd("~/Desktop/project_cheo/2016-10-28_gemini_test/")
 
 reference_tables_path="~/Desktop/reference_tables"
+setwd("/home/sergey/Desktop/project_cheo/2016-10-28_gemini_test")
+
+
 library(RSQLite)
 library(stringr)
 library(genetics)
@@ -274,3 +286,23 @@ create_report("417",c("417_120882D"))
 setwd("~/Desktop/project_exomes/2_n/2016-11-17_ensemble_calls/")
 setwd("~/Desktop/project_exomes")
 create_report("b100940",c("100940"))
+
+dbname="NA12878-1-ensemble.db"
+dbname="1130-BD-B175-gatk-haplotype.db"
+
+con = dbConnect(RSQLite::SQLite(),dbname=dbname)
+dbListTables(con)
+
+qryCount = "select count(*) from variant_impacts"
+dbGetQuery(con,qryCount)
+
+#more complex query
+qryAllTranscriptsAffected = "select v.chrom, v.start+1,v.end, v.ref, v.alt,
+                                    v.gene,vi.gene,
+                                    v.transcript,
+                                    vi.transcript,
+                                    vi.aa_change,
+                                    vi.aa_length 
+                             from variant_impacts vi, variants v 
+                             where vi.variant_id=v.variant_id"
+all_coding_effects = dbGetQuery(con,qryAllTranscriptsAffected)
