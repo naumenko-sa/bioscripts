@@ -11,7 +11,7 @@ move_column=function (variants,number)
   return(variants)
 }
 
-add_placeholder=function(variants,column_name,placeholder,number)
+add_placeholder=function(variants,column_name,placeholder)
 {
    variants[,column_name]=with(variants,placeholder)
    return(variants)
@@ -210,8 +210,8 @@ variants = merge(variants,orphanet,all.x=T)
 #field19 - protein change, aa_position
 
 #fields 23-24
-variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R",23)
-variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples",24)
+variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R")
+variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples")
 
 #fields 27-28 EVS frequencies
 for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all"))
@@ -230,10 +230,18 @@ variants = merge(variants,exac_scores,all.x=T)
 #variants = add_placeholder(variants,"Phast_cons_score","Phast_cons_score",35)
 
 #fields39-42
-variants = add_placeholder(variants,"Trio_coverage","Trio_coverage",39)
+variants = add_placeholder(variants,"Trio_coverage","")
+n_sample = 1
+prefix = ""
+for(sample in samples)
+{
+  column = paste0("gt_depths.",sample)
+  if (n_sample>1) prefix="/"
+  variants$Trio_coverage = with(variants,paste0(Trio_coverage,prefix,get(column)))
+  n_sample = n_sample+1
+}
+variants$Trio_coverage = with(variants,gsub("-1.*","Multiple_callers",Trio_coverage,fixed=F))
 
-#variants = add_placeholder(variants,"Imprinting_status","Imprinting_status",40)
-#variants = add_placeholder(variants,"Imprinting_expressed_allele","Imprinting_expressed_allele",41)
 imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
 variants = merge(variants,imprinting,all.x=T)
 
