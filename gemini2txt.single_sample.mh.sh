@@ -46,6 +46,7 @@ gemini query --header -q "select
         v.codon_change as Codon_change,
 	gts."$sample"
         from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01 and
-          (v.gene='CACNA1S' or v.gene='RYR1' or v.gene='STAC3' or v.gene='TRDN' or v.gene='ASPH' or v.gene='JPH2' or 
-          v.gene='CASQ1' or v.gene='ATP2A1' or v.gene='ATP2A2' or v.gene='CALM1' or v.gene='FKBP1A')" $file > ${file}.txt;
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01" $file >${file}.txt;
+        # and
+        #  (v.gene='CACNA1S' or v.gene='RYR1' or v.gene='STAC3' or v.gene='TRDN' or v.gene='ASPH' or v.gene='JPH2' or 
+        #  v.gene='CASQ1' or v.gene='ATP2A1' or v.gene='ATP2A2' or v.gene='CALM1' or v.gene='FKBP1A')" $file > ${file}.txt;
