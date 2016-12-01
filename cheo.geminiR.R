@@ -213,9 +213,14 @@ variants = merge(variants,orphanet,all.x=T)
 variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R",23)
 variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples",24)
 
-#fields 27-28
-variants = add_placeholder(variants,"EVS_maf","EVS_maf",27)
-variants = add_placeholder(variants,"EVS_genotype_counts","EVS_genotype_counts",28)
+#fields 27-28 EVS frequencies
+for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all"))
+{
+    variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
+}
+    
+
+
 
 #fields 31-32
 exac_scores = read.delim(paste0(reference_tables_path,"/exac_scores.txt"), stringsAsFactors=F)
