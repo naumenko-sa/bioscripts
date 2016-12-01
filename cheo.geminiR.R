@@ -218,9 +218,6 @@ for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","
 {
     variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
 }
-    
-
-
 
 #fields 31-32
 exac_scores = read.delim(paste0(reference_tables_path,"/exac_scores.txt"), stringsAsFactors=F)
@@ -230,7 +227,7 @@ variants = merge(variants,exac_scores,all.x=T)
 
 #field 35
 #https://www.biostars.org/p/150152/
-variants = add_placeholder(variants,"Phast_cons_score","Phast_cons_score",35)
+#variants = add_placeholder(variants,"Phast_cons_score","Phast_cons_score",35)
 
 #fields39-42
 variants = add_placeholder(variants,"Trio_coverage","Trio_coverage",39)

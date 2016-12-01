@@ -48,6 +48,7 @@ gemini query --header -q "select
         v.aaf_esp_all as EVS_maf_all,
         v.is_conserved as Conserved_in_29_mammals,
 	gts."$sample",
+	gt_depths."$sample",
 	gt_alt_depths."$sample"
         from variants v, gene_detailed g
         where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all <0.01" $file > ${file}.txt;
