@@ -43,6 +43,9 @@ gemini query --header -q "select
         v.aa_change as AA_change,
         v.vep_hgvsc as Codon_change,
         v.vep_hgvsp as Protein_change,
+        v.aaf_esp_aa as EVS_maf_aa,
+        v.aaf_esp_ea as EVS_maf_ea,
+        v.aaf_maf_all as EVS_maf_all,
 	gts."$sample",
 	gt_alt_depths."$sample"
         from variants v, gene_detailed g
