@@ -1,82 +1,58 @@
 #!/bin/bash
-#exports gemini database to txt file to import to xls
-#database schema: https://gemini.readthedocs.io/en/latest/content/database_schema.html#the-variants-table
-#when using v.chr = g.chr AND v.gene = g.gene it becomes very slow
-#reports PASS only variants to the database
+#   exports gemini.db database to gemini.db.txt file
+#   database schema: https://gemini.readthedocs.io/en/latest/content/database_schema.html#the-variants-table
+#   when using v.chr = g.chr AND v.gene = g.gene it becomes very slow
+#   by default bcbio writes PASS only variants to the database
 
-#PBS -l walltime=10:00:00,nodes=1:ppn=1
+#PBS -l walltime=1:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
+if [ -z $file ]
+then
+    file=$1
+fi
 
-bname=`echo $1 | sed s/.db//`;
-sample=$2
+gemini query -q "select name from samples" $file > samples.txt
 
-gemini query --header -q "select v.chrom,
-			  v.start as start0based,
-			  v.start+1  as start1based,
-			  v.end as end1based,
-			  v.ref,
-			  v.alt,
-			  v.qual,
-			  v.type,
-			  v.sub_type,
-			  (v.gts)."$sample" as genotype,
-			  v.gene,
-			  g.ensembl_gene_id,
-			  v.transcript,
-			  v.is_exonic,
-			  v.is_coding,
-			  v.is_lof,
-			  v.is_splicing,
-			  v.exon,
-			  v.codon_change,
-			  v.aa_change,
-			  v.biotype,
-			  v.impact,
-			  v.impact_so,
-			  v.impact_severity,
-			  v.polyphen_pred,
-			  v.polyphen_score,
-			  v.sift_pred,
-			  v.sift_score,
-			  v.pfam_domain,
-			  v.depth,
-			  v.in_hom_run,
-			  v.qual_depth,
-			  v.in_dbsnp,
-			  v.rs_ids,
-			  v.in_1kg,
-			  v.in_exac,
-			  v.aaf_exac_all,
-			  v.max_aaf_all,
-			  v.exac_num_het,
-			  v.exac_num_hom_alt,
-			  v.exac_num_chroms,
-			  v.in_omim,
-			  v.clinvar_causal_allele,
-			  v.clinvar_sig,
-			  v.clinvar_disease_name,
-			  v.exome_chip,
-			  v.cyto_band,
-			  v.rmsk,
-			  v.in_cpg_island,
-			  v.in_segdup,
-			  v.is_conserved,
-			  v.recomb_rate,
-			  v.cadd_raw,
-			  v.cadd_scaled,
-			  v.grc,
-			  v.gms_illumina,
-			  v.in_cse,
-			  v.info
-			  from variants v, gene_detailed g
-			  where v.transcript=g.transcript and v.gene=g.gene" $1 > $bname.tmp;
+sQuery="select 
+        v.ref as Ref,
+        v.alt as Alt,
+        v.impact as Variation,
+        v.depth as Depth,
+        v.qual_depth as Qual_depth,
+        v.gene as Gene,
+        g.ensembl_gene_id as Ensembl_gene_id,
+        v.clinvar_disease_name as Clinvar,
+        v.transcript as Ensembl_transcript_id,
+        v.aa_length as AA_position,
+        v.exon as Exon,
+        v.pfam_domain as Pfam_domain,
+        v.rs_ids as rsIDs,
+        v.aaf_1kg_all as Maf_1000g,
+        v.aaf_exac_all as Exac_maf,
+        v.max_aaf_all as Maf_all,
+        v.exac_num_het as Exac_het,
+        v.exac_num_hom_alt as Exac_hom_alt,
+        v.sift_score as Sift_score,
+        v.polyphen_score as Polyphen_score,
+        v.cadd_scaled as Cadd_score,gts,
+        v.chrom as Chrom,
+        v.start+1 as Pos,
+        v.aa_change as AA_change,
+        v.vep_hgvsc as Codon_change,"
 
-head -n1 $bname.tmp | awk '{for (i=1;i<=NF;i++) printf $i"\t";printf "exac_pLi\texac_mis_z\told_call\tomim\n"}' > $bname.txt
-cat $bname.tmp | sed 1d > $bname.body;
-cheo.add_exac_scores.pl $bname.body > $bname.body1;
-cheo.add_snp_annotation.pl $bname.body1 $3 > $bname.body2;
-cheo.add_omim_string.pl $bname.body2 >>  $bname.txt
-#rm $bname.tmp $bname.body $bname.body1 $bname.body2
+while read sample;
+do
+	sQuery=$sQuery"gts."$sample","
+	sQuery=$sQuery"gt_alt_depths."$sample","
+	sQuery=$sQuery"gt_depths."$sample","
+done < samples.txt
+
+
+export sQuery="\""$sQuery"v.vep_hgvsp as Protein_change from variants v, gene_detailed g
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and max_aaf_all <0.01""\"" 
+
+echo $sQuery
+#gemini query --header -q `echo "\""$sQuery"\""` $file > ${file}.txt;
