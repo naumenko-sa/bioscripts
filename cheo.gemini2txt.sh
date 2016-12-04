@@ -41,7 +41,11 @@ sQuery="select
         v.chrom as Chrom,
         v.start+1 as Pos,
         v.aa_change as AA_change,
-        v.vep_hgvsc as Codon_change,"
+        v.vep_hgvsc as Codon_change,
+        v.aaf_esp_aa as EVS_maf_aa,
+        v.aaf_esp_ea as EVS_maf_ea,
+        v.aaf_esp_all as EVS_maf_all,
+        v.is_conserved as Conserved_in_29_mammals,"
 
 while read sample;
 do
@@ -51,8 +55,8 @@ do
 done < samples.txt
 
 
-export sQuery="\""$sQuery"v.vep_hgvsp as Protein_change from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and max_aaf_all <0.01""\"" 
+sQuery=$sQuery"v.vep_hgvsp as Protein_change from variants v, gene_detailed g
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and max_aaf_all <0.01"
 
 echo $sQuery
-#gemini query --header -q `echo "\""$sQuery"\""` $file > ${file}.txt;
+gemini query --header -q "$sQuery" $file > ${file}.txt;
