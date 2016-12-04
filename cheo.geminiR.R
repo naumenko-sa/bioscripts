@@ -94,28 +94,34 @@ test = function()
 genotype2zygocity = function (genotype_str)
 {
       #genotype_str = "A|A|B"
-      #genotype_str = "./."
+      #genotype_str = "./." - call not possible
       #genotype_str = "TCA/."
       #genotype_str = "G"
       #genotype_str="A/A"
       #greedy
       genotype_str = gsub("|","/",genotype_str,fixed=T)
+      genotype_str = gsub(".","NO_CALL",genotype_str,fixed=T)
       
-      ar = strsplit(genotype_str,"/",fixed=T)
-      len = length(ar[[1]])
-      if (len == 2)
-      {
-          if (ar[[1]][1] == ar[[1]][2])
-            result = "Hom"
-          else
-            result = "Het"
+      if(grepl("NO_CALL",genotype_str)){
+          result = genotype_str
       }else{
-          result = "Multiple_het"
+          ar = strsplit(genotype_str,"/",fixed=T)
+          len = length(ar[[1]])
+          if (len == 2)
+          {
+            if (ar[[1]][1] == ar[[1]][2])
+              result = "Hom"
+            else
+              result = "Het"
+          }else{
+            result = "Multiple_het"
+          }
       }
       return(result)
 }
 
-create_report = function(family,samples)
+#suffix = [ensemble | gatk-haplotype]
+create_report = function(family,samples,suffix)
 {
   #test: 3 samples in a family
   #family="166"
@@ -125,7 +131,7 @@ create_report = function(family,samples)
   #family="NA12878-1"
   #samples=c("NA12878.1")
   
-  file=paste0(family,"-ensemble.db.txt")
+  file=paste0(family,"-",suffix,".db.txt")
   
   variants = get_variants_from_file(file)
 
@@ -177,7 +183,7 @@ for(sample in samples)
 {
   new_name = paste0("Alt_depths.",sample)
   setnames(variants, paste0("gt_alt_depths.",sample),new_name)
-  variants[,new_name] = with(variants,gsub("-1","Multiple_callers",get(new_name),fixed=T))
+  #variants[,new_name] = with(variants,gsub("-1","Multiple_callers",get(new_name),fixed=T))
 }
 
 #fields 11,12 - Gene, ENS_ID
@@ -239,7 +245,7 @@ for(sample in samples)
   variants$Trio_coverage = with(variants,paste0(Trio_coverage,prefix,get(column)))
   n_sample = n_sample+1
 }
-variants$Trio_coverage = with(variants,gsub("-1.*","Multiple_callers",Trio_coverage,fixed=F))
+#variants$Trio_coverage = with(variants,gsub("-1.*","Multiple_callers",Trio_coverage,fixed=F))
 
 #fields 41-42 - imprinting
 imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
@@ -262,48 +268,32 @@ variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",s
 write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)  
 }
 
-reference_tables_path="~/Desktop/reference_tables"
-setwd("/home/sergey/Desktop/project_cheo/2016-10-28_gemini_test")
-
 
 library(RSQLite)
 library(stringr)
 library(genetics)
 library(data.table)
 
+reference_tables_path="~/Desktop/reference_tables"
+#setwd("/home/sergey/Desktop/project_cheo/2016-10-28_gemini_test")
+setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10/ensemble_txt")
+setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10/haplotype_txt")
+
 create_report("NA12878-1",samples=c("NA12878.1"))
 
-create_report("166",c("166_3_5","166_4_8","166_4_10"))
-create_report("181",c("181_121141J","181_WG0927"))
-create_report("241",c("241_44845","241_52062","241_52063"))
-create_report("246",c("246_90137","246_CH0015","246_CH0016"))
-create_report("380",c("380_120890B","380_120891B"))
-create_report("391",c("391_121031C","391_CH0073"))
-create_report("394",c("394_60638BD"))
-create_report("411",c("411_G0071AG","411_G0091AG"))
-create_report("412",c("412_120880N","412_120886B","412_120887D"))
-create_report("417",c("417_120882D"))
+suffix="ensemble"
+suffix="gatk-haplotype"
 
-setwd("~/Desktop/project_exomes/2_n/2016-11-17_ensemble_calls/")
-setwd("~/Desktop/project_exomes")
-create_report("b100940",c("100940"))
+create_report("166",c("166_3_5","166_4_10","166_4_8"),suffix)
+create_report("181",c("181_121141J","181_WG0927"),suffix)
+create_report("241",c("241_44845","241_52062","241_52063"),suffix)
+create_report("246",c("246_90137","246_CH0015","246_CH0016"),suffix)
+create_report("380",c("380_120890B","380_120891B"),suffix)
+create_report("391",c("391_121031C","391_CH0073","391_121030T"),suffix)
+create_report("394",c("394_60638BD"),suffix)
+create_report("411",c("411_G0071AG","411_G0091AG"),suffix)
+create_report("412",c("412_120880N","412_120886B","412_120887D"),suffix)
+create_report("417",c("417_120882D"),suffix)
 
-dbname="NA12878-1-ensemble.db"
-dbname="1130-BD-B175-gatk-haplotype.db"
 
-con = dbConnect(RSQLite::SQLite(),dbname=dbname)
-dbListTables(con)
 
-qryCount = "select count(*) from variant_impacts"
-dbGetQuery(con,qryCount)
-
-#more complex query
-qryAllTranscriptsAffected = "select v.chrom, v.start+1,v.end, v.ref, v.alt,
-                                    v.gene,vi.gene,
-                                    v.transcript,
-                                    vi.transcript,
-                                    vi.aa_change,
-                                    vi.aa_length 
-                             from variant_impacts vi, variants v 
-                             where vi.variant_id=v.variant_id"
-all_coding_effects = dbGetQuery(con,qryAllTranscriptsAffected)
