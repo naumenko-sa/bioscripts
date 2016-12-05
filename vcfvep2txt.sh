@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #convert vep.vcf annotations for export to xls
+#bad idea: better use gemini
 
 #cat $1 | grep -v "^#" | grep PASS | awk '{for(i=1;i<8;i++)printf $i"\t";printf $9"\t"$10;gsub(";CSQ","\nCSQ",$8);gsub(",","\nCSQ=",$8);print $8}' | sed s/"|"/"\t"/g > $1.txt
 #"Consequence annotations from Ensembl VEP. Format: Consequence|Codons|Amino_acids|Gene|SYMBOL|Feature|EXON|PolyPhen|SIFT|Protein_position|BIOTYPE|CANONICAL|CCDS|LoF|LoF_filter|LoF_flags">
