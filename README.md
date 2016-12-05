@@ -2,7 +2,7 @@
 
 ## Gemini staff - for CHEO and MH projects
 
-* (gemini.vep2gemini.sh) - load VEP annotated vcf to the GEMINI database
+* gemini.vep2gemini.sh - load VEP annotated vcf to the GEMINI database
 
 ## Working with alignments
 
