@@ -175,6 +175,7 @@ for(sample in samples)
     df_burden = count(t,'Ensembl_gene_id')    
     colnames(df_burden)[2] = burden_column_name
     variants = merge(variants,df_burden,all.x=T)
+    variants[,burden_column_name][is.na(variants[,burden_column_name])] = 0
 }
 
 #field 6 - Variation
