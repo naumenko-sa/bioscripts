@@ -90,8 +90,8 @@ test = function()
   variants$inherited = with(variants,{t=strsplit(allele_pool," ",fixed=T);t[2]})
 }
 
-# return Homozygous Heterozygous or Multiple het
-genotype2zygocity = function (genotype_str)
+# return Hom, Het, or - if == hom_reference
+genotype2zygocity = function (genotype_str,ref)
 {
       #genotype_str = "A|A|B"
       #genotype_str = "./." - call not possible
@@ -109,12 +109,15 @@ genotype2zygocity = function (genotype_str)
           len = length(ar[[1]])
           if (len == 2)
           {
-            if (ar[[1]][1] == ar[[1]][2])
-              result = "Hom"
-            else
+            if (ar[[1]][1] == ar[[1]][2]){
+              if (ar[[1]][1] == ref)
+                  result = "-"
+              else
+                  result = "Hom"
+            }else
               result = "Het"
           }else{
-            result = "Multiple_het"
+            result = genotype_str
           }
       }
       return(result)
@@ -126,6 +129,7 @@ create_report = function(family,samples,suffix)
   #test: 3 samples in a family
   #family="166"
   #samples=c("166_3_5","166_4_10","166_4_8")
+  #suffix = "gatk-haplotype"
   
   #test: 1 sample in a familty
   #family="NA12878-1"
@@ -158,9 +162,19 @@ variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
 #variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
 for(sample in samples)
 {
-    new_name = paste0("Zygocity.",sample)
-    t = lapply(variants[,paste0("gts.",sample)],genotype2zygocity)
-    variants[,new_name] = unlist(t)
+    #DEBUG: gene = IL20RA
+    #sample=samples[1]
+    zygocity_column_name = paste0("Zygocity.",sample)
+    #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+    #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+    t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
+    variants[,zygocity_column_name] = unlist(t)
+    
+    burden_column_name = paste0("Burden.",sample)
+    t = subset(variants, get(zygocity_column_name) == 'Hom' | get(zygocity_column_name) == 'Het',select=c("Ensembl_gene_id",zygocity_column_name))
+    df_burden = count(t,'Ensembl_gene_id')    
+    colnames(df_burden)[2] = burden_column_name
+    variants = merge(variants,df_burden,all.x=T)
 }
 
 #field 6 - Variation
@@ -256,8 +270,9 @@ pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"
 variants = merge(variants,pseudoautosomal,all.x=T)
 
 #final selection and order
-variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
-                      paste0("Alt_depths.",samples),c("Trio_coverage","Gene","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
+variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
+                      paste0("Burden.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
+                      paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
                         "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
@@ -273,6 +288,7 @@ library(RSQLite)
 library(stringr)
 library(genetics)
 library(data.table)
+library(plyr)
 
 reference_tables_path="~/Desktop/reference_tables"
 #setwd("/home/sergey/Desktop/project_cheo/2016-10-28_gemini_test")
