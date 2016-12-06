@@ -127,9 +127,9 @@ genotype2zygocity = function (genotype_str,ref)
 create_report = function(family,samples,suffix)
 {
   #test: 3 samples in a family
-  #family="166"
-  #samples=c("166_3_5","166_4_10","166_4_8")
-  #suffix = "gatk-haplotype"
+  family="166"
+  samples=c("166_3_5","166_4_10","166_4_8")
+  suffix = "gatk-haplotype"
   
   #test: 1 sample in a familty
   #family="NA12878-1"
