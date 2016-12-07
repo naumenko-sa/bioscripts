@@ -171,13 +171,15 @@ plot_heatmap = function (counts,de_results,prefix)
     #         color = colorRampPalette(c("green", "black", "red"))(20),
     #         show_colnames = F, rot=90)
     labels = ph$tree_col$labels[ph$tree_col$order]
-    start = 0.88 - length(labels)*0.01
+    #start = 0.88 - length(labels)*0.01
              #filename="SG523.heatmap.png")
+    start = 0.555 - length(labels)*0.01
     grid.text(labels,
               seq(start,start+(length(labels)-1)*0.01,0.01),
-              rep(0.637,length(labels)),
+              rep(0.638,length(labels)),
               rot=rep(90,length(labels)),
               just = "left")
+    
     dev.off()
 }   
 
@@ -191,8 +193,12 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     #          );
     #counts=read.delim("combined.counts",row.names="id")
     #prefix = "test"
+    samples = samples.511.2
+    counts = all_counts
+    prefix = "511.2points"
   
     x = counts[samples]
+    n_samples = length(samples)
     
     treat = factor(substring(colnames(x),11,12),levels=c("lo","hi"))
     
@@ -278,7 +284,7 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     
     write.table(de_results,paste0(prefix,"_w_batch_effect_correction.txt"),quote=F,sep=';')
     
-    #plot_heatmap(all_counts,de_results,"5points1")
+    plot_heatmap(all_counts,de_results,prefix)
     
     go_analysis(qlf,paste0(prefix,".batch"))
     kegg_analysis(qlf,paste0(prefix,".batch"))
@@ -338,6 +344,11 @@ samples.511.2 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
 samples.523.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
             "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
 
+#final set - 4 points from two samples:
+samples.523.2_511.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
+                        "SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+                        "SG523_ven_hi_2_27","SG523_ven_hi_4_10",
+                        "SG511_ven_hi_4_13","SG511_ven_hi_4_27")
 
 #venn diagram
 library("VennDiagram")
@@ -345,8 +356,10 @@ library("VennDiagram")
 calc_de_w_batch_effect(all_counts,samples5,"5points")
 calc_de_w_batch_effect(all_counts,samples.511.2,"511.2points")
 calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
+calc_de_w_batch_effect(all_counts,samples.523.2_511.2,"523.2_511.2")
 
 
+r523.2_511.2points= read.csv("523.2_511.2_w_batch_effect_correction.txt",header=T,sep=";")
 r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points_w_batch_effect_correction.txt", header=T, sep=";")
 
 r523.3points = read.csv("~/Dropbox/project_katie_csc/523.3points.txt", header=T, sep=";")
@@ -366,18 +379,20 @@ overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol,
 overlap = calculate.overlap(x=list("523.3points" = r523.3points$Symbol,
                                    "523.2points" = r523.2points_no_batch$Symbol))
 
+overlap = calculate.overlap(x=list("523.2points" = r523.2points$Symbol,
+                                   "511.2points" = r511.2points$Symbol))
 
 
-png("523.2points_3points.png",width=1500)
+png("523.2points_511.2points.png",width=1200)
 venn.plot=draw.pairwise.venn(length(overlap$a1),
                              length(overlap$a2),
                              length(overlap$a3),
-                             c("523.3points","523.2points"),fill=c("blue","red"),
+                             c("SG523_2points","SG511_2points"),fill=c("blue","red"),
                              lty="blank",
-                             cex = 2, cat.cex=2, 
+                             cex = 4, cat.cex=4,cat.pos = 0,lwd=c(2,2),
                              ext.length = 0.3,  
                              ext.line.lwd=2,
-                             ext.text = F)
+                             ext.text = F,scaled = F)
 dev.off()
 
 png("5points.511_2points.523_2points.png",width=1000)

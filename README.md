@@ -1,5 +1,13 @@
 # bioscripts - scripts I am using on a daily basis
 
+## BCBIO
+
+
+
+## Differential expression
+
+* dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
+
 ## Gemini staff - for CHEO and MH projects
 
 * gemini.vep2gemini.sh - load VEP annotated vcf to the GEMINI database
@@ -9,8 +17,7 @@
 
 ## Working with alignments
 
-*  alignment.av_pw_dist.pl 
-average pairwise distances between sequences in an alignment, and distance matrix
+* alignment.av_pw_dist.pl - average pairwise distances between sequences in an alignment, and distance matrix
 
 * alignment.check_3x.sh
 
