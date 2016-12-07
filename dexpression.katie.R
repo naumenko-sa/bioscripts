@@ -58,7 +58,7 @@ kegg_analysis = function (lrt,prefix)
   dev.off()
 }
 
-calc_de = function(all_counts,samples,result_file)
+calc_de = function(all_counts,samples,prefix,filter)
 {
     ####    test: ###################
     #samples = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
@@ -67,8 +67,8 @@ calc_de = function(all_counts,samples,result_file)
     #            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
     #################################
     
-    samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
-                "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24");
+    #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+    #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
     
     n_samples = length(samples)
     group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
@@ -79,7 +79,9 @@ calc_de = function(all_counts,samples,result_file)
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
 
     plotMDS(y)
-    keep=rowSums(cpm(y)>1) >= n_samples/2
+    #filter - 1 or 0.5
+    #filter=0.5
+    keep=rowSums(cpm(y)>filter) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
     #necessary for goana
@@ -141,25 +143,43 @@ calc_de = function(all_counts,samples,result_file)
     de_results = de_results[order(de_results$PValue),]
     rownames(de_results) = s_rownames
 
-    result_file="523.3points.txt"
+    result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=F,sep=';')
     
-    return(de_results)
+    #return(de_results)
     
-    go_analysis(lrt,"523.3points")
+    go_analysis(lrt,prefix)
     
-    kegg_analysis(lrt,"523.3points")
+    #kegg_analysis(lrt,prefix)
     
 }
  
+plot_heatmap_separate = function(counts,samples,de_results,prefix)
+{
+  logcpm = cpm(counts,prior.count=1,log=T)
+  #cpm0  = log(cpm(y$counts+1))
+  top_genes_cpm = logcpm[de_results$genes,]
+  top_genes_cpm = top_genes_cpm[,samples]
+  rownames(top_genes_cpm) = de_results$external_gene_name
+  
+  png(paste0(prefix,".heatmap.png"))
+  
+  pheatmap(top_genes_cpm,scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
+  
+  dev.off()
+}   
+
 plot_heatmap = function (counts,de_results,prefix)
 {
-    logcpm = cpm (counts,prior.count=2,log=T)
+    logcpm = cpm(counts,prior.count=1,log=T)
     #cpm0  = log(cpm(y$counts+1))
     top_genes_cpm = logcpm[de_results$genes,]
     rownames(top_genes_cpm) = de_results$external_gene_name
     
     png(paste0(prefix,".heatmap.png"),width=2000)
+    
+    pheatmap(top_genes_cpm,scale="row",treeheight_row=0)
+    
     ph=pheatmap(t(top_genes_cpm), kmeans_k=2, scale="column", show_rownames=F,
              treeheight_row = 0, treeheight_col = 0, fontsize = 20,
              cellheight = 60, cellwidth = 20,rot=90,cluster_rows = T,
@@ -184,7 +204,7 @@ plot_heatmap = function (counts,de_results,prefix)
 }   
 
 #using the section 4.2 of edgeR manual
-calc_de_w_batch_effect = function(counts,samples,prefix)
+calc_de_w_batch_effect = function(counts,samples,prefix,filter)
 {
     #samples = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
     #          "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
@@ -193,9 +213,11 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     #          );
     #counts=read.delim("combined.counts",row.names="id")
     #prefix = "test"
-    samples = samples.511.2
+    #samples = samples.511.2
     counts = all_counts
-    prefix = "511.2points"
+    prefix = "523.3points_wb_cpm1"
+    samples = samples.523.3points
+    filter=1
   
     x = counts[samples]
     n_samples = length(samples)
@@ -210,7 +232,8 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     #y=DGEList(counts=x,group=treat)
     y=DGEList(counts=x,group=treat,genes=row.names(x),remove.zeros = T)
     
-    keep = rowSums(cpm(y)>0.5) >= n_samples/2
+    #>=0.5 filter =1 or 0.5
+    keep = rowSums(cpm(y)>filter) >= n_samples/2
     table(keep)
  
     y = y [keep, ,keep.lib.sizes=F]   
@@ -226,7 +249,7 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     m = match (y$genes$EntrezGene,egSYMBOL$gene_id)
     y$genes$Symbol = egSYMBOL$symbol[m]
     
-    #remove duplications - just 1 gene in this dataset
+    #remove duplications - just 1 gene in this datasetcalc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm0.5",0.5)
     o = order(rowSums(y$counts),decreasing = T)
     y = y[o,]
     d = duplicated(y$genes$Symbol)
@@ -282,12 +305,12 @@ calc_de_w_batch_effect = function(counts,samples,prefix)
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
     
-    write.table(de_results,paste0(prefix,"_w_batch_effect_correction.txt"),quote=F,sep=';')
+    write.table(de_results,paste0(prefix,".txt"),quote=F,sep=';')
     
-    plot_heatmap(all_counts,de_results,prefix)
+    plot_heatmap_separate(all_counts,samples,de_results,prefix)
     
-    go_analysis(qlf,paste0(prefix,".batch"))
-    kegg_analysis(qlf,paste0(prefix,".batch"))
+    go_analysis(qlf,prefix)
+    #kegg_analysis(qlf,paste0(prefix,".batch"))
     
     #dt = decideTestsDGE(qlf)
     #summary(dt)
@@ -341,7 +364,7 @@ samples.511.2 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
 
 
 #523.2points
-samples.523.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
+samples.523.2points = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
             "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
 
 #final set - 4 points from two samples:
@@ -350,14 +373,27 @@ samples.523.2_511.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
                         "SG523_ven_hi_2_27","SG523_ven_hi_4_10",
                         "SG511_ven_hi_4_13","SG511_ven_hi_4_27")
 
+samples.523.3points = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
+                        "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
+
 #venn diagram
 library("VennDiagram")
 
-calc_de_w_batch_effect(all_counts,samples5,"5points")
-calc_de_w_batch_effect(all_counts,samples.511.2,"511.2points")
-calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
-calc_de_w_batch_effect(all_counts,samples.523.2_511.2,"523.2_511.2")
+calc_de_w_batch_effect(all_counts,samples5,"5points_wb_cpm1",1)
 
+calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
+calc_de_w_batch_effect(all_counts,samples.523.2_511.2,"4points_wb_cpm1",1)
+calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points")
+
+calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm0.5",0.5)
+calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm1",1)
+
+calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm2",2)
+calc_de_w_batch_effect(all_counts,samples.523.2points,"523.2points_wb_1cpm",1)
+
+
+calc_de(all_counts,samples.523.3points,"523.3points_nob_cpm0.5",0.5)
+calc_de(all_counts,samples.523.2points,"523.2points_nob_cpm0.5",0.5)
 
 r523.2_511.2points= read.csv("523.2_511.2_w_batch_effect_correction.txt",header=T,sep=";")
 r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points_w_batch_effect_correction.txt", header=T, sep=";")
@@ -372,7 +408,7 @@ r511.2points = read.csv("511.2points_w_batch_effect_correction.txt",header=T,sep
 overlap = calculate.overlap(x=list("511.2points" = r511.2points$Symbol,
                                                  "5points" = r5points$Symbol))
 
-overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol,
+overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol"532.3points_wb_cpm0.5",
                                    "5points_batch" = r5points$Symbol,
                                    "523.2points" = r523.2points$Symbol))
 
