@@ -1,9 +1,5 @@
 # bioscripts - scripts I am using on a daily basis
 
-## BCBIO
-
-
-
 ## Differential expression
 
 * dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
@@ -15,7 +11,11 @@
 * gemini.gemini2txt.sh - dump a gemini database into txt file with decompressed genotypes
 * gemini.gemini2report.R  - create a nice report for import to excel from the gemini.txt dump
 
-## Working with alignments
+## Validation
+
+* vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
+
+## Alignments
 
 * alignment.av_pw_dist.pl - average pairwise distances between sequences in an alignment, and distance matrix
 
