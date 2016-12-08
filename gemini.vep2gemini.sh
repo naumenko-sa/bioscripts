@@ -8,7 +8,7 @@
 #PBS -d .
 #PBS -l vmem=50g,mem=50g
 
-#if [ -z $vcf ]
+if [ -z $vcf ]
 then
     vcf=$1
 fi
@@ -27,7 +27,8 @@ bname=`echo $vcf | sed s/.vcf.gz//`
 
 #/home/naumenko/work/tools/bcbio/anaconda/bin/tabix -f -p vcf $bname.decompose.vepeffects.vcf.gz
 
-gemini load --passonly --skip-cadd --skip-gerp-bp -v $vcf -t VEP --cores 16 --tempdir . $bname.db
+#--skip-cadd if no cadd
+gemini load --passonly --skip-gerp-bp -v $vcf -t VEP --cores 16 --tempdir . $bname.db
 
 
 
