@@ -271,7 +271,7 @@ pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"
 variants = merge(variants,pseudoautosomal,all.x=T)
 
 #final selection and order
-variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
+    variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
                       paste0("Burden.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
                       paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
@@ -281,9 +281,19 @@ variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",s
                         "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
 
 
-write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)  
+    write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)  
 }
 
+# merges ensembl and gatk-haplotype reports to 
+# - fill alt_depths, qual_depths columns
+# fix NO_CALL issue
+#   complex alleles like T > C,TA are divided into two variants : T>C, T>TA
+#   why are they not separated before loading to gemini - check
+#   indels called differently should be reported from GATK
+merge_reports = function()
+{
+  
+}
 
 library(RSQLite)
 library(stringr)
