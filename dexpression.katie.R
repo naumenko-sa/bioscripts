@@ -70,6 +70,10 @@ calc_de = function(all_counts,samples,prefix,filter)
     #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
     
+    #samples=samples.523.3points
+    #prefix="523.3points_nob_cpm1"
+    #filter=1
+    
     n_samples = length(samples)
     group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
     #patient = factor(c("511","511","511","523","523","523",
@@ -132,20 +136,21 @@ calc_de = function(all_counts,samples,prefix,filter)
 
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
     s_rownames = row.names(de_results)
-    setnames(de_results,"genes","ensembl_gene_id")
+    #setnames(de_results,"genes","ensembl_gene_id")
     #de_results = lrt$table
     
     gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
     
-    de_results = merge(de_results,gene_descriptions,by.x="ensembl_gene_id",by.y="ensembl_gene_id",all.x=T)
+    de_results = merge(de_results,gene_descriptions,by.x="genes",by.y="ensembl_gene_id",all.x=T)
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
-    de_results = merge(de_results,x,by.x = "ensembl_gene_id", by.y="row.names",all.x=T)
+    de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
     de_results = de_results[order(de_results$PValue),]
     rownames(de_results) = s_rownames
 
     result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=F,sep=';')
-    
+
+    plot_heatmap_separate(all_counts,samples,de_results,prefix)    
     #return(de_results)
     
     go_analysis(lrt,prefix)
@@ -214,10 +219,10 @@ calc_de_w_batch_effect = function(counts,samples,prefix,filter)
     #counts=read.delim("combined.counts",row.names="id")
     #prefix = "test"
     #samples = samples.511.2
-    counts = all_counts
-    prefix = "523.3points_wb_cpm1"
-    samples = samples.523.3points
-    filter=1
+    #counts = all_counts
+    #prefix = "523.3points_wb_cpm1"
+    #samples = samples.523.3points
+    #filter=1
   
     x = counts[samples]
     n_samples = length(samples)
@@ -232,7 +237,7 @@ calc_de_w_batch_effect = function(counts,samples,prefix,filter)
     #y=DGEList(counts=x,group=treat)
     y=DGEList(counts=x,group=treat,genes=row.names(x),remove.zeros = T)
     
-    #>=0.5 filter =1 or 0.5
+    #>=0.5 filter =1 or 0.5calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm0.5",0.5)calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm0.5",0.5)calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm0.5",0.5)
     keep = rowSums(cpm(y)>filter) >= n_samples/2
     table(keep)
  
@@ -329,6 +334,7 @@ init = function()
   library(data.table)
   library(pheatmap)
   library(grid)  
+  library("VennDiagram")
   reference_tables_path = "~/Desktop/reference_tables"
   setwd("~/Desktop/project_katie_csc")
 
@@ -350,8 +356,6 @@ init = function()
 
 }
 
-init()
-
 samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
           "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
           "SG511_ven_hi_4_13","SG511_ven_hi_4_27",
@@ -359,7 +363,7 @@ samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
           )
 
 #511.2points
-samples.511.2 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+samples.511.2points = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
             "SG511_ven_hi_4_13","SG511_ven_hi_4_27")
 
 
@@ -376,9 +380,6 @@ samples.523.2_511.2 = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
 samples.523.3points = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
                         "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
 
-#venn diagram
-library("VennDiagram")
-
 calc_de_w_batch_effect(all_counts,samples5,"5points_wb_cpm1",1)
 
 calc_de_w_batch_effect(all_counts,samples.523.2,"523.2points")
@@ -390,25 +391,29 @@ calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm1",1)
 
 calc_de_w_batch_effect(all_counts,samples.523.3points,"523.3points_wb_cpm2",2)
 calc_de_w_batch_effect(all_counts,samples.523.2points,"523.2points_wb_1cpm",1)
+calc_de_w_batch_effect(all_counts,samples.523.2points,"523.2points_wb_0.5cpm",0.5)
+
+calc_de_w_batch_effect(all_counts,samples.511.2points,"511.2points_wb_cpm0.5",0.5)
 
 
+calc_de(all_counts,samples.523.3points,"523.3points_nob_cpm1",1)
 calc_de(all_counts,samples.523.3points,"523.3points_nob_cpm0.5",0.5)
 calc_de(all_counts,samples.523.2points,"523.2points_nob_cpm0.5",0.5)
 
-r523.2_511.2points= read.csv("523.2_511.2_w_batch_effect_correction.txt",header=T,sep=";")
+r523.2_511.2points= read.csv("SG523/3points/523.2_511.2_w_batch_effect_correction.txt",header=T,sep=";")
 r523.2points = read.csv("~/Dropbox/project_katie_csc/523.2points_w_batch_effect_correction.txt", header=T, sep=";")
 
-r523.3points = read.csv("~/Dropbox/project_katie_csc/523.3points.txt", header=T, sep=";")
+r523.3points = read.csv("de_results/SG523/3points/wb_cpm0.5/523.3points_wb_cpm0.5.txt", header=T, sep=";")
 r523.2points_no_batch = read.csv("~/Dropbox/project_katie_csc/523.2points.txt", header=T, sep=";")
 
 r523.6points = read.csv("~/Dropbox/project_katie_csc/all_sample_w_batch_effect1.txt", header=T, sep=";")
 r5points = read.csv("~/Dropbox/project_katie_csc/5points_w_batch_effect.txt", header=T, sep=";")
-r511.2points = read.csv("511.2points_w_batch_effect_correction.txt",header=T,sep=";")
+r511.2points = read.csv("de_results/SG511/2points/wb_0.5cpm/511.2points_wb_cpm0.5.txt",header=T,sep=";")
 
 overlap = calculate.overlap(x=list("511.2points" = r511.2points$Symbol,
-                                                 "5points" = r5points$Symbol))
+                                    "523.3points" = r523.3points$Symbol))
 
-overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol"532.3points_wb_cpm0.5",
+overlap = calculate.overlap(x=list("511.2points_batch" = r511.2points$Symbol,
                                    "5points_batch" = r5points$Symbol,
                                    "523.2points" = r523.2points$Symbol))
 
@@ -419,11 +424,11 @@ overlap = calculate.overlap(x=list("523.2points" = r523.2points$Symbol,
                                    "511.2points" = r511.2points$Symbol))
 
 
-png("523.2points_511.2points.png",width=1200)
+png("511.2points_523.3points.png",width=1200)
 venn.plot=draw.pairwise.venn(length(overlap$a1),
                              length(overlap$a2),
                              length(overlap$a3),
-                             c("SG523_2points","SG511_2points"),fill=c("blue","red"),
+                             c("SG511_2points","SG523_3points"),fill=c("blue","red"),
                              lty="blank",
                              cex = 4, cat.cex=4,cat.pos = 0,lwd=c(2,2),
                              ext.length = 0.3,  
