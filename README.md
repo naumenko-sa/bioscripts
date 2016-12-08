@@ -14,8 +14,8 @@
 ## Variants
 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
-* [biallelic sites decomposition](https://github.com/atks/vt)
-* [accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
+* [VT: biallelic sites decomposition](https://github.com/atks/vt)
+* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 
 ## Alignments
 

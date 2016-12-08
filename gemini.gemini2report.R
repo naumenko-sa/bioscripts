@@ -100,9 +100,10 @@ genotype2zygocity = function (genotype_str,ref)
       #genotype_str="A/A"
       #greedy
       genotype_str = gsub("|","/",genotype_str,fixed=T)
-      genotype_str = gsub(".","NO_CALL",genotype_str,fixed=T)
+      genotype_str = gsub("./.","Insufficient_coverage",genotype_str,fixed=T)
+      #genotype_str = gsub(".","NO_CALL",genotype_str,fixed=T)
       
-      if(grepl("NO_CALL",genotype_str)){
+      if(grepl("Insufficient_coverage",genotype_str)){
           result = genotype_str
       }else{
           ar = strsplit(genotype_str,"/",fixed=T)
@@ -127,9 +128,10 @@ genotype2zygocity = function (genotype_str,ref)
 create_report = function(family,samples,suffix)
 {
   #test: 3 samples in a family
-  family="166"
-  samples=c("166_3_5","166_4_10","166_4_8")
-  suffix = "gatk-haplotype"
+  #family="166"
+  #samples=c("166_3_5","166_4_10","166_4_8")
+  #suffix = "gatk-haplotype"
+  #suffix = "ensemble"
   
   #test: 1 sample in a familty
   #family="NA12878-1"
@@ -147,7 +149,7 @@ variants=variants[c(columns,1:columns-1)]
 
 #field2 - UCSC link
 sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
-sUCSC2="\",\"UCSC link\""
+sUCSC2="\",\"UCSC_link\""
 variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
 
 #fields 3,4: Ref,Alt
@@ -270,29 +272,50 @@ variants = merge(variants,imprinting,all.x=T)
 pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"), stringsAsFactors=F)
 variants = merge(variants,pseudoautosomal,all.x=T)
 
+    select_and_write(variants,samples,paste0(family,".",suffix))
+}
+
 #final selection and order
+select_and_write = function(variants,samples,prefix)
+{
     variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
-                      paste0("Burden.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
-                      paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
-                        "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
-                        "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
-                        "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
-                        "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
-                        "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
-
-
-    write.table(variants,paste0(family,".txt"),quote=F,sep = ";",row.names=F)  
+                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
+                        paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
+                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
+                                                        "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
+                                                        "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
+                                                        "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
+                                                        "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
+  
+    write.table(variants,paste0(prefix,".txt"),quote=F,sep = ";",row.names=F)  
 }
 
 # merges ensembl and gatk-haplotype reports to 
-# - fill alt_depths, qual_depths columns
+# - fill alt_depths, Trio_coverage, qual_depths columns
 # fix NO_CALL issue
 #   complex alleles like T > C,TA are divided into two variants : T>C, T>TA
 #   why are they not separated before loading to gemini - check
 #   indels called differently should be reported from GATK
-merge_reports = function()
+merge_reports = function(family,samples)
 {
-  
+    setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
+    family = "166"
+    ensemble_file = paste0(family,".ensemble.txt")
+    gatk_file = paste0(family,".gatk-haplotype.txt")
+    
+    ensemble = read.csv(ensemble_file, sep=";", quote="", stringsAsFactors=F)
+    gatk = read.csv(gatk_file, sep=";", quote="", stringsAsFactors=F)
+    gatk.depths = gatk[c("Position","Ref","Alt",paste0("Alt_depths.",samples),"Trio_coverage","Qual_depth")]
+
+    ensemble[c(paste0("Alt_depths.",samples),"Trio_coverage","Qual_depth")]=NULL
+    
+    ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
+    gatk.depths$superindex=with(gatk.depths,paste(Position,Ref,Alt,sep='-'))
+    gatk.depths[c("Ref","Alt","Position")]=NULL
+    
+    ensemble = merge(ensemble,gatk.depths,by.x = "superindex", by.y="superindex",all.x = T)
+    
+    select_and_write(ensemble,samples,family)
 }
 
 library(RSQLite)
