@@ -27,7 +27,7 @@ bname=`echo $vcf | sed s/.vcf.gz//`
 
 #/home/naumenko/work/tools/bcbio/anaconda/bin/tabix -f -p vcf $bname.decompose.vepeffects.vcf.gz
 
-gemini load --passonly --skip-cadd --skip-gerp-bp -v $vcf -t VEP --cores 4 --tempdir . $bname.db
+gemini load --passonly --skip-cadd --skip-gerp-bp -v $vcf -t VEP --cores 16 --tempdir . $bname.db
 
 
 
