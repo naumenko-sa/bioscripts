@@ -129,7 +129,7 @@ create_report = function(family,samples,suffix)
 {
   #test: 3 samples in a family
   #family="166"
-  #samples=c("166_3_5","166_4_10","166_4_8")
+  samples=c("166_3_5","166_4_10","166_4_8")
   #suffix = "gatk-haplotype"
   #suffix = "ensemble"
   
@@ -233,11 +233,6 @@ variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples")
 #field 25, 26 - rsIDs, Maf_1000g
 
 #fields 27-29 EVS frequencies
-#substitute -1 to 0
-for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all","Exac_het","Exac_hom_alt"))
-{
-    variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
-}
 
 #fields 30-31: Exac_maf, Maf_all
 #fields 32-33: Exac scores
@@ -262,7 +257,17 @@ for(sample in samples)
   variants$Trio_coverage = with(variants,paste0(Trio_coverage,prefix,get(column)))
   n_sample = n_sample+1
 }
-#variants$Trio_coverage = with(variants,gsub("-1.*","Multiple_callers",Trio_coverage,fixed=F))
+#substitute -1 to 0
+for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all","Exac_het","Exac_hom_alt","Trio_coverage"))
+{
+  variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
+}
+
+for (field in c(paste0("Alt_depths.",samples)))
+{
+  variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
+}
+
 
 #fields 41-42 - imprinting
 imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
