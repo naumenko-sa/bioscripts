@@ -127,155 +127,163 @@ genotype2zygocity = function (genotype_str,ref)
 #suffix = [ensemble | gatk-haplotype]
 create_report = function(family,samples,suffix)
 {
-  #test: 3 samples in a family
-  #family="166"
-  samples=c("166_3_5","166_4_10","166_4_8")
-  #suffix = "gatk-haplotype"
-  #suffix = "ensemble"
+    #test: 3 samples in a family
+    family="166"
+    samples=c("166_3_5","166_4_10","166_4_8")
+    #suffix = "gatk-haplotype"
+    suffix = "ensemble"
   
-  #test: 1 sample in a familty
-  #family="NA12878-1"
-  #samples=c("NA12878.1")
+    #test: 1 sample in a familty
+    #family="NA12878-1"
+    #samples=c("NA12878.1")
   
-  file=paste0(family,"-",suffix,".db.txt")
+    file=paste0(family,"-",suffix,".db.txt")
   
   variants = get_variants_from_file(file)
 
+  #field1 - Position
+  variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
+  columns = ncol(variants)
+  variants=variants[c(columns,1:columns-1)]
 
-#field1 - Position
-variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
-columns = ncol(variants)
-variants=variants[c(columns,1:columns-1)]
+  #field2 - UCSC link
+  sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
+  sUCSC2="\",\"UCSC_link\""
+  variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
 
-#field2 - UCSC link
-sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
-sUCSC2="\",\"UCSC_link\""
-variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
+  #fields 3,4: Ref,Alt
 
-#fields 3,4: Ref,Alt
-
-# field5 - Zygocity
-# use new loader vcf2db.py - with flag  to load plain text
-# for genotype and depth - Noah
-# otherwise have to decode BLOB 
-# snappy decompression
-# https://github.com/arq5x/gemini/issues/700
-# https://github.com/lulyon/R-snappy
-#variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
-for(sample in samples)
-{
-    #DEBUG: gene = IL20RA
-    #sample=samples[1]
-    zygocity_column_name = paste0("Zygocity.",sample)
-    #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
-    #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
-    t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
-    variants[,zygocity_column_name] = unlist(t)
+  # field5 - Zygocity
+  # use new loader vcf2db.py - with flag  to load plain text
+  # for genotype and depth - Noah
+  # otherwise have to decode BLOB 
+  # snappy decompression
+  # https://github.com/arq5x/gemini/issues/700
+  # https://github.com/lulyon/R-snappy
+  #variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
+    for(sample in samples)
+    {
+      #DEBUG: gene = IL20RA
+      #sample=samples[1]
+      zygocity_column_name = paste0("Zygocity.",sample)
+      #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+      #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+      t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
+      variants[,zygocity_column_name] = unlist(t)
     
-    burden_column_name = paste0("Burden.",sample)
-    t = subset(variants, get(zygocity_column_name) == 'Hom' | get(zygocity_column_name) == 'Het',select=c("Ensembl_gene_id",zygocity_column_name))
-    df_burden = count(t,'Ensembl_gene_id')    
-    colnames(df_burden)[2] = burden_column_name
-    variants = merge(variants,df_burden,all.x=T)
-    variants[,burden_column_name][is.na(variants[,burden_column_name])] = 0
-}
+      burden_column_name = paste0("Burden.",sample)
+      t = subset(variants, get(zygocity_column_name) == 'Hom' | get(zygocity_column_name) == 'Het',select=c("Ensembl_gene_id",zygocity_column_name))
+      df_burden = count(t,'Ensembl_gene_id')    
+      colnames(df_burden)[2] = burden_column_name
+      variants = merge(variants,df_burden,all.x=T)
+      variants[,burden_column_name][is.na(variants[,burden_column_name])] = 0
+    }
 
-#field 6 - Variation
-#add splicing and splicing extended annotation - just use RefSeq annotation and chr:pos
-#in the meawhile we have splice_region_variant
-#http://sequenceontology.org/browser/current_svn/term/SO:0001630
-#1-3 bases of exon, 3-8 bases of intron
+    #field 6 - Variation
+    #add splicing and splicing extended annotation - just use RefSeq annotation and chr:pos
+    #in the meawhile we have splice_region_variant
+    #http://sequenceontology.org/browser/current_svn/term/SO:0001630
+    #1-3 bases of exon, 3-8 bases of intron
 
-#field 7 - Info, we want all transcripts, not it is more more severily affected
-#gemini bug: https://github.com/arq5x/gemini/issues/798
-ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq_no_duplicates.txt"), stringsAsFactors=F)
-variants = merge(variants,ensembl_refseq,all.x=T)
-variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
+    #field 7 - Info, we want all transcripts, not it is more more severily affected
+    #gemini bug: https://github.com/arq5x/gemini/issues/798
+    ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq_no_duplicates.txt"), stringsAsFactors=F)
+    variants = merge(variants,ensembl_refseq,all.x=T)
+    variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
 
-#fields 8,9 - Depth, Qual_depth
+    #fields 8,9 - Depth, Qual_depth
 
-#field 10 - Alt_depth - from v.gt_alt_depth
-#when multiple callers used, AD is not set
-for(sample in samples)
-{
-  new_name = paste0("Alt_depths.",sample)
-  setnames(variants, paste0("gt_alt_depths.",sample),new_name)
-  #variants[,new_name] = with(variants,gsub("-1","Multiple_callers",get(new_name),fixed=T))
-}
+    #field 10 - Alt_depth - from v.gt_alt_depth
+    #when multiple callers used, AD is not set
+    for(sample in samples)
+    {
+      new_name = paste0("Alt_depths.",sample)
+      setnames(variants, paste0("gt_alt_depths.",sample),new_name)
+      #variants[,new_name] = with(variants,gsub("-1","Multiple_callers",get(new_name),fixed=T))
+    }
 
-#fields 11,12 - Gene, ENS_ID
+    #fields 11,12 - Gene, ENS_ID
 
-#field13 - Gene_description - from biomart
-gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=F)
-variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ensembl_gene_id",all.x=T)
+    #field13 - Gene_description - from biomart
+    gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=F)
+    variants = merge(variants,gene_descriptions,by.x = "Ensembl_gene_id",by.y = "ensembl_gene_id",all.x=T)
 
-#field14 - Omim_gene_description - from omim text file
-omim = read.delim2(paste0(reference_tables_path,"/omim.forannotation2"), stringsAsFactors=FALSE)
-variants = merge(variants,omim,all.x=T)
+    #field14 - Omim_gene_description - from omim text file
+    omim = read.delim2(paste0(reference_tables_path,"/omim.forannotation2"), stringsAsFactors=FALSE)
+    variants = merge(variants,omim,all.x=T)
 
-#field15 - Omim_inheritance 
-#from Kristin xls
-omim_inheritance = read.delim(paste0(reference_tables_path,"/omim_inheritance.txt"), stringsAsFactors=F)
-variants = merge(variants,omim_inheritance,all.x=T)
+    #field15 - Omim_inheritance 
+    #from Kristin xls
+    omim_inheritance = read.delim(paste0(reference_tables_path,"/omim_inheritance.txt"), stringsAsFactors=F)
+    variants = merge(variants,omim_inheritance,all.x=T)
 
-#field16 - Orphanet
-orphanet = read.delim(paste0(reference_tables_path,"/orphanet.deduplicated.txt"), stringsAsFactors=F)
-variants = merge(variants,orphanet,all.x=T)
+    #field16 - Orphanet
+    orphanet = read.delim(paste0(reference_tables_path,"/orphanet.deduplicated.txt"), stringsAsFactors=F)
+    variants = merge(variants,orphanet,all.x=T)
 
-#fields17-18 Clinvar, Ensembl Transcript ID
+    #fields17-18 Clinvar, Ensembl Transcript ID
 
-#fields19-20-21-22 - protein change, aa_position, exon, pfam domain
+    #fields19-20-21-22 - protein change, aa_position, exon, pfam domain
 
-#fields 23-24, will add when all samples will be done
-variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R")
-variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples")
+    #fields 23-24, will add when all samples will be done
+    variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R")
+    variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples")
 
-#field 25, 26 - rsIDs, Maf_1000g
+    #field 25, 26 - rsIDs, Maf_1000g
 
-#fields 27-29 EVS frequencies
+    #fields 27-29 EVS frequencies
 
-#fields 30-31: Exac_maf, Maf_all
-#fields 32-33: Exac scores
-exac_scores = read.delim(paste0(reference_tables_path,"/exac_scores.txt"), stringsAsFactors=F)
-variants = merge(variants,exac_scores,all.x=T)
+    #fields 30-31: Exac_maf, Maf_all
+    #fields 32-33: Exac scores
+    exac_scores = read.delim(paste0(reference_tables_path,"/exac_scores.txt"), stringsAsFactors=F)
+    variants = merge(variants,exac_scores,all.x=T)
 
-#field 34-35  Exac het, exac_hom_alt
+    #field 34-35  Exac het, exac_hom_alt
 
-#field36 - Conserved in 29 mammals instead of phastcons
-#https://www.biostars.org/p/150152/
+    #field36 - Conserved in 29 mammals instead of phastcons
+    #https://www.biostars.org/p/150152/
 
-#fields 37-39: sift,polyphen,cadd
+    #fields 37-39: sift,polyphen,cadd
 
-#field40
-variants = add_placeholder(variants,"Trio_coverage","")
-n_sample = 1
-prefix = ""
-for(sample in samples)
-{
-  column = paste0("gt_depths.",sample)
-  if (n_sample>1) prefix="/"
-  variants$Trio_coverage = with(variants,paste0(Trio_coverage,prefix,get(column)))
-  n_sample = n_sample+1
-}
-#substitute -1 to 0
-for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all","Exac_het","Exac_hom_alt","Trio_coverage"))
-{
-  variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
-}
+    #field40
+    variants = add_placeholder(variants,"Trio_coverage","")
+    n_sample = 1
+    prefix = ""
+  
+    #order gts column in the same way as 
+    variants$gts=""
+    for(sample in samples)
+    {
+        column = paste0("gt_depths.",sample)
+        if (n_sample>1) prefix="/"
+        variants$Trio_coverage = with(variants,paste0(Trio_coverage,prefix,get(column)))
+    
+        column = paste0("gts.",sample)
+        if (n_sample>1) prefix=","
+            variants$gts = with(variants,paste0(gts,prefix,get(column)))
+    
+        n_sample = n_sample+1
+    }
 
-for (field in c(paste0("Alt_depths.",samples)))
-{
-  variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
-}
+    #substitute -1 to 0
+    for (field in c("EVS_maf_aa","EVS_maf_ea","EVS_maf_all","Maf_1000g","Exac_maf","Maf_all","Exac_het","Exac_hom_alt","Trio_coverage"))
+    {
+        variants[,field] = with(variants,gsub("-1","0",get(field),fixed=T))  
+    }
+
+    for (field in c(paste0("Alt_depths.",samples)))
+    {
+        variants[,field] = with(variants,gsub("-1",NA,get(field),fixed=T))  
+    }
 
 
-#fields 41-42 - imprinting
-imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
-variants = merge(variants,imprinting,all.x=T)
+    #fields 41-42 - imprinting
+    imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
+    variants = merge(variants,imprinting,all.x=T)
 
-#field 43 - pseudoautosomal
-pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"), stringsAsFactors=F)
-variants = merge(variants,pseudoautosomal,all.x=T)
+    #field 43 - pseudoautosomal
+    pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"), stringsAsFactors=F)
+    variants = merge(variants,pseudoautosomal,all.x=T)
 
     select_and_write(variants,samples,paste0(family,".",suffix))
 }
@@ -354,6 +362,7 @@ merge_reports = function(family,samples)
     fields_bayes = paste0("X",samples,".DP")
     fields_platypus = paste0("X",samples,".NR")
 
+    #depends on 3 samples in a family
     for (i in 1:nrow(ensemble))
     {
         if (is.na(ensemble[i,field]))
