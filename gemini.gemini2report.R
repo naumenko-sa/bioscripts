@@ -305,6 +305,8 @@ merge_reports = function(family,samples)
 {
     setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
     family = "166"
+    # mind the samples order: it will influence the Trio
+    samples=c("166_3_5","166_4_10","166_4_8")
     ensemble_file = paste0(family,".ensemble.txt")
     gatk_file = paste0(family,".gatk-haplotype.txt")
     
@@ -319,6 +321,33 @@ merge_reports = function(family,samples)
     gatk.depths[c("Ref","Alt","Position")]=NULL
     
     ensemble = merge(ensemble,gatk.depths,by.x = "superindex", by.y="superindex",all.x = T)
+    
+    freebayes = read.delim("166-freebayes.decomposed.table", stringsAsFactors=F)
+    freebayes$superindex=with(freebayes,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
+    freebayes[c("CHROM","POS","REF","ALT")]=NULL
+    ensemble = merge(ensemble,freebayes,by.x = "superindex", by.y="superindex",all.x = T)
+    
+    platypus = read.delim("166-platypus.decomposed.table", stringsAsFactors=F)
+    platypus$superindex=with(platypus,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
+    ensemble = merge(ensemble,platypus,by.x = "superindex", by.y="superindex",all.x = T)
+    
+    #if alt_depth and trio_depth is absent, get from freebayes or platypus
+    
+    for (i in 1:nrow(ensemble))
+    {
+        for (sample in samples)
+        {
+            field_depth = paste0("Alt_depths.",sample)
+            field_bayes = paste0("X",sample,".AO")
+            field_platypus = paste0("X",sample,".NV")
+        
+            if (is.na(ensemble[i,field_depth])) 
+              ensemble[i,field_depth] = ensemble[i,field_bayes]
+        
+            if (is.na(ensemble[i,field_depth])) 
+              ensemble[i,field_depth] = ensemble[i,field_platypus]
+        }
+    }
     
     select_and_write(ensemble,samples,family)
 }
