@@ -7,13 +7,13 @@
 # https://github.com/RealTimeGenomics/rtg-tools/blob/master/installer/resources/tools/RTGOperationsManual.pdf
 
 
-bedtools intersect -nonamecheck -a NA12878-sort-callable_sample.bed -b GiaB_v2_19_regions.bed > NA12878-sort-callable_sample-NA12878-wrm.bed
+#bedtools intersect -nonamecheck -a NA12878-sort-callable_sample.bed -b GiaB_v2_19_regions.bed > NA12878-sort-callable_sample-NA12878-wrm.bed
 
 #uses PASS variants only
 export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin:$PATH &&  \
    export RTG_JAVA_OPTS='-Xms750m' && export RTG_MEM=9100m && \
-   rtg vcfeval --threads 5 -b /hpf/largeprojects/ccmbio/naumenko/NA12878-exome-eval/input/GiaB_v2_19.vcf.gz \
-   --bed-regions NA12878-sort-callable_sample-NA12878-wrm.bed \
+   rtg vcfeval --threads 5 -b /hpf/largeprojects/ccmbio/naumenko/validation/NA12878-exome-eval/input/GiaB_v2_19.vcf.gz \
+   --bed-regions $2 \
    -c $1 \
    -t /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rtg/GRCh37.sdf \
    -o rtg --vcf-score-field='GQ' 
