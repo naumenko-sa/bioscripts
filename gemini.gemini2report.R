@@ -329,6 +329,7 @@ merge_reports = function(family,samples)
     
     platypus = read.delim("166-platypus.decomposed.table", stringsAsFactors=F)
     platypus$superindex=with(platypus,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
+    platypus[c("CHROM","POS","REF","ALT")]=NULL
     ensemble = merge(ensemble,platypus,by.x = "superindex", by.y="superindex",all.x = T)
     
     #if alt_depth and trio_depth is absent, get from freebayes or platypus
@@ -341,11 +342,26 @@ merge_reports = function(family,samples)
             field_bayes = paste0("X",sample,".AO")
             field_platypus = paste0("X",sample,".NV")
         
-            if (is.na(ensemble[i,field_depth])) 
+            if (is.na(ensemble[i,field_depth]))
               ensemble[i,field_depth] = ensemble[i,field_bayes]
         
             if (is.na(ensemble[i,field_depth])) 
               ensemble[i,field_depth] = ensemble[i,field_platypus]
+        }
+    }
+    
+    field = "Trio_coverage"
+    fields_bayes = paste0("X",samples,".DP")
+    fields_platypus = paste0("X",samples,".NR")
+
+    for (i in 1:nrow(ensemble))
+    {
+        if (is.na(ensemble[i,field]))
+        {
+            if (!is.na(ensemble[i,fields_bayes[1]]))
+                ensemble[i,field] = paste(ensemble[i,fields_bayes[1]],ensemble[i,fields_bayes[2]],ensemble[i,fields_bayes[3]],sep="/")
+            else
+                ensemble[i,field] = paste(ensemble[i,fields_platypus[1]],ensemble[i,fields_platypus[2]],ensemble[i,fields_platypus[3]],sep="/")
         }
     }
     
