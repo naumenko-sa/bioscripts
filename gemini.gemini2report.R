@@ -106,20 +106,20 @@ genotype2zygocity = function (genotype_str,ref)
       return(result)
 }
 
-#suffix = [ensemble | gatk-haplotype]
-create_report = function(family,samples,suffix)
+#output : family.ensemble.txt
+create_report = function(family,samples)
 {
     #test: 3 samples in a family
-    family="166"
-    samples=c("166_3_5","166_4_10","166_4_8")
+    #family="166"
+    #samples=c("166_3_5","166_4_10","166_4_8")
     #suffix = "gatk-haplotype"
-    suffix = "ensemble"
+    #suffix = "ensemble"
   
     #test: 1 sample in a familty
     #family="NA12878-1"
     #samples=c("NA12878.1")
   
-    file=paste0(family,"-",suffix,".decomposed.db.txt")
+    file=paste0(family,"-ensemble.decomposed.db.txt")
   
     variants = get_variants_from_file(file)
 
@@ -202,7 +202,7 @@ create_report = function(family,samples,suffix)
     #field16 - Orphanet
     orphanet = read.delim(paste0(reference_tables_path,"/orphanet.deduplicated.txt"), stringsAsFactors=F)
     variants = merge(variants,orphanet,all.x=T)
-
+    # mind the samples order: it will influence the Trio
     #fields17-18 Clinvar, Ensembl Transcript ID
 
     #fields19-20-21-22 - protein change, aa_position, exon, pfam domain
@@ -267,7 +267,7 @@ create_report = function(family,samples,suffix)
     pseudoautosomal = read.delim(paste0(reference_tables_path,"/pseudoautosomal.txt"), stringsAsFactors=F)
     variants = merge(variants,pseudoautosomal,all.x=T)
 
-    select_and_write(variants,samples,paste0(family,".",suffix))
+    select_and_write(variants,samples,paste0(family,".ensemble"))
 }
 
 #final selection and order
@@ -293,16 +293,18 @@ select_and_write = function(variants,samples,prefix)
 #   indels called differently should be reported from GATK
 merge_reports = function(family,samples)
 {
-    setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
-    family = "166"
+    #setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
+    #family = "166"
     # mind the samples order: it will influence the Trio
-    samples=c("166_3_5","166_4_10","166_4_8")
+    #samples=c("166_3_5","166_4_10","166_4_8")
+  
     ensemble_file = paste0(family,".ensemble.txt")
     
     ensemble = read.csv(ensemble_file, sep=";", quote="", stringsAsFactors=F)
     ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
     
-    gatk = read.delim("166-gatk-haplotype.decomposed.table", stringsAsFactors=F)
+    gatk_file = paste0(family,"-gatk-haplotype.decomposed.table")
+    gatk = read.delim(gatk_file, stringsAsFactors=F)
     gatk$superindex=with(gatk,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     gatk[c("CHROM","POS","REF","ALT")]=NULL
     
@@ -334,12 +336,13 @@ merge_reports = function(family,samples)
             field = paste0("Alt_depths.",sample)
             
             ensemble[i,field]=strsplit(ensemble[i,field],",",fixed=T)[[1]][2]
-      }
+        }
     }
     
     ensemble[c("DP",paste0("X",samples,".DP"),paste0("X",samples,".AD"))]=NULL
     
-    freebayes = read.delim("166-freebayes.decomposed.table", stringsAsFactors=F)
+    freebayes_file = paste0(family,"-freebayes.decomposed.table")
+    freebayes = read.delim(freebayes_file, stringsAsFactors=F)
     freebayes$superindex=with(freebayes,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     freebayes[c("CHROM","POS","REF","ALT")]=NULL
     ensemble = merge(ensemble,freebayes,by.x = "superindex", by.y="superindex",all.x = T)
@@ -374,7 +377,8 @@ merge_reports = function(family,samples)
     
     ensemble[c("DP",paste0("X",samples,".DP"),paste0("X",samples,".AO"))]=NULL
     
-    platypus = read.delim("166-platypus.decomposed.table", stringsAsFactors=F)
+    platypus_file = paste0(family,"-platypus.decomposed.table")
+    platypus = read.delim(platypus_file, stringsAsFactors=F)
     platypus$superindex=with(platypus,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     platypus[c("CHROM","POS","REF","ALT")]=NULL
     ensemble = merge(ensemble,platypus,by.x = "superindex", by.y="superindex",all.x = T)
@@ -414,7 +418,6 @@ merge_reports = function(family,samples)
     ensemble[c("TC",paste0("X",samples,".NV"),paste0("X",samples,".NR"))]=NULL
     ensemble[,"Trio_coverage"] = with(ensemble,gsub("NA","0",get("Trio_coverage"),fixed=T))  
    
-    
     for (i in 1:nrow(ensemble))
     {
         if (is.na(ensemble[i,"Depth"]))
@@ -440,17 +443,19 @@ library(data.table)
 library(plyr)
 
 reference_tables_path="~/Desktop/reference_tables"
-#setwd("/home/sergey/Desktop/project_cheo/2016-10-28_gemini_test")
-setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10/ensemble_txt")
-setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10/haplotype_txt")
 
-create_report("NA12878-1",samples=c("NA12878.1"))
+setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
 
-suffix="ensemble"
-suffix="gatk-haplotype"
+family="166"
+samples=c("166_3_5","166_4_10","166_4_8")
+create_report(family,samples)
+merge_reports(family,samples)
 
-create_report("166",c("166_3_5","166_4_10","166_4_8"),suffix)
-create_report("181",c("181_121141J","181_WG0927"),suffix)
+family="181"
+samples = c("181_121141J","181_WG0927")
+create_report(family,samples)
+merge_reports(family,samples)
+
 create_report("241",c("241_44845","241_52062","241_52063"),suffix)
 create_report("246",c("246_90137","246_CH0015","246_CH0016"),suffix)
 create_report("380",c("380_120890B","380_120891B"),suffix)
