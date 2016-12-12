@@ -119,9 +119,9 @@ create_report = function(family,samples,suffix)
     #family="NA12878-1"
     #samples=c("NA12878.1")
   
-    file=paste0(family,"-",suffix,".db.txt")
+    file=paste0(family,"-",suffix,".decomposed.db.txt")
   
-  variants = get_variants_from_file(file)
+    variants = get_variants_from_file(file)
 
   #field1 - Position
   variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
@@ -274,7 +274,7 @@ create_report = function(family,samples,suffix)
 select_and_write = function(variants,samples,prefix)
 {
     variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Qual_depth"),
+                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                                                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
@@ -413,6 +413,7 @@ merge_reports = function(family,samples)
     
     ensemble[c("TC",paste0("X",samples,".NV"),paste0("X",samples,".NR"))]=NULL
     ensemble[,"Trio_coverage"] = with(ensemble,gsub("NA","0",get("Trio_coverage"),fixed=T))  
+   
     
     for (i in 1:nrow(ensemble))
     {
@@ -420,6 +421,12 @@ merge_reports = function(family,samples)
         {
             l=strsplit(ensemble[i,"Trio_coverage"],"/")[[1]]
             ensemble[i,"Depth"]=sum(as.integer(l))
+        }
+        for (sample in samples)
+        {
+            field_depth = paste0("Alt_depths.",sample)
+            if (is.na(ensemble[i,field_depth]))
+                ensemble[i,field_depth]=0
         }
     }
     
