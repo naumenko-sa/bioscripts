@@ -21,7 +21,7 @@ sQuery="select
         v.alt as Alt,
         v.impact as Variation,
         v.depth as Depth,
-        v.qual_depth as Qual_depth,
+        v.qual as Quality,
         v.gene as Gene,
         g.ensembl_gene_id as Ensembl_gene_id,
         v.clinvar_disease_name as Clinvar,
