@@ -456,14 +456,46 @@ samples = c("181_121141J","181_WG0927")
 create_report(family,samples)
 merge_reports(family,samples)
 
-create_report("241",c("241_44845","241_52062","241_52063"),suffix)
-create_report("246",c("246_90137","246_CH0015","246_CH0016"),suffix)
-create_report("380",c("380_120890B","380_120891B"),suffix)
-create_report("391",c("391_121030T","391_121031C","391_CH0073"),suffix)
-create_report("394",c("394_60638BD"),suffix)
-create_report("411",c("411_G0071AG","411_G0091AG"),suffix)
-create_report("412",c("412_120880N","412_120886B","412_120887D"),suffix)
-create_report("417",c("417_120882D"),suffix)
+family="241"
+samples=c("241_44845","241_52062","241_52063")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family = "246"
+samples = c("246_90137","246_CH0015","246_CH0016")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="380"
+samples=c("380_120890B","380_120891B")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="391"
+samples=c("391_121030T","391_121031C","391_CH0073")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="394"
+samples=c("394_60638BD")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="411"
+samples=c("411_G0071AG","411_G0091AG")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="412"
+samples=c("412_120880N","412_120886B","412_120887D")
+create_report(family,samples)
+merge_reports(family,samples)
+
+family="417"
+samples=c("417_120882D")
+create_report(family,samples)
+merge_reports(family,samples)
+
 
 
 
