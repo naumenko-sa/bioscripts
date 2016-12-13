@@ -24,4 +24,4 @@ unset PERL5LIB && export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/ana
 
 /home/naumenko/work/tools/bcbio/anaconda/bin/tabix -f -p vcf $bname.decompose.vepeffects.vcf.gz
 
-/home/naumenko/work/tools/bcbio/anaconda/bin/gemini load  --passonly --skip-cadd --skip-gerp-bp  -v $bname.decompose.vepeffects.vcf.gz -t VEP --cores 16 --tempdir . $bname.db
+/home/naumenko/work/tools/bcbio/anaconda/bin/gemini load  --passonly --skip-cadd --skip-gerp-bp  -v $bname.decompose.vepeffects.vcf.gz -t VEP --cores 1 --tempdir . $bname.db

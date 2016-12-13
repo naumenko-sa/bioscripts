@@ -11,5 +11,6 @@ cat $bname.vcf | sed s/"##FORMAT=<ID=AD,Number=."/"##FORMAT=<ID=AD,Number=R"/ > 
 vt decompose -s $bname.modified.vcf | vt normalize -r ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa - | vt uniq - > $bname.decomposed.vcf
 bgzip $bname.vcf
 bgzip $bname.decomposed.vcf
+tabix $bname.decomposed.vcf.gz
 rm $bname.modified.vcf
 

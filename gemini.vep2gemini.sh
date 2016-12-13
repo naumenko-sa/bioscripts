@@ -28,6 +28,14 @@ bname=`echo $vcf | sed s/.vcf.gz//`
 #/home/naumenko/work/tools/bcbio/anaconda/bin/tabix -f -p vcf $bname.decompose.vepeffects.vcf.gz
 
 #--skip-cadd if no cadd
+#remove GL chromosomes - sometimes they cause problems
+mv $vcf $bname.tmp.vcf.gz
+gunzip -c $bname.tmp.vcf.gz | grep "^#" > $bname.vcf
+gunzip -c $bname.tmp.vcf.gz | grep -v "^#" | grep -v "^GL00" >> $bname.vcf
+bgzip $bname.vcf
+tabix $bname.vcf.gz
+rm $bname.tmp.vcf.gz
+
 gemini load --passonly --skip-gerp-bp -v $vcf -t VEP --cores 16 --tempdir . $bname.db
 
 
