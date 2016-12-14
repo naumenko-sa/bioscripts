@@ -12,7 +12,7 @@
 #uses PASS variants only
 export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin:$PATH &&  \
    export RTG_JAVA_OPTS='-Xms750m' && export RTG_MEM=9100m && \
-   rtg vcfeval --threads 5 -b /hpf/largeprojects/ccmbio/naumenko/validation/NA12878-exome-eval/input/GiaB_v2_19.vcf.gz \
+   rtg vcfeval --threads 5 -b /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/validation/giab-NA12878/truth_small_variants.vcf.gz \
    --bed-regions $2 \
    -c $1 \
    -t /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rtg/GRCh37.sdf \
