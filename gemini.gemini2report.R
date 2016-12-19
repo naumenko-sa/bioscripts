@@ -444,8 +444,19 @@ library(plyr)
 
 reference_tables_path="~/Desktop/reference_tables"
 
-setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
+#Hernan samples
+setwd("/home/sergey/Desktop/project_muscular/muscle2/")
+family="muscle2"
+samples=c("Muscle2_filtered")
+create_report(family,samples)
 
+setwd("/home/sergey/Desktop/project_muscular/muscle5/")
+family="muscle5"
+samples=c("Muscle5_filtered")
+create_report(family,samples)
+
+#cheo 10 samples
+setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
 family="166"
 samples=c("166_3_5","166_4_10","166_4_8")
 create_report(family,samples)
@@ -497,5 +508,14 @@ create_report(family,samples)
 merge_reports(family,samples)
 
 
-
+#mutations for katie
+setwd("/home/sergey/Desktop/project_katie_csc_large")
+families=c("wG432_DMSO","wG432_LGK","wG440_DMSO","wG440_LGK","wG472_DMSO","wG472_LGK",
+           "wG481_DMSO","wG481_LGK","wG510_DMSO","wG510_LGK","wG511_DMSO","wG511_LGK",
+           "wG523_DMSO","wG523_LGK","wG564_DMSO","wG564_LGK")
+for (family in families)
+{
+  samples=c("gbm")
+  create_report(family,samples)
+}
 
