@@ -349,7 +349,8 @@ merge_reports = function(family,samples)
     
     for (i in 1:nrow(ensemble))
     {
-        if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
+        #if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
+        if(grepl("NA",ensemble[i,"Trio_coverage"]))
         {
             ensemble[i,"Depth"] = ensemble[i,"DP"]
             for (sample in samples)
@@ -385,7 +386,8 @@ merge_reports = function(family,samples)
     
     for (i in 1:nrow(ensemble))
     {
-      if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
+      if(grepl("NA",ensemble[i,"Trio_coverage"]))
+      #if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
       {
         ensemble[i,"Depth"] = ensemble[i,"TC"]
         for (sample in samples)
@@ -519,3 +521,16 @@ for (family in families)
   create_report(family,samples)
 }
 
+#V
+setwd("/home/sergey/Desktop/project_exomes/1_v/2016-12-19_new_report_decomposed/")
+family="bnu7823"
+samples=c("nu7823")
+create_report(family,samples)
+merge_reports(family,samples)
+
+#N
+setwd("/home/sergey/Desktop/project_exomes/2_n/2016-12-19_new_report_decomposed")
+family="b100940"
+samples=c("100940")
+create_report(family,samples)
+merge_reports(family,samples)
