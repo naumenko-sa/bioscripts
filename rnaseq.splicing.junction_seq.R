@@ -3,8 +3,9 @@
 library(QoRTs)
 
 #load data
-path="~/work/project_muscular/jseq_fibro5"
-setwd(path)
+#path="~/work/project_muscular/jseq_fibro5"
+#setwd(path)
+path=getwd()
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
 get.size.factors(res, outfile="sizeFactors.txt",sf.method = c("edgeR"))
@@ -37,7 +38,7 @@ lrt <- glmLRT(fit,coef=2)
 topTags(lrt)
 
 ensembl_w_description <- read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", stringsAsFactors=FALSE)
-top_tags = as.data.frame(topTags(lrt,n=1000))
+top_tags = as.data.frame(topTags(lrt,n=2000))
 top_tags = merge(top_tags,ensembl_w_description,by.x = "row.names",by.y="ensembl_gene_id",all.x=T)
 write.table(top_tags,"de_results.txt",quote=F,row.names=F,sep=";")
 
@@ -52,7 +53,7 @@ jscs <- runJunctionSeqAnalyses(
   sample.names = decoder$sample.ID,
   condition = decoder$group.ID,
   flat.gff.file = "withNovel.forJunctionSeq.gff.gz",
-  nCores = 1,
+  nCores = 10,
   verbose=TRUE,
   debug.mode = TRUE
 )
@@ -67,3 +68,5 @@ buildAllPlots(
   ma.plot = TRUE,
   rawCounts.plot=TRUE,
   verbose = TRUE)
+
+

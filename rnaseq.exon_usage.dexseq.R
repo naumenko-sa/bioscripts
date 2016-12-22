@@ -206,7 +206,7 @@ jscs <- runJunctionSeqAnalyses(
   sample.names = decoder$sample.ID,
   condition = decoder$group.ID,
   flat.gff.file = "withNovel.forJunctionSeq.gff.gz",
-  nCores = 1,
+  nCores = 3,
   verbose=TRUE,
   debug.mode = TRUE
 )
