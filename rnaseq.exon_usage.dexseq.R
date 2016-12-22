@@ -12,6 +12,8 @@ library(DEXSeq)
 library(GenomicRanges)
 library(IRanges)
 library(ggplot2)
+library(JunctionSeq)
+library(edgeR)
 
 init = function()
 {
@@ -90,7 +92,7 @@ text(x=1:125, y=-200, overlap[,1], cex=0.8, srt=90, xpd=TRUE)
 
 #125 in ryr1
 
-cnts = as.data.frame(counts(dxd,normalized=T)
+cnts = as.data.frame(counts(dxd,normalized=T))
 ggplot(as.data.frame(counts(dxd,normalized=T)[,c(1:2)]))
 
 axis(1,at=1:73,labels=overlap[,1],cex.axis=0.7)
@@ -149,3 +151,73 @@ plotDEXSeq( dxr2, genes[1], legend=TRUE, cex.axis=1.2, cex=1.3,
             lwd=2, displayTranscripts = T,
             expression = T, norCounts = F, names = T)
 
+
+#JunctionSeq
+#http://hartleys.github.io/JunctionSeq/doc/example-walkthrough.pdf
+library(QoRTs)
+
+#load data
+path="/home/sergey/Desktop/project_muscular/junction_seq_dmd"
+setwd(path)
+res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
+makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
+get.size.factors(res, outfile="sizeFactors.txt",sf.method = c("edgeR"))
+
+#gene expression analysis with edgeR
+suppressPackageStartupMessages(library(edgeR))
+decoder.bySample = read.table("decoder.txt",header=T,stringsAsFactors=F)
+#directory="countTables"
+files = paste0(decoder.bySample$unique.ID,"/QC.geneCounts.formatted.for.DESeq.txt.gz")
+
+countData <- lapply(files, function(f){
+  ct <- read.table(f,header=F,stringsAsFactors=F)$V2;
+  ct <- ct[1:(length(ct)-5)]
+})
+
+countMatrix <- do.call(cbind.data.frame,countData)
+colnames(countMatrix) <- decoder.bySample$unique.ID
+rownames(countMatrix) <- read.table(files[1],header=F,
+                                    stringsAsFactors=F)$V1[1:nrow(countMatrix)]
+group=factor(decoder.bySample$group.ID)
+
+design <- model.matrix(~group)
+y <- DGEList(counts = countMatrix, group = group);
+y <- calcNormFactors(y)
+y <- estimateGLMCommonDisp(y,design)
+y <- estimateGLMTrendedDisp(y,design)
+y <- estimateGLMTagwiseDisp(y,design)
+fit <- glmFit(y,design)
+lrt <- glmLRT(fit,coef=2)
+topTags(lrt)
+
+ensembl_w_description <- read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", stringsAsFactors=FALSE)
+top_tags = as.data.frame(topTags(lrt,n=200))
+top_tags = merge(top_tags,ensembl_w_description,by.x = "row.names",by.y="ensembl_gene_id",all.x=T)
+write.table(top_tags,"de_results.txt",quote=F,row.names=F,sep=";")
+
+#differential splicing analysis
+#first run : rnaseq.qorts.merge_novel_splices.sh
+library(JunctionSeq)
+decoder <- read.table("decoder.txt", header=T,stringsAsFactors=F)
+countFiles <- paste0(decoder$sample.ID, "/QC.spliceJunctionAndExonCounts.withNovel.forJunctionSeq.txt.gz")
+#long step - 1h
+jscs <- runJunctionSeqAnalyses(
+  sample.files = countFiles,
+  sample.names = decoder$sample.ID,
+  condition = decoder$group.ID,
+  flat.gff.file = "withNovel.forJunctionSeq.gff.gz",
+  nCores = 1,
+  verbose=TRUE,
+  debug.mode = TRUE
+)
+
+writeCompleteResults(jscs,outfile.prefix="results",save.jscs = T)
+
+buildAllPlots(
+  jscs=jscs,
+  FDR.threshold = 0.01,
+  outfile.prefix = "results",
+  variance.plot = TRUE,
+  ma.plot = TRUE,
+  rawCounts.plot=TRUE,
+  verbose = TRUE)

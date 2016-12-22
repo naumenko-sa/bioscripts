@@ -8,7 +8,7 @@
 java -Xmx10g -jar ~/work/tools/bin/QoRTs.jar \
     mergeNovelSplices \
     --minCount 6 \
-    outputData/countTables/ \
-    outputData/sizeFactors.GEO.txt \
-    inputData/annoFiles/anno.gtf.gz \
-    outputData/countTables/
+    `pwd` \
+    decoder.txt \
+    ref-transcripts.gtf \
+    `pwd` 
