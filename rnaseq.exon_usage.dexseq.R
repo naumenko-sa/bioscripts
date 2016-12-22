@@ -157,7 +157,7 @@ plotDEXSeq( dxr2, genes[1], legend=TRUE, cex.axis=1.2, cex=1.3,
 library(QoRTs)
 
 #load data
-path="/home/sergey/Desktop/project_muscular/junction_seq_muscle5"
+path="/home/sergey/Desktop/project_muscular/jseq_muscle2"
 setwd(path)
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
@@ -191,7 +191,7 @@ lrt <- glmLRT(fit,coef=2)
 topTags(lrt)
 
 ensembl_w_description <- read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", stringsAsFactors=FALSE)
-top_tags = as.data.frame(topTags(lrt,n=200))
+top_tags = as.data.frame(topTags(lrt,n=2000))
 top_tags = merge(top_tags,ensembl_w_description,by.x = "row.names",by.y="ensembl_gene_id",all.x=T)
 write.table(top_tags,"de_results.txt",quote=F,row.names=F,sep=";")
 
@@ -200,7 +200,7 @@ write.table(top_tags,"de_results.txt",quote=F,row.names=F,sep=";")
 library(JunctionSeq)
 decoder <- read.table("decoder.txt", header=T,stringsAsFactors=F)
 countFiles <- paste0(decoder$sample.ID, "/QC.spliceJunctionAndExonCounts.withNovel.forJunctionSeq.txt.gz")
-#long step - 1h
+#long step - 1h-3h
 jscs <- runJunctionSeqAnalyses(
   sample.files = countFiles,
   sample.names = decoder$sample.ID,
@@ -221,3 +221,5 @@ buildAllPlots(
   ma.plot = TRUE,
   rawCounts.plot=TRUE,
   verbose = TRUE)
+
+buildAllPlotsForGene(geneID = "ENSG00000196569",jscs=jscs)

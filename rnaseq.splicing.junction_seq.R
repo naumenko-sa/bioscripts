@@ -3,7 +3,7 @@
 library(QoRTs)
 
 #load data
-path="/home/sergey/Desktop/project_muscular/junction_seq_muscle5"
+path="~/work/project_muscular/jseq_fibro5"
 setwd(path)
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
