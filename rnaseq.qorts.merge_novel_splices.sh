@@ -7,7 +7,7 @@
 
 java -Xmx10g -jar ~/work/tools/bin/QoRTs.jar \
     mergeNovelSplices \
-    --minCount 6 \
+    --minCount 1 \
     `pwd` \
     decoder.txt \
     ref-transcripts.gtf \

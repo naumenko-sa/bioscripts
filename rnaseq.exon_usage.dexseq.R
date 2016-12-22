@@ -157,7 +157,7 @@ plotDEXSeq( dxr2, genes[1], legend=TRUE, cex.axis=1.2, cex=1.3,
 library(QoRTs)
 
 #load data
-path="/home/sergey/Desktop/project_muscular/junction_seq_dmd"
+path="/home/sergey/Desktop/project_muscular/junction_seq_muscle5"
 setwd(path)
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
