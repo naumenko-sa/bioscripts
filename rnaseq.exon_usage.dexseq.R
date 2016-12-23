@@ -157,7 +157,7 @@ plotDEXSeq( dxr2, genes[1], legend=TRUE, cex.axis=1.2, cex=1.3,
 library(QoRTs)
 
 #load data
-path="/home/sergey/Desktop/project_muscular/jseq_muscle2"
+path="/home/sergey/Desktop/project_muscular/junction_seq_dmd_threshold6/"
 setwd(path)
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
@@ -181,7 +181,7 @@ rownames(countMatrix) <- read.table(files[1],header=F,
 group=factor(decoder.bySample$group.ID)
 
 design <- model.matrix(~group)
-y <- DGEList(counts = countMatrix, group = group);
+y <- DGEList(counts = countMatrix, group = group, remove.zeros =T );
 y <- calcNormFactors(y)
 y <- estimateGLMCommonDisp(y,design)
 y <- estimateGLMTrendedDisp(y,design)
@@ -206,7 +206,7 @@ jscs <- runJunctionSeqAnalyses(
   sample.names = decoder$sample.ID,
   condition = decoder$group.ID,
   flat.gff.file = "withNovel.forJunctionSeq.gff.gz",
-  nCores = 3,
+  nCores = 1,
   verbose=TRUE,
   debug.mode = TRUE
 )
@@ -219,7 +219,11 @@ buildAllPlots(
   outfile.prefix = "results",
   variance.plot = TRUE,
   ma.plot = TRUE,
-  rawCounts.plot=TRUE,
+  rawCounts.plot=F,
+  without.TX = F,
+  expr.plot = T,
+  normCounts.plot = F,
+  plot.novel.junction.results = T,
   verbose = TRUE)
 
 buildAllPlotsForGene(geneID = "ENSG00000196569",jscs=jscs)
