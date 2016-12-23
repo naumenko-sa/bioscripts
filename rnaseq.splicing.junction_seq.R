@@ -28,7 +28,7 @@ rownames(countMatrix) <- read.table(files[1],header=F,
 group=factor(decoder.bySample$group.ID)
 
 design <- model.matrix(~group)
-y <- DGEList(counts = countMatrix, group = group);
+y <- DGEList(counts = countMatrix, group = group, remove.zeros = T);
 y <- calcNormFactors(y)
 y <- estimateGLMCommonDisp(y,design)
 y <- estimateGLMTrendedDisp(y,design)
