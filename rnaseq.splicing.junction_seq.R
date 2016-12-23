@@ -53,7 +53,7 @@ jscs <- runJunctionSeqAnalyses(
   sample.names = decoder$sample.ID,
   condition = decoder$group.ID,
   flat.gff.file = "withNovel.forJunctionSeq.gff.gz",
-  nCores = 10,
+  nCores = 1,
   verbose=TRUE,
   debug.mode = TRUE
 )
@@ -66,7 +66,11 @@ buildAllPlots(
   outfile.prefix = "results",
   variance.plot = TRUE,
   ma.plot = TRUE,
-  rawCounts.plot=TRUE,
+  rawCounts.plot=F,
+  without.TX = F,
+  expr.plot = F,
+  normCounts.plot = T,
+  plot.novel.junction.results = T,
   verbose = TRUE)
 
 
