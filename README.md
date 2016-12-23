@@ -12,7 +12,10 @@
 
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
-* rnaseq.qorts.qc.sh - calculate counts from bam file
+* rnaseq.qorts.qc.sh - calculate counts from bam file, discovers junctions
+* rnaseq.qorts.merge_novel_splices.sh - merges junctions from all samples
+* rnaseq.splicing.junction_seq.R - runs junction seq analysis in R
+* rnaseq.splicing.junction_seq.sh - runs R script in the queue
 
 # Variant analysis
 
@@ -27,4 +30,3 @@
 * gemini.vep2gemini.sh - load VEP annotated vcf to the GEMINI database
 * gemini.gemini2txt.sh - dump a gemini database into txt file with decompressed genotypes
 * gemini.gemini2report.R  - create a nice report for import to excel from the gemini.txt dump
-
