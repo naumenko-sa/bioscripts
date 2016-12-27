@@ -30,3 +30,9 @@
 * gemini.vep2gemini.sh - load VEP annotated vcf to the GEMINI database
 * gemini.gemini2txt.sh - dump a gemini database into txt file with decompressed genotypes
 * gemini.gemini2report.R  - create a nice report for import to excel from the gemini.txt dump
+
+# By project
+
+## CHEO
+
+* cheo.check_if_done.sh [bcbio.output]
