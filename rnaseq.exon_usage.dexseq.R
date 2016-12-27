@@ -159,6 +159,7 @@ library(QoRTs)
 #load data
 path="/home/sergey/Desktop/project_muscular/junction_seq_dmd_threshold6/"
 setwd(path)
+
 res = read.qc.results.data("",decoder.files="decoder.txt", calc.DESeq2 = F, calc.edgeR = T)
 makeMultiPlot.all(res,outfile.dir = path,plot.device.name="pdf")
 get.size.factors(res, outfile="sizeFactors.txt",sf.method = c("edgeR"))
@@ -221,8 +222,8 @@ buildAllPlots(
   ma.plot = TRUE,
   rawCounts.plot=F,
   without.TX = F,
-  expr.plot = T,
-  normCounts.plot = F,
+  expr.plot = F,
+  normCounts.plot = T,
   plot.novel.junction.results = T,
   verbose = TRUE)
 

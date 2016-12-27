@@ -119,7 +119,7 @@ create_report = function(family,samples)
     #family="NA12878-1"
     #samples=c("NA12878.1")
   
-    file=paste0(family,"-ensemble.decomposed.db.txt")
+    file=paste0(family,"-ensemble.db.txt")
   
     variants = get_variants_from_file(file)
 
@@ -317,13 +317,14 @@ merge_reports = function(family,samples)
     
     for(sample in samples)
     {
+        #R fixes numerical column names with X
         column = paste0("X",sample,".DP")
         if (n_sample>1) prefix="/"
         ensemble$Trio_coverage = with(ensemble,paste0(Trio_coverage,prefix,get(column)))
       
         column = paste0("Alt_depths.",sample)
         column_gatk = paste0("X",sample,".AD")
-      
+        
         ensemble[,column] = ensemble[,column_gatk]
       
         n_sample = n_sample+1
@@ -340,6 +341,7 @@ merge_reports = function(family,samples)
     }
     
     ensemble[c("DP",paste0("X",samples,".DP"),paste0("X",samples,".AD"))]=NULL
+    #ensemble[c("DP",paste0(samples,".DP"),paste0(samples,".AD"))]=NULL
     
     freebayes_file = paste0(family,"-freebayes.decomposed.table")
     freebayes = read.delim(freebayes_file, stringsAsFactors=F)
@@ -357,6 +359,7 @@ merge_reports = function(family,samples)
             {
                 field_depth = paste0("Alt_depths.",sample)
                 field_bayes = paste0("X",sample,".AO")
+                #field_bayes = paste0(sample,".AO")
                       
                 ensemble[i,field_depth] = ensemble[i,field_bayes]
         
@@ -418,6 +421,7 @@ merge_reports = function(family,samples)
     
     
     ensemble[c("TC",paste0("X",samples,".NV"),paste0("X",samples,".NR"))]=NULL
+    #ensemble[c("TC",paste0(samples,".NV"),paste0(samples,".NR"))]=NULL
     ensemble[,"Trio_coverage"] = with(ensemble,gsub("NA","0",get("Trio_coverage"),fixed=T))  
    
     for (i in 1:nrow(ensemble))
@@ -534,3 +538,16 @@ family="b100940"
 samples=c("100940")
 create_report(family,samples)
 merge_reports(family,samples)
+
+# R substituts - with . in sample names in columns
+setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families")
+families <- unlist(read.table("families_ready.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+
+for (family in families)
+{
+    setwd(family)
+    samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+    create_report(family,samples)
+    merge_reports(family,samples)
+    setwd("..")
+}
