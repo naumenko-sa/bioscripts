@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+
  
 if ("--help" in sys.argv) or ("-?" in sys.argv):
     sys.stderr.write("usage: fasta-to-nexus.py [<fasta-file-path>] [<nexus-file-path>]\n")
@@ -19,17 +20,23 @@ if len(sys.argv) < 3:
 else:
     dest_fpath = os.path.expanduser(os.path.expandvars(sys.argv[2]))
     dest = open(dest_fpath, "w")
- 
+
+
+def writeln(*lines):
+    dest.write("\n".join(lines))
+    dest.write("\n")
+
+
 seqs = {}
 cur_seq = None
 lines = src.readlines()
 for i in lines:
-    i = i.replace("\n", "").replace("\r", "")
+    i = i.rstrip("\n\r")  # Strip "\n" and/or "\r" characters from the end.
     if i:
         if i.startswith(">"):
             label = i[1:]
-            seqs[label] = []
-            cur_seq = seqs[label]
+            cur_seq = []
+            seqs[label] = cur_seq
         else:
             if cur_seq is None:
                 raise Exception("Sequence data found before label")
@@ -38,22 +45,22 @@ for i in lines:
 taxlabels = seqs.keys()
 taxlabels.sort()
  
-dest.write("#NEXUS\n\n")
- 
-dest.write("Begin Taxa;\n")
-dest.write("  dimensions ntax=%d;\n" % len(seqs))
-dest.write("  taxlabels\n")
+writeln("#NEXUS",
+        "",
+        "Begin Taxa;",
+        "  dimensions ntax=%d;" % len(seqs),
+        "  taxlabels")
 for taxlabel in taxlabels:
-    dest.write("    %s\n" % taxlabel)
-dest.write("  ;\n")
-dest.write("End;\n\n")
- 
-nchar = max([len(s) for s in seqs.values()])
-dest.write("Begin Characters;\n")
-dest.write("   dimensions nchar=%d;\n" % nchar)
-dest.write("   format datatype=dna missing=? gap=-;\n")
-dest.write("   matrix\n")
+    writeln("    %s" % taxlabel)
+writeln("  ;",
+        "End;",
+        "")
+nchar = max(len(s) for s in seqs.values())
+writeln("Begin Characters;",
+        "  dimensions nchar=%d;" % nchar,
+        "  format datatype=dna missing=? gap=-;",
+        "  matrix")
 for taxlabel in taxlabels:
-    dest.write("    %s      %s\n" % (taxlabel, "".join(seqs[taxlabel])))
-dest.write("  ;\n")
-dest.write("end;\n")
+    writeln("    %s      %s" % (taxlabel, "".join(seqs[taxlabel])))
+writeln("  ;",
+        "end;")
