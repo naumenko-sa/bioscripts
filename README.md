@@ -2,7 +2,7 @@
 
 # RNA-seq
 
-## rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
+* rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
 
 ### Differential expression
 
@@ -35,4 +35,4 @@
 
 ## CHEO
 
-* cheo.check_if_done.sh [bcbio.output]
+* cheo.check_if_done.sh [bcbio_job.output]
