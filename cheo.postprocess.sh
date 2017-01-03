@@ -44,5 +44,5 @@ function prepare_for_report
     cd ..
 }
 
-#cleanup
+cleanup
 prepare_for_report

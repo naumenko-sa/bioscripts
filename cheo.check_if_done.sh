@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if grep -q "END:" $1;
+#list successfully finished bcbio runs only with family name
+
+if grep -q "Timing: finished" $1;
 then
-    echo $1 "done"
-fi 
+    echo $1 `cat $1 | sed -n 3p | awk -F '/' '{print $8}'`
+fi

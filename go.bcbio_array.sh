@@ -5,6 +5,8 @@
 #PBS -d .
 #PBS -l vmem=50g,mem=50g
 
+#13T on the peak with throttle of 100
+
 echo "START: " `date`;
 
 module load java/1.8.0_91
