@@ -69,6 +69,11 @@ calc_de = function(all_counts,samples,prefix,filter)
     
     #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
+  
+    #all_counts = counts
+    #samples = c("G432","G511", "G472","G523", 
+    #            "G440","G481", "G510","G564")
+    
     
     #samples=samples.523.3points
     #prefix="523.3points_nob_cpm1"
@@ -84,7 +89,7 @@ calc_de = function(all_counts,samples,prefix,filter)
 
     plotMDS(y)
     #filter - 1 or 0.5
-    #filter=0.5
+    #filter=1
     keep=rowSums(cpm(y)>filter) >= n_samples/2
     y=y[keep,,keep.lib.sizes=F]
 
@@ -118,7 +123,9 @@ calc_de = function(all_counts,samples,prefix,filter)
 #nc=cpm(y,normalized.lib.sizes=F)
 #write.table(nc,"filtered.normalized_counts.txt",col.names=NA)
 
+    png(paste0(prefix,".png"))
     plotMDS(y,las=1)
+    dev.off()
 
     design=model.matrix(~group)
 
@@ -146,7 +153,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
     de_results = de_results[order(de_results$PValue),]
     rownames(de_results) = s_rownames
-
+    
     result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=F,sep=';')
 
@@ -354,6 +361,30 @@ init = function()
 
   all_counts=read.delim("combined.counts",row.names="id")
 
+}
+
+test8samples = function()
+{
+    counts = read.delim("wG432_DMSO.txt", stringsAsFactors=F, row.names=1)
+    #all samples but 1
+    samples = read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=F)
+    for (sample in unlist(samples))
+    {
+        temp = read.delim(paste0(sample,".txt"), quote="\"", 
+                          comment.char="",stringsAsFactors=F, row.names=1)
+        counts = merge(counts,temp,by.x="row.names",by.y="row.names")
+        row.names(counts)=counts$Row.names
+        counts$Row.names=NULL
+    }
+    
+    samples = c("G432","G511", "G472","G523", 
+                "G440","G481", "G510","G564")
+    
+    samples = c("G511", "G472","G523", 
+                "G440", "G510","G564")
+    prefix = "DMSO_6lines"
+    all_counts=read.csv("DMSO_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    calc_de(all_counts,samples,prefix,1)
 }
 
 samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",

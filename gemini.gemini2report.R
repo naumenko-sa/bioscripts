@@ -539,7 +539,7 @@ samples=c("100940")
 create_report(family,samples)
 merge_reports(family,samples)
 
-# R substituts - with . in sample names in columns
+# R substitutes - with . in sample names in columns
 setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families")
 families <- unlist(read.table("families_ready.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 

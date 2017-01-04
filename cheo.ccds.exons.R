@@ -68,6 +68,17 @@ get_exon_coordinates = function()
   write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+get_gene_coordinate = function()
+{
+    #gene_name = "DMD"
+    muscular_genes <- read.table("~/Desktop/project_muscular/muscular_genes_uniq.txt", quote="\"", comment.char="", stringsAsFactors=FALSE)
+    genes=getBM(
+      attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
+      filters=c('external_gene_name'),
+      values=muscular_genes,mart=grch37)
+    write.table(genes[c(2:5)],"muscular_genes_coord.bed",sep="\t",quote=F,row.names=F,col.names=F)    
+}
+
 #exon coordinates given ENS ids
 get_omim_orphanet_exon_coordinates = function()
 { 
