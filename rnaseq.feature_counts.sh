@@ -13,12 +13,12 @@ fi
 
 featureCounts  \
 	-T 8 \ #threads
-	-F GTF 
-	-t exon 
-	-g gene_id 
+	-F GTF \
+	-t exon \
+	-g gene_id \ 
 	-s 0 
 	-C \
 	--largestOverlap \
 	-a /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.gtf \
-	-o $1.counts.txt \
-	$1
+	-o $bam.counts.txt \
+	$bam
