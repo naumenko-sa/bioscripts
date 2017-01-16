@@ -451,14 +451,14 @@ library(plyr)
 reference_tables_path="~/Desktop/reference_tables"
 
 #Hernan samples
-setwd("/home/sergey/Desktop/project_muscular/muscle2/")
+setwd("/home/sergey/Desktop/project_muscular/Muscle2/")
 family="muscle2"
 samples=c("Muscle2_filtered")
 create_report(family,samples)
 
-setwd("/home/sergey/Desktop/project_muscular/muscle5/")
-family="muscle5"
-samples=c("Muscle5_filtered")
+setwd("/home/sergey/Desktop/project_muscular/DMD/")
+family="dmd"
+samples=c("DMD")
 create_report(family,samples)
 
 #cheo 10 samples
@@ -539,6 +539,13 @@ samples=c("100940")
 create_report(family,samples)
 merge_reports(family,samples)
 
+#mh
+setwd("/home/sergey/Desktop/project_mh/B175/")
+family="B175"
+samples = c("1130-BD-B175","2064-BA-B175")
+create_report(family,samples)
+merge_reports(family,samples)
+
 # R substitutes - with . in sample names in columns
 setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families")
 families <- unlist(read.table("families_ready.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
@@ -547,6 +554,7 @@ for (family in families)
 {
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+    samples = gsub("-",".",samples)
     create_report(family,samples)
     merge_reports(family,samples)
     setwd("..")

@@ -387,6 +387,27 @@ test8samples = function()
     calc_de(all_counts,samples,prefix,1)
 }
 
+test_lgk_dmso = function()
+{
+    setwd("~/Desktop/project_katie_csc/DMSO_LGK_expression/")
+    counts_lgk = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    counts_dmso = read.csv("DMSO_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    counts = merge(counts_lgk,counts_dmso,by.x="row.names",by.y="row.names")
+    
+    row.names(counts)=counts[,1]
+    counts$Row.names = NULL
+    write.table(counts,"counts.txt",quote=F)
+    
+    samples = c("G432_lgk","G511_lgk", "G472_lgk","G523_lgk", 
+                "G440_lgk","G481_lgk", "G510_lgk","G564_lgk",
+                "G432_dmso","G511_dmso", "G472_dmso","G523_dmso", 
+                "G440_dmso","G481_dmso", "G510_dmso","G564_dmso")
+    
+    prefix = "8lines"
+    
+    calc_de(counts,samples,prefix,1)
+}
+
 samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
           "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
           "SG511_ven_hi_4_13","SG511_ven_hi_4_27",

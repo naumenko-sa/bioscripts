@@ -148,4 +148,31 @@ dispersion=0.04
 
 write.table(merge(work_counts,lrt$table,by="row.names"),"muscle1_vs_1130_panel.txt",col.names=NA,quote=F)  
 
+expression_sample5 = function()
+{
+    setwd("counts/muscular_filtered/")
+    counts = read.delim("muscle5.filtered.counts", stringsAsFactors=F, row.names=1)
+    #all samples but 1
+    samples = read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=F)
+    for (sample in unlist(samples))
+    {
+        temp = read.delim(paste0(sample,".filtered.counts"), quote="\"",stringsAsFactors=F, row.names=1)
+        temp$symbol=NULL
+        counts = merge(counts,temp,by.x="row.names",by.y="row.names")
+        row.names(counts)=counts$Row.names
+        counts$Row.names=NULL
+    }
+    samples = c("Muscle5_filtered","Fibroblast5_filtered","Myotubes5_filtered")
+    counts = counts[c(samples,"symbol")]
+    write.table(counts,"sample5.txt",quote=F)
+    
+    sample5 <- read.csv("sample5.txt", row.names=1, sep="", stringsAsFactors=F)
+    
+    x=sample5[samples]
+    group = factor(c(1,1,1))
+    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
+    plotMDS(y)
+    #generate counts in the other way
+    rpkm(y,)
+}
 
