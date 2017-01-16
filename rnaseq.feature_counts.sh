@@ -5,20 +5,14 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-if [ -z bam ];
+if [ -z $bam ]
 then
     bam=$1
 fi
-    
 
-featureCounts  \
-	-T 8 \ #threads
-	-F GTF \
-	-t exon \
-	-g gene_id \ 
-	-s 0 
+featureCounts -T 8 \
+	-g gene_id \
 	-C \
 	--largestOverlap \
 	-a /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.gtf \
-	-o $bam.counts.txt \
-	$bam
+	-o $bam.counts.txt $bam
