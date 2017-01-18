@@ -148,31 +148,169 @@ dispersion=0.04
 
 write.table(merge(work_counts,lrt$table,by="row.names"),"muscle1_vs_1130_panel.txt",col.names=NA,quote=F)  
 
-expression_sample5 = function()
+expression_unfiltered = function()
 {
-    setwd("counts/muscular_filtered/")
-    counts = read.delim("muscle5.filtered.counts", stringsAsFactors=F, row.names=1)
+    setwd("~/Desktop/project_muscular/counts/muscular_unfiltered/")
+    annotated_combined <- read.delim("~/Desktop/project_muscular/counts/muscular_unfiltered/annotated_combined.counts", row.names=1, stringsAsFactors=FALSE)
+    all_genes_lengths <- read.delim("~/Desktop/project_muscular/counts/muscular_unfiltered/all_genes_lengths", row.names=1, stringsAsFactors=FALSE)
+    
+    samples = c("myotubes5","fibroblast5")  
+    counts = annotated_combined[,samples]
+
+    counts = merge(counts,all_genes_lengths,by.x="row.names",by.y="row.names")   
+    row.names(counts)=counts$Row.names
+    counts$Row.names = NULL
+    
+    x=counts[samples]
+    group = factor(c(1,1))
+    y=DGEList(counts=x,group=group,remove.zeros = F)
+    plotMDS(y)
+    #generate counts in the other way
+    rpkms = rpkm(y,counts$Length)
+    
+    rpkms = merge(rpkms,ensembl_w_description,by.x="row.names",by.y="row.names")
+    row.names(rpkms)=rpkms$Row.names
+    rpkms$Row.names=NULL
+    
+    congenital_myopathy = c("ACTA1","TPM3", "TPM2", "TNNT1", "NEB", "LMOD3", "KBTBD13", "CFL2", 
+                            "KLHL40", "KLHL41", "MYO18B", "RYR1", "CACNAS1", "STAC3", "ORAI1", 
+                            "SITM1", "SEPN1", "CCDC78", "BIN1", "DNM2", "MTM1", "MTMR14", 
+                            "SPEG", "PTPLA", "TTN", "MYH7", "MYH2", "CNTN1", "MEGF10","ZAK")
+    
+    panel.rpkm = rpkms[rpkms$external_gene_name %in% congenital_myopathy,]
+    row.names(panel.rpkm) = panel.rpkm$external_gene_name
+    panel.rpkm$external_gene_name=NULL
+    panel.rpkm$Gene_description=NULL
+    
+    png("congenital_myopaties.png",res=100,width=1000)
+    pheatmap(panel.rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+             display_number =T,cluster_rows=T, cluster_cols=T,
+             main="Congenital myopaties, RPKM/2, unfiltered",breaks = c(0,10,50,100,500,1000,5000,10000,15000),
+             colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(8))
+    dev.off()
+}
+expression_rpkm_sample5 = function()
+{
+    setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
+    
+    counts = read.delim("muscle5.rpkm.counts.txt", stringsAsFactors=F, row.names=1)
+    counts$Chr=NULL
+    counts$Start=NULL
+    counts$End=NULL
+    counts$Strand=NULL
+    
     #all samples but 1
     samples = read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=F)
     for (sample in unlist(samples))
     {
-        temp = read.delim(paste0(sample,".filtered.counts"), quote="\"",stringsAsFactors=F, row.names=1)
-        temp$symbol=NULL
+        temp = read.delim(paste0(sample,".rpkm.counts.txt"), quote="\"",stringsAsFactors=F, row.names=1)
+        temp$Chr=NULL
+        temp$Start=NULL
+        temp$End=NULL
+        temp$Strand=NULL
+        temp$Length=NULL
+        
         counts = merge(counts,temp,by.x="row.names",by.y="row.names")
         row.names(counts)=counts$Row.names
         counts$Row.names=NULL
     }
-    samples = c("Muscle5_filtered","Fibroblast5_filtered","Myotubes5_filtered")
-    counts = counts[c(samples,"symbol")]
-    write.table(counts,"sample5.txt",quote=F)
+    samples = c("Muscle5","Fibroblast5","Myotubes5")
+    #counts = counts[c(samples,"symbol")]
+    
+    ensembl_w_description <- read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", row.names=1, stringsAsFactors=FALSE)
+    counts = merge(counts,ensembl_w_description,by.x="row.names",by.y="row.names")
+    row.names(counts)=counts$Row.names
+    counts$Row.names=NULL
+    
+    counts=subset(counts,Muscle5 !=0 & Fibroblast5 !=0 & Myotubes5!=0)
+    counts$Gene_description = NULL
+    
+    write.table(counts,"sample5.txt",quote=F,sep = "\t")
     
     sample5 <- read.csv("sample5.txt", row.names=1, sep="", stringsAsFactors=F)
     
     x=sample5[samples]
     group = factor(c(1,1,1))
-    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
+    y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = F)
     plotMDS(y)
     #generate counts in the other way
-    rpkm(y,)
+    rpkms = rpkm(y,sample5$Length)
+    
+    rpkms = merge(rpkms,ensembl_w_description,by.x="row.names",by.y="row.names")
+    row.names(rpkms)=rpkms$Row.names
+    rpkms$Row.names=NULL
+    rpkms$Gene_description=NULL
+    
+    write.table(rpkms,"sample5.rpkms.txt",quote=F,sep = "\t")
+    
+    rpkms <- read.delim("~/Desktop/project_muscular/counts/muscular_filtered/sample5.rpkms.txt", stringsAsFactors=FALSE)
+    
+    MuscleGeneRPKM <- read.csv("~/Desktop/project_muscular/counts/muscular_filtered/MuscleGeneRPKM.txt", sep="", stringsAsFactors = F)
+    
+    congenital_myopathy = c("ACTA1","TPM3", "TPM2", "TNNT1", "NEB", "LMOD3", "KBTBD13", "CFL2", 
+                            "KLHL40", "KLHL41", "MYO18B", "RYR1", "CACNAS1", "STAC3", "ORAI1", 
+                            "SITM1", "SEPN1", "CCDC78", "BIN1", "DNM2", "MTM1", "MTMR14", 
+                            "SPEG", "PTPLA", "TTN", "MYH7", "MYH2", "CNTN1", "MEGF10","ZAK")
+    breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,500,1000,2000,3000,4000)
+    plot_panel(congenital_myopathy, rpkms, MuscleGeneRPKM, "congenital_myopaties",breaks)
+    
+    congenital_myastenic_syndromes = c("CHRNA1", "CHRNB1", "CHRND", "CHRNE", "CHRNA1", "RAPSN", "CHAT", "COLQ", "MUSK", "DOK7", 
+                                       "AGRN", "GFPT1", "DAPGT1", "LAMB2", "SCN4A", "CHRNG", "PLEC", "ALG2", "ALG14", "SYT2", "PREPL")
+    breaks = c(0,5,10,50,100,200)
+    plot_panel(congenital_myastenic_syndromes, rpkms, MuscleGeneRPKM, "congenital_myastenic_syndromes",breaks)
+    
+    channelopathies = c("DMPK", "ZNF9", "CAV3", "HSPG2", "SERCA1", "CLCN1", "SCN4A", "CACNA1S", "CACNA1A", "KCNE3", "KCNA1", "KCNJ18")
+    breaks = c(0,5,10,50)
+    plot_panel(channelopathies, rpkms, MuscleGeneRPKM, "channelopathies",breaks)
+    
+    vacuolar_and_others = c("LAMP2", "VMA21", "CLN3", "PABPN1", "TTN", "PEC1", "GDF8", "ACVR1", "CAV3", "FHL1", "ICSU") 
+    breaks = c(0,5,10,50,100,500,1000,1500)
+    plot_panel(vacuolar_and_others, rpkms, MuscleGeneRPKM, "vacoular_and_others",breaks)
+    
+    distal_myopathies=c("DYSF", "TTN", "GNE", "MYH7", "MATR3", "TIA1", "MYOT", "NEB", "LDB3", "ANO5", "KLHL9", "DNM2", "FLNC", 
+                        "VCP", "CRYAB", "DES", "SPEN1", "LDB3", "FLNC", "BAG3", "TRIM63", "TRIM54")
+    breaks = c(0,5,10,50,100,500,1000,2000,5000,5200)
+    plot_panel(distal_myopathies, rpkms, MuscleGeneRPKM, "distal_myopathies",breaks)
+    
+    congenital_muscular_dystrophies=c("LAMA2", "COL6A1", "COL6A2", "COL6A3", 
+                                      "SPEN1", "FHL1", "ITGA7", "DNM2","TCAP", "LMNA", "FKTN", 
+                                      "POMT1", "POMT2", "FKRP", "POMGNT1", "ISPD", "GTDC2", "B3GNT1", 
+                                      "POMGNT1", "GMPPB", "LARGE", "DPM1", "DPM2", "ALG13", "B3GALNT2", 
+                                      "TMEM5",  "POMK", "CHKB", "ACTA1", "TRAPPC11")
+    breaks = c(0,5,10,50,100,500,1000,2000,5000,10000,15000)
+    plot_panel(congenital_muscular_dystrophies, rpkms, MuscleGeneRPKM, "congenital_muscular_dystrophies",breaks)
+    
+    limb_girdle = c("MYOT", "LMNA", "CAV3", "DNAJB6", "DES", "TNPO3", "HNRPDL","CAPN3", "DYSF", 
+                    "SGCG", "SGCA", "SGCB", "SGCD", "TCAP", "TRIM32", "FKRP", "TTN", "POMT1", "ANO5",
+                    "FKTN", "POMT2", "POMGNT1", "PLEC", "DAG1", "TRAPPC11", "GMPPB", "DPM3", "ISPD", "VCP", "LIMS2", "PLEC1", "GAA")
+    breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,500,1000,1400)
+    #2000,5000,5200)
+    plot_panel(limb_girdle, rpkms, MuscleGeneRPKM, "Limb_girdle_dystrophies",breaks)
+  
+    
+    muscular_dystrophies= c("DMD", "EMD", "FHL1", "LMNA", "SYNE1", "SYNE2", "TMEM43", "TOR1AIP1","DUX4", "SMCHD1", "PTRF")
+    breaks = c(0,5,10,50,100,500,1000)
+    plot_panel(muscular_dystrophies, rpkms, MuscleGeneRPKM, "Muscular_dystrophies",breaks)
+}
+
+plot_panel= function(gene_panel, rpkms, MuscleGeneRPKM, title,breaks)
+{
+  
+    panel.rpkm = rpkms[rpkms$external_gene_name %in% gene_panel,]
+    gtex.rpkm = MuscleGeneRPKM[MuscleGeneRPKM$gene_name %in% gene_panel,]
+    
+    all.rpkm = merge(panel.rpkm,gtex.rpkm,by.x='external_gene_name',by.y='gene_name')
+    row.names(all.rpkm) = all.rpkm$external_gene_name
+    all.rpkm$external_gene_name=NULL
+    
+    library(pheatmap)
+    library(RColorBrewer)
+    png(paste0(title,".png"),res=100,width=500)
+    pheatmap(all.rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+             display_number =T,cluster_rows=T, cluster_cols=T,
+             main=paste0(title," RPKM"),
+             breaks=breaks,
+             colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
+    dev.off()
 }
 

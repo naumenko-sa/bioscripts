@@ -5,6 +5,9 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
+
+#calculate features (reads) for RPKM calculation with length of the genes
+
 if [ -z $bam ]
 then
     bam=$1
