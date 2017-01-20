@@ -451,9 +451,9 @@ library(plyr)
 reference_tables_path="~/Desktop/reference_tables"
 
 #Hernan samples
-setwd("/home/sergey/Desktop/project_muscular/Muscle2/")
-family="muscle2"
-samples=c("Muscle2_filtered")
+setwd("/home/sergey/Desktop/project_muscular/Fibroblast8/")
+family="fibroblast8"
+samples=c("Fibroblast8")
 create_report(family,samples)
 
 setwd("/home/sergey/Desktop/project_muscular/DMD/")

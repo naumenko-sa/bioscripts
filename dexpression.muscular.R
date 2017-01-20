@@ -1,4 +1,3 @@
-library(edgeR)
 setwd("~/Desktop/project_muscular/")
 
 #all_counts = read.delim("annotated_combined.counts", row.names=1, stringsAsFactors=FALSE)
@@ -189,15 +188,92 @@ expression_unfiltered = function()
              colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(8))
     dev.off()
 }
-expression_rpkm_sample5 = function()
+
+# Loads a file with counts from feature_counts
+# loads gene lengths
+# loads gene names
+# calculates RPKMs
+# returns ENS_ID, rpkm, Gene_name
+load_rpkm_counts = function(filename)
 {
-    setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
+    #test:
+    #filename="/home/sergey/Desktop/project_muscular/Fibroblast8/fibroblast8.rpkm"
     
-    counts = read.delim("muscle5.rpkm.counts.txt", stringsAsFactors=F, row.names=1)
+    counts = read.delim(filename, stringsAsFactors=F, row.names=1)
     counts$Chr=NULL
     counts$Start=NULL
     counts$End=NULL
     counts$Strand=NULL
+    counts$Length=NULL
+    
+    counts = rpkm(counts,gene_lengths$Length)
+    
+    counts = merge(counts,ensembl_w_description,by.x="row.names",by.y="row.names")
+    row.names(counts)=counts$Row.names
+    counts$Row.names=NULL
+    counts$Gene_description=NULL
+    
+    return(counts)
+}
+
+# merge two dataframes by row.names and fix the row.names of the resulting df
+merge_row_names = function(df1,df2)
+{
+    merged = merge(df1,df2,by.x='row.names',by.y='row.names')
+    row.names(merged) = merged$Row.names
+    merged$Row.names = NULL
+    return(merged)
+}
+
+# plots the heatmap of title.png for gene_panel using sample_rpkm and gtex_rpkm
+plot_panel= function(gene_panel, sample_rpkm, gtex_rpkm, filename,title, breaks)
+{
+  panel_rpkm = sample_rpkm[sample_rpkm$external_gene_name %in% gene_panel,]
+  gtex_panel_rpkm = gtex_rpkm[gtex_rpkm$gene_name %in% gene_panel,]
+  
+  all_rpkm = merge(panel_rpkm,gtex_rpkm,by.x='external_gene_name',by.y='gene_name')
+  row.names(all_rpkm) = all_rpkm$external_gene_name
+  all_rpkm$external_gene_name=NULL
+  
+  png(filename,res=100,width=600)
+  pheatmap(all_rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+           display_number =T,cluster_rows=T, cluster_cols=T,
+           main=title,
+           breaks=breaks,
+           colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
+  dev.off()
+}
+
+
+expression_fibroblasts = function()
+{
+    setwd("~/Desktop/project_muscular/Fibroblasts/")
+    fibroblast5 = load_rpkm_counts("fibroblast5.rpkm")
+    fibroblast6 = load_rpkm_counts("fibroblast6.rpkm")
+    fibroblast7 = load_rpkm_counts("fibroblast7.rpkm")
+    fibroblast8 = load_rpkm_counts("fibroblast8.rpkm")
+    
+    fibroblast6$external_gene_name=NULL
+    fibroblast7$external_gene_name=NULL
+    fibroblast8$external_gene_name=NULL
+    
+    fibroblasts = merge_row_names(fibroblast5,fibroblast6)
+    fibroblasts = merge_row_names(fibroblasts,fibroblast7)
+    fibroblasts = merge_row_names(fibroblasts,fibroblast8)
+    
+    breaks = c(0,5,10,50,100,500,1000)
+    
+    plot_panel(congenital_muscular_dystrophies,fibroblast8,gtex_rpkm,"fibroblast8.congenital_m_dystrophies.png",
+               "Fibroblast8 expr(rpkm), congenital md panel",breaks)
+    
+    plot_panel(congenital_muscular_dystrophies,fibroblasts,gtex_rpkm,"fibroblasts.congenital_m_dystrophies.png",
+               "Fibroblasts expr(rpkm), congenital md panel",breaks)
+}
+
+expression_rpkm_sample5 = function()
+{
+    
+    setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
     
     #all samples but 1
     samples = read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=F)
@@ -272,11 +348,6 @@ expression_rpkm_sample5 = function()
     breaks = c(0,5,10,50,100,500,1000,2000,5000,5200)
     plot_panel(distal_myopathies, rpkms, MuscleGeneRPKM, "distal_myopathies",breaks)
     
-    congenital_muscular_dystrophies=c("LAMA2", "COL6A1", "COL6A2", "COL6A3", 
-                                      "SPEN1", "FHL1", "ITGA7", "DNM2","TCAP", "LMNA", "FKTN", 
-                                      "POMT1", "POMT2", "FKRP", "POMGNT1", "ISPD", "GTDC2", "B3GNT1", 
-                                      "POMGNT1", "GMPPB", "LARGE", "DPM1", "DPM2", "ALG13", "B3GALNT2", 
-                                      "TMEM5",  "POMK", "CHKB", "ACTA1", "TRAPPC11")
     breaks = c(0,5,10,50,100,500,1000,2000,5000,10000,15000)
     plot_panel(congenital_muscular_dystrophies, rpkms, MuscleGeneRPKM, "congenital_muscular_dystrophies",breaks)
     
@@ -293,24 +364,55 @@ expression_rpkm_sample5 = function()
     plot_panel(muscular_dystrophies, rpkms, MuscleGeneRPKM, "Muscular_dystrophies",breaks)
 }
 
-plot_panel= function(gene_panel, rpkms, MuscleGeneRPKM, title,breaks)
+fibroblast8 = function()
 {
+  setwd("~/Desktop/project_muscular/counts/mh_unfiltered/")
+  samples = 
+  mh = read.delim("mh.txt", stringsAsFactors=F, row.names=1)
+  fibroblast8 = read.delim("fibroblast8.counts", stringsAsFactors=F, row.names=1)
   
-    panel.rpkm = rpkms[rpkms$external_gene_name %in% gene_panel,]
-    gtex.rpkm = MuscleGeneRPKM[MuscleGeneRPKM$gene_name %in% gene_panel,]
-    
-    all.rpkm = merge(panel.rpkm,gtex.rpkm,by.x='external_gene_name',by.y='gene_name')
-    row.names(all.rpkm) = all.rpkm$external_gene_name
-    all.rpkm$external_gene_name=NULL
-    
-    library(pheatmap)
-    library(RColorBrewer)
-    png(paste0(title,".png"),res=100,width=500)
-    pheatmap(all.rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
-             display_number =T,cluster_rows=T, cluster_cols=T,
-             main=paste0(title," RPKM"),
-             breaks=breaks,
-             colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
-    dev.off()
+  counts = merge(mh,fibroblast8, by.x='row.names',by.y='row.names')
+  row.names(counts) = counts$Row.names
+  counts$Row.names = NULL
+  
+  congenital_muscular_dystrophies=c("LAMA2", "COL6A1", "COL6A2", "COL6A3", 
+                                    "SPEN1", "FHL1", "ITGA7", "DNM2","TCAP", "LMNA", "FKTN", 
+                                    "POMT1", "POMT2", "FKRP", "POMGNT1", "ISPD", "GTDC2", "B3GNT1", 
+                                    "POMGNT1", "GMPPB", "LARGE", "DPM1", "DPM2", "ALG13", "B3GALNT2", 
+                                    "TMEM5",  "POMK", "CHKB", "ACTA1", "TRAPPC11")
+  
+  
+  panel.counts = counts[counts$symbol %in% gene_panel,]
+  
+  
+  row.names(all.rpkm) = all.rpkm$external_gene_name
+  all.rpkm$external_gene_name=NULL
+  
+  library(pheatmap)
+  library(RColorBrewer)
+  png(paste0(title,".png"),res=100,width=500)
+  pheatmap(all.rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+           display_number =T,cluster_rows=T, cluster_cols=T,
+           main=paste0(title," RPKM"),
+           breaks=breaks,
+           colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
+  dev.off()
+  
 }
 
+init = function()
+{
+    library(edgeR)
+    library(pheatmap)
+    library(RColorBrewer)
+    gene_lengths = read.delim("~/Desktop/project_muscular/reference/gene_lengths.txt", stringsAsFactors=F, row.names=1)
+    gtex_rpkm = read.csv("~/Desktop/project_muscular/reference/gtex.muscle_gene.rpkm", sep="", stringsAsFactors = F)
+    
+    ensembl_w_description = read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", row.names=1, stringsAsFactors=F)
+    
+    congenital_muscular_dystrophies=c("LAMA2", "COL6A1", "COL6A2", "COL6A3", 
+                                      "SPEN1", "FHL1", "ITGA7", "DNM2","TCAP", "LMNA", "FKTN", 
+                                      "POMT1", "POMT2", "FKRP", "POMGNT1", "ISPD", "GTDC2", "B3GNT1", 
+                                      "POMGNT1", "GMPPB", "LARGE", "DPM1", "DPM2", "ALG13", "B3GALNT2", 
+                                      "TMEM5",  "POMK", "CHKB", "ACTA1", "TRAPPC11")
+}
