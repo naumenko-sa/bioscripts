@@ -12,10 +12,10 @@
 
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
-* rnaseq.qorts.qc.sh - calculate counts from bam file, discovers junctions
-* rnaseq.qorts.merge_novel_splices.sh - merges junctions from all samples
-* rnaseq.splicing.junction_seq.R - runs junction seq analysis in R
-* rnaseq.splicing.junction_seq.sh - runs R script in the queue
+* rnaseq.qorts.qc.sh calculate counts from bam file, discovers junctions
+* rnaseq.qorts.merge_novel_splices.sh merges junctions from all samples
+* rnaseq.splicing.junction_seq.R runs junction seq analysis in R
+* rnaseq.splicing.junction_seq.sh runs R script in the queue
 
 # Variant analysis
 
@@ -25,11 +25,12 @@
 
 ### Gemini staff - for CHEO, MH, and Muscular projects
 
-* gemini.decompose.sh - decompose and normalize variants with vt
-* gemini.vep.sh - annotate vcf file with VEP
-* gemini.vep2gemini.sh - load VEP annotated vcf to the GEMINI database
-* gemini.gemini2txt.sh - dump a gemini database into txt file with decompressed genotypes
-* gemini.gemini2report.R  - create a nice report for import to excel from the gemini.txt dump
+* gemini.decompose.sh decomposes and normalizes variants with vt
+* gemini.vep.sh annotates vcf file with VEP
+* gemini.vep2gemini.sh loads VEP annotated vcf to the GEMINI database
+* gemini.gemini2txt.sh dumps gemini database into txt file with decompressed genotypes
+* gemini.gemini2report.R creates nice report for import to excel from the gemini.txt dump
+* gemini.from_rnaseq.sh creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
 
 # By project
 
