@@ -9,10 +9,11 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-if [ -z vcf ];
+if [ -z $vcf ];
 then
     vcf=$1
 fi
+
 bname=`echo $vcf | sed s/.vcf.gz//`
 
 unset PERL5LIB && export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/anaconda/bin:$PATH && /home/naumenko/work/tools/bcbio/anaconda/bin/variant_effect_predictor.pl --vcf -o stdout \

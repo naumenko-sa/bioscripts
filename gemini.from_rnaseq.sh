@@ -11,18 +11,19 @@ then
     sample=$1
 fi
 
-if [ -z $vcf ]
+#downstream scripts use $vcf for current vcf file
+if [ -z $original_vcf ]
 then
-    vcf=$2
+    original_vcf=$2
 fi
 
-gunzip -c $vcf | grep "^#"  > $sample.vcf
-gunzip -c $vcf | grep -v "^#" | grep PASS | grep -v possible_rnaedit  >> $sample.vcf
+gunzip -c $original_vcf | grep "^#"  > $sample.vcf
+gunzip -c $original_vcf | grep -v "^#" | grep PASS | grep -v possible_rnaedit  >> $sample.vcf
 
 bgzip $sample.vcf
 tabix $sample.vcf.gz
 
 gemini.decompose.sh $sample.vcf.gz
-gemini.vep.sh $sample.decomposed.vcf.gz 
+gemini.vep.sh $sample.decomposed.vcf.gz
 gemini.vep2gemini.sh $sample.decomposed.vepeffects.vcf.gz
 gemini.gemini2txt.sh $sample.decomposed.vepeffects.db
