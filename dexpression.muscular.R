@@ -270,6 +270,12 @@ expression_fibroblasts = function()
                "Fibroblasts expr(rpkm), congenital md panel",breaks)
 }
 
+expression_muscle2 = function()
+{
+    setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
+    muscle2 = load_rpkm_counts("muscle2.rpkm")
+}
+
 expression_rpkm_sample5 = function()
 {
     

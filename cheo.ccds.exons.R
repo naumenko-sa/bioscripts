@@ -71,7 +71,9 @@ get_exon_coordinates = function()
 get_gene_coordinate = function()
 {
     #gene_name = "DMD"
-    muscular_genes <- read.table("~/Desktop/project_muscular/muscular_genes_uniq.txt", quote="\"", comment.char="", stringsAsFactors=FALSE)
+    setwd("~/Desktop/project_muscular/reference/")
+    muscular_genes = read.table("~/Desktop/project_muscular/reference/muscular_genes.txt", 
+                                quote="\"", comment.char="", stringsAsFactors=F)
     genes=getBM(
       attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
       filters=c('external_gene_name'),
