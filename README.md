@@ -1,5 +1,14 @@
 # bioscripts - scripts I am using on a daily basis
 
+# Fastq,bam,cram
+
+* bam2fq.sh converts bam to fastq, uses samtools and bedtools
+* bam.reads_number.sh reports the number of paired reads in a bam file, uses samtools
+* bam.remove_region.sh removes reads from a bam file located at regions specified by a bed file.
+Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
+It is better to filter those with prinseq, however sometimes it is necessary to remove a particular region.
+* cram2fq.sh converts cram to fastq, uses cramtools wrapper from bcbio
+
 # RNA-seq
 
 * rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
