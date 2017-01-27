@@ -43,8 +43,7 @@ It is better to filter those with prinseq, however sometimes it is necessary to 
 
 # By project
 
-## CHEO is a study of hundreds of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/)
-at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
+## CHEO is a study of hundreds of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of a genetic testing laboratory.
