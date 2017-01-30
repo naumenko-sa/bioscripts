@@ -147,7 +147,7 @@ create_report = function(family,samples)
     {
       #DEBUG: gene = IL20RA
       #sample=samples[1]
-      zygocity_column_name = paste0("Zygocity.",sample)
+      zygocity_column_name = paste0("Zygosity.",sample)
       #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
       #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
       t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
@@ -273,7 +273,7 @@ create_report = function(family,samples)
 #final selection and order
 select_and_write = function(variants,samples,prefix)
 {
-    variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygocity.",samples),c("Gene"),
+    variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
                         paste0("Burden.",samples),c("gts","Variation","Info","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                                                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
