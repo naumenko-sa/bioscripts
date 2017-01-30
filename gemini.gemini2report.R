@@ -129,7 +129,7 @@ create_report = function(family,samples)
   variants=variants[c(columns,1:columns-1)]
 
   #field2 - UCSC link
-  sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
+  sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.out3=10x&position="
   sUCSC2="\",\"UCSC_link\""
   variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,")",sep=''))
 
@@ -560,7 +560,7 @@ merge_reports(family,samples)
 # R substitutes "-" with "." in sample names in columns so fix this in samples.txt
 # sample names starting with letters should be prefixed by X in *.table
 # for correct processing. most of them start with numbers, and R adds X automatically
-setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families")
+setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
 for (family in families)
