@@ -351,8 +351,11 @@ merge_reports = function(family,samples)
     
     for (i in 1:nrow(ensemble))
     {
-        #if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
-        if(grepl("NA",ensemble[i,"Trio_coverage"]))
+        
+        #if(grepl("NA",ensemble[i,"Trio_coverage"]))
+        #wrong: a variant may be called by gatk with 10/10/NA,
+        #and freebayes will destroy coverage info
+        if (str_count(ensemble[i,"Trio_coverage"],"NA") == length(samples))
         {
             ensemble[i,"Depth"] = ensemble[i,"DP"]
             for (sample in samples)
@@ -389,8 +392,9 @@ merge_reports = function(family,samples)
     
     for (i in 1:nrow(ensemble))
     {
-      if(grepl("NA",ensemble[i,"Trio_coverage"]))
+      #if(grepl("NA",ensemble[i,"Trio_coverage"])) - wrong, may be 10/10/NA in gatk
       #if (ensemble[i,"Trio_coverage"]=="NA/NA/NA")
+      if (str_count(ensemble[i,"Trio_coverage"],"NA") == length(samples))
       {
         ensemble[i,"Depth"] = ensemble[i,"TC"]
         for (sample in samples)
@@ -546,9 +550,18 @@ samples = c("1130-BD-B175","2064-BA-B175")
 create_report(family,samples)
 merge_reports(family,samples)
 
-# R substitutes - with . in sample names in columns
+#Dorin - 1091R
+setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
+family="1091R"
+samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+create_report(family,samples)
+merge_reports(family,samples)
+
+# R substitutes "-" with "." in sample names in columns so fix this in samples.txt
+# sample names starting with letters should be prefixed by X in *.table
+# for correct processing. most of them start with numbers, and R adds X automatically
 setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families")
-families <- unlist(read.table("families_ready.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
 for (family in families)
 {

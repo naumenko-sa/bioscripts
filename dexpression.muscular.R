@@ -274,6 +274,7 @@ expression_muscle2 = function()
 {
     setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
     muscle2 = load_rpkm_counts("muscle2.rpkm")
+    write.table(muscle2,"muscle2.rpkms.txt",quote=F,sep = "\t")
 }
 
 expression_rpkm_sample5 = function()
