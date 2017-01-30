@@ -131,7 +131,7 @@ create_report = function(family,samples)
   #field2 - UCSC link
   sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?hgt.out3=10x&position="
   sUCSC2="\",\"UCSC_link\""
-  variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,sep=''))
+  variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,")",sep=''))
 
   #fields 3,4: Ref,Alt
 
@@ -551,8 +551,8 @@ create_report(family,samples)
 merge_reports(family,samples)
 
 #Dorin - 1091R
-setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
-family="1091R"
+setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin/1092R/")
+family="1092R"
 samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 create_report(family,samples)
 merge_reports(family,samples)
