@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# cleans up after bcbio - when running large cohort only final folder is kept, and only ensemble gemini database: 2-3G per family
+# cleans up after bcbio - when running large cohort only the final folder is kept, 
+# and only ensemble gemini database: 2-3G per family
+# keeps bam files for new samples
 # prepares tables for report generation
-# creates report
 
 # parameters:
 # family = [family_id] (=folder_name)
@@ -15,15 +16,27 @@
 function cleanup
 {
 
-    mv ${family}/final/2016*/* $family
-    rm -rf ${family}/final/
-    rm -rf ${family}/work/
-    rm -rf ${family}/input/
+    # better to look for project-summary than hardcode the year
+    # don't forget to extract bam files from sample directories for new samples
+    cd $family
+    result_dir=`find final -name project-summary.yaml | sed s/"\/project-summary.yaml"//`
+    mv $result_dir/* .
+    mv final/*/*.bam .
+    mv final/*/*.bai .
 
-    rm ${family}/${family}-freebayes.db
-    rm ${family}/${family}-gatk-haplotype.db
-    rm ${family}/${family}-samtools.db
-    rm ${family}/${family}-platypus.db
+    rm -rf final/
+    rm -rf work/
+
+    #don't remove input files for new projects
+    #rm -rf input/
+
+    # we don't need gemini databases for particular calling algorythms
+    rm ${family}-freebayes.db
+    rm ${family}-gatk-haplotype.db
+    rm ${family}-samtools.db
+    rm ${family}-platypus.db
+
+    cd ..
 }
 
 function prepare_for_report
@@ -43,6 +56,11 @@ function prepare_for_report
 
     cd ..
 }
+
+if [ -z $family ]
+then
+    family=$1
+fi
 
 cleanup
 prepare_for_report
