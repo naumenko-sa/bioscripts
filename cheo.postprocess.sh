@@ -62,5 +62,6 @@ then
     family=$1
 fi
 
-cleanup
+echo $family
+#cleanup
 prepare_for_report
