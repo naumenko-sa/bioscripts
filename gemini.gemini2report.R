@@ -561,6 +561,7 @@ merge_reports(family,samples)
 # sample names starting with letters should be prefixed by X in *.table
 # for correct processing. most of them start with numbers, and R adds X automatically
 setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded")
+setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
 for (family in families)
