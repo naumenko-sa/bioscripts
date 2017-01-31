@@ -573,3 +573,14 @@ for (family in families)
     merge_reports(family,samples)
     setwd("..")
 }
+
+#add seen in c4r information
+setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded/1/")
+seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
+seen_in_c4r_samples = read.delim(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F)
+
+variants = read.csv("1.txt", sep=";", stringsAsFactors=F)
+variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
+variants = merge(variants,seen_in_c4r_counts,by.x = "superindex", by.y="superindex",all.x = T)
+variants$Frequency_in_C4R = variants$counts
+variants$counts=NULL

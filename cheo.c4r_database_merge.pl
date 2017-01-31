@@ -24,14 +24,17 @@ while(<IN>)
 
 close(IN);
 
+print $fh "superindex\tcounts\n";
 foreach $key (keys(%seen_in_c4r_counts))
 {
     print $fh $key."\t".$seen_in_c4r_counts{$key}."\n";
 }
 
+
+print $fh1 "superindex;samples\n";
 for $key (keys(%seen_in_c4r_samples))
 {
-    print $fh1 $key."\t".$seen_in_c4r_samples{$key}."\n";
+    print $fh1 $key.";".$seen_in_c4r_samples{$key}."\n";
 }
 
 close $fh;
