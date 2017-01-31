@@ -18,8 +18,15 @@ while(<IN>)
     $variant_id = $ar[0];
     $sample = $ar[1];
     $seen_in_c4r_counts{$variant_id}++;
-    $t = $seen_in_c4r_samples{$variant_id};
-    $seen_in_c4r_samples{$variant_id} = $sample."\t".$t;
+    if (exists($seen_in_c4r_samples{$variant_id}))
+    {
+	$t = $seen_in_c4r_samples{$variant_id};
+	$seen_in_c4r_samples{$variant_id} = $sample.",".$t;
+    }
+    else
+    {
+	$seen_in_c4r_samples{$variant_id} = $sample;
+    }
 }
 
 close(IN);

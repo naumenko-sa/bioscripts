@@ -575,12 +575,27 @@ for (family in families)
 }
 
 #add seen in c4r information
-setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded/1/")
-seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
-seen_in_c4r_samples = read.delim(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F)
+setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded")
+setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
+families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
-variants = read.csv("1.txt", sep=";", stringsAsFactors=F)
-variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
-variants = merge(variants,seen_in_c4r_counts,by.x = "superindex", by.y="superindex",all.x = T)
-variants$Frequency_in_C4R = variants$counts
-variants$counts=NULL
+seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
+seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F, sep=";")
+for (family in families)
+{
+    #family="100"
+    setwd(family)
+    samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+    samples = gsub("-",".",samples)
+    variants = read.csv(paste0(family,".txt"), sep=";", stringsAsFactors=F,quote="")
+    
+    variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
+    variants = merge(variants,seen_in_c4r_counts,by.x = "superindex", by.y="superindex",all.x = T)
+    variants$Frequency_in_C4R = variants$counts
+    variants$counts=NULL
+  
+    variants = merge(variants,seen_in_c4r_samples,by.x = "superindex", by.y="superindex",all.x = T)
+    variants$Seen_in_C4R_samples=variants$samples
+    select_and_write(variants,samples,paste0(family,".report"))
+    setwd("..")
+}
