@@ -51,3 +51,5 @@ This allows to achieve increased sensitivity required for research, compared to 
 * cheo.check_if_done.sh [bcbio_job.output]
 * cheo.postprocess.sh [family] cleans up after bcbio and prepares necessary tables for excel report generator
 * gemini.gemini2reportR creates txt files to import in excel
+* cheo.c4r_database.sh prepares variants from a family to be merged in a database seen_in_c4r
+* **cheo.c4r_database_merge.pl** merges variant evidence from many samples
