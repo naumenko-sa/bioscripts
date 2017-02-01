@@ -48,8 +48,8 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of a genetic testing laboratory.
 
-* **cheo.check_if_done.sh** [bcbio_job.output] check which bcbio jobs are done, useful when running 100x families
-* **cheo.postprocess.sh [family]** cleans up after bcbio and prepares necessary tables for excel report generator
-* **gemini.gemini2report.R** generates reports for excel import 
-* **cheo.c4r_database.sh** prepares variants from a family to be merged in a database seen_in_c4r
-* **cheo.c4r_database_merge.pl** merges variant evidence from many samples
+1. [cheo.check_if_done.sh](../blob/master/cheo.check_if_done.sh) [bcbio_job.output] check which bcbio jobs are done, useful when running 100x families
+2. **cheo.postprocess.sh [family]** cleans up after bcbio and prepares necessary tables for excel report generator
+3. **gemini.gemini2report.R** generates reports for excel import 
+4. **cheo.c4r_database.sh** prepares variants from a family to be merged in a database seen_in_c4r
+5. **cheo.c4r_database_merge.pl** merges variant evidence from many samples
