@@ -198,7 +198,7 @@ load_rpkm_counts = function(filename)
 {
     #test:
     #filename="/home/sergey/Desktop/project_muscular/Fibroblast8/fibroblast8.rpkm"
-    
+    library(edgeR)   
     counts = read.delim(filename, stringsAsFactors=F, row.names=1)
     counts$Chr=NULL
     counts$Start=NULL
