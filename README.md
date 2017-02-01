@@ -11,10 +11,12 @@ It is better to filter those with prinseq, however sometimes it is necessary to 
 
 # RNA-seq
 
-* rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
+* [rnaseq.star.sh](../master/rnaseq.star.sh) - 2pass on the fly STAR alignment for a single sample. Two passes are recommended to enhance alignment and calculation of counts for novel splice junctions
+(1st pass discovers junctions, 2nd pass makes an alignment).
 * [rnaseq.feature_counts.sh](../master/rnaseq.feature_counts.sh) [file.bam] calculates features (reads) for RPKM calculation in R, outputs length of the genes. TPMs are generally better
 (http://www.rna-seqblog.com/rpkm-fpkm-and-tpm-clearly-explained/), because you can compare expression values across samples, and they are calculated by default in bcbio rnaseq pipeline, 
 but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.proteinatlas.org/) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
+* [rnaseq.load_rpkm_counts.R](../master/rnaseq.load_rpkm_counts.R) calculates RPKM counts from feature_counts output.
 
 ### Differential expression
 
@@ -60,3 +62,8 @@ This allows to achieve increased sensitivity required for research, compared to 
 ---
 
 ## Muscle is a study of genetic causes of muscular diseases
+
+---
+
+## MH studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
+1. [project_mh.R](../master/project_mh.R)
