@@ -14,7 +14,7 @@ It is better to filter those with prinseq, however sometimes it is necessary to 
 * rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
 * [rnaseq.feature_counts.sh](../master/rnaseq.feature_counts.sh) [file.bam] calculates features (reads) for RPKM calculation in R, outputs length of the genes. TPMs are generally better
 (http://www.rna-seqblog.com/rpkm-fpkm-and-tpm-clearly-explained/), because you can compare expression values across samples, and they are calculated by default in bcbio rnaseq pipeline, 
-but [http://www.gtexportal.org](GTEX) values unlike [http://www.proteinatlas.org/)(Protein atlas) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
+but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.proteinatlas.org/) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
 
 ### Differential expression
 
