@@ -12,7 +12,9 @@ It is better to filter those with prinseq, however sometimes it is necessary to 
 # RNA-seq
 
 * rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
-* [rnaseq.feature_counts.sh](../rnaseq.feature_counts.sh) calculates features (reads) for RPKM calculation in R, outputs length of the genes
+* [rnaseq.feature_counts.sh](../master/rnaseq.feature_counts.sh) [file.bam] calculates features (reads) for RPKM calculation in R, outputs length of the genes. TPMs are generally better
+(http://www.rna-seqblog.com/rpkm-fpkm-and-tpm-clearly-explained/), because you can compare expression values across samples, and they are calculated by default by bcbio rnaseq pipeline, 
+but GTEX values are in RPKMs, and still many people think in terms of RPKMs.
 
 ### Differential expression
 
@@ -55,6 +57,6 @@ This allows to achieve increased sensitivity required for research, compared to 
 4. [cheo.c4r_database.sh](../master/cheo.c4r_database.sh) prepares variants from a family to be merged in a database seen_in_c4r
 5. [cheo.c4r_database_merge.pl](../master/cheo.c4r_database_merge.pl) merges variant evidence from many samples
 
-...
+---
 
 ## Muscle is a study of genetic causes of muscular diseases
