@@ -12,6 +12,7 @@ It is better to filter those with prinseq, however sometimes it is necessary to 
 # RNA-seq
 
 * rnaseq.star.sh - 2pass on the fly STAR alignment for a single sample
+* [rnaseq.feature_counts.sh](../rnaseq.feature_counts.sh) calculates features (reads) for RPKM calculation in R, outputs length of the genes
 
 ### Differential expression
 
@@ -53,3 +54,7 @@ This allows to achieve increased sensitivity required for research, compared to 
 3. [gemini.gemini2report.R](../master/gemini.gemini2report.R) generates reports for excel import 
 4. [cheo.c4r_database.sh](../master/cheo.c4r_database.sh) prepares variants from a family to be merged in a database seen_in_c4r
 5. [cheo.c4r_database_merge.pl](../master/cheo.c4r_database_merge.pl) merges variant evidence from many samples
+
+...
+
+## Muscle is a study of genetic causes of muscular diseases

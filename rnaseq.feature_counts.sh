@@ -6,7 +6,7 @@
 #PBS -l vmem=10g,mem=10g
 
 
-#calculate features (reads) for RPKM calculation with length of the genes
+#calculates features (reads) for RPKM calculation in R, outputs length of the genes
 
 if [ -z $bam ]
 then
