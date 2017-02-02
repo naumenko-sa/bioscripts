@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #parses qorts output looking for novel junctions in muscular genes and novel exons like found in DMD2016 article
-#$1 = sample name: muscle2
+#$1 = sample name for output: muscle2
+#$2 = threshold for novel junction coverage = 10
 
 gunzip -c QC.spliceJunctionCounts.novelSplices.txt.gz | sed 1d | cut -f 1,3,4,5 > $1.novel_junctions_all.bed
 
