@@ -2,12 +2,12 @@
 
 # Fastq,bam,cram
 
-* bam2fq.sh converts bam to fastq, uses samtools and bedtools
-* bam.reads_number.sh reports the number of paired reads in a bam file, uses samtools
-* bam.remove_region.sh removes reads from a bam file located at regions specified by a bed file.
+* [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
+* [bam.reads_number.sh](../master/bam.reads_number.sh) reports the number of paired reads in a bam file, uses samtools
+* [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
-It is better to filter those with prinseq, however sometimes it is necessary to remove a particular region.
-* cram2fq.sh converts cram to fastq, uses cramtools wrapper from bcbio
+It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
+* [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 
 # RNA-seq
 
