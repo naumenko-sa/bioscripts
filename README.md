@@ -1,5 +1,7 @@
 # bioscripts - scripts I am using on a daily basis
 
+[Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
+
 # Fastq,bam,cram
 
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
