@@ -28,8 +28,6 @@ but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.p
 * rnaseq.qorts.makeflatgff.sh
 * rnaseq.qorts.qc.sh calculate counts from bam file, discovers junctions
 * rnaseq.qorts.merge_novel_splices.sh merges junctions from all samples
-* [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh) [sample] [max_novel_exon_lengths] 
-discovers novel exons using qorts files as input. A novel exon is reported when two novel junctions are found at the distance less then max_novel_exon_lengths.    
 * rnaseq.splicing.junction_seq.R runs junction seq analysis in R
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
@@ -69,4 +67,3 @@ This allows to achieve increased sensitivity required for research, compared to 
 
 ## MH studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
 1. [project_mh.R](../master/project_mh.R)
-2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
