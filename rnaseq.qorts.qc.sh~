@@ -5,8 +5,7 @@
 #PBS -d .
 #PBS -l vmem=15g,mem=15g
 
-#don't use flattened gff file - it flattens on the fly
-#the main command of qorts produces all counts
+#don't use flattened gff file - it flattens on the fly 
 
 if [ -z $bam ]
 then

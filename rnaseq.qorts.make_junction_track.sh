@@ -5,7 +5,7 @@
 #PBS -d .
 #PBS -l vmem=15g,mem=15g
 
-#creates junction track for IGV browser
+#creates junction track for IGV browser from qorts output
 #https://dl.dropboxusercontent.com/u/103621176/pipelineWalkthrough/example-walkthrough.pdf, page 27
 
 #$1 = file = forJunctionSeq.txt.gz

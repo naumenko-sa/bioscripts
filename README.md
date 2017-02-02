@@ -26,7 +26,7 @@ but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.p
 
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
-* rnaseq.qorts.qc.sh calculate counts from bam file, discovers junctions
+* [rnaseq.qorts.qc.sh](../master/rnaseq.qorts.qc.sh) [file.bam] calculates counts from bam file
 * rnaseq.qorts.merge_novel_splices.sh merges junctions from all samples
 * [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh) [sample] [max_novel_exon_lengths] 
 discovers novel exons using qorts files as input. A novel exon is reported when two novel junctions are found at the distance less then max_novel_exon_lengths.    
