@@ -9,6 +9,11 @@ Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low compl
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 
+# Genome assembly
+
+* [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
+for genomes up to 100G.
+
 # RNA-seq
 
 * [rnaseq.star.sh](../master/rnaseq.star.sh) - 2pass on the fly STAR alignment for a single sample. Two passes are recommended to enhance alignment and calculation of counts for novel splice junctions
