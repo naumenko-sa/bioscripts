@@ -69,6 +69,7 @@ variant calling pipeline outputs variants in gemini format.
 ## 5. MH [2016-] studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
 1. [project_mh.R](../master/project_mh.R)
 2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
+3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
 
 ## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
