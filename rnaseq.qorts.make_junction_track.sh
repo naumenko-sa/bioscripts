@@ -6,9 +6,23 @@
 #PBS -l vmem=15g,mem=15g
 
 #creates junction track for IGV browser
+#https://dl.dropboxusercontent.com/u/103621176/pipelineWalkthrough/example-walkthrough.pdf, page 27
+
+#$1 = file = forJunctionSeq.txt.gz
+#$2 = sample = output_name, sample.known.bed.gz
+
+if [ -z $file ]
+then
+	file=$1
+fi
+
+if [ -z $sample ]
+then
+	sample=$2
+fi
 
 java -Xmx1g -jar ~/work/tools/bin/QoRTs.jar \
     makeJunctionTrack \
-    --filenames $1 \
+    --filenames $file \
     ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.qorts.gff.gz \
-    $2
+    $sample.known.bed.gz
