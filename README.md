@@ -53,7 +53,15 @@ variant calling pipeline outputs variants in gemini format.
 
 # By project
 
-## CHEO is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
+## 6. Muscle [2016-] is a study of genetic causes of muscular diseases
+
+---
+
+## 5. MH [2016-] studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
+1. [project_mh.R](../master/project_mh.R)
+2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
+
+## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
@@ -65,11 +73,9 @@ This allows to achieve increased sensitivity required for research, compared to 
 5. [cheo.c4r_database_merge.pl](../master/cheo.c4r_database_merge.pl) merges variant evidence from many samples
 
 ---
-
-## Muscle is a study of genetic causes of muscular diseases
-
+## 3. Gammaruses [2012-]
 ---
 
-## MH studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
-1. [project_mh.R](../master/project_mh.R)
-2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
+## 2. Spectrum [2010-2012]
+---
+## 1. Reversals [2009-2012]
