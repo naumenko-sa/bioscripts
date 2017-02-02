@@ -5,10 +5,9 @@
 #PBS -d .
 #PBS -l vmem=15g,mem=15g
 
-#creates junction track for IGV browser
-
 java -Xmx1g -jar ~/work/tools/bin/QoRTs.jar \
     makeJunctionTrack \
+    --nonflatgtf \
     --filenames $1 \
-    ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.qorts.gff.gz \
-    $2
+    ../withNovel.forJunctionSeq.gff.gz \
+    `echo $1 | sed s/txt.gz/known.bed.gz/`
