@@ -1,5 +1,6 @@
 # bioscripts - scripts I am using on a daily basis
 
+[Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
 [Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
 
 # Fastq,bam,cram
