@@ -41,6 +41,9 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 
 ### Gemini staff - for CHEO, MH, and Muscular projects
 
+[Gemini](https://gemini.readthedocs.io/en/latest/) is a database and framework for variant analysis. [Bcbio](http://bcbio-nextgen.readthedocs.io/en/latest/)
+variant calling pipeline outputs variants in gemini format.
+
 * gemini.decompose.sh decomposes and normalizes variants with vt
 * gemini.vep.sh annotates vcf file with VEP
 * gemini.vep2gemini.sh loads VEP annotated vcf to the GEMINI database
