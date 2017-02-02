@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=1
+#PBS -l walltime=20:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=15g,mem=15g
@@ -24,5 +24,6 @@ fi
 java -Xmx1g -jar ~/work/tools/bin/QoRTs.jar \
     makeJunctionTrack \
     --filenames $file \
+    --trackTitle $sample \
     ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.qorts.gff.gz \
     $sample.known.bed.gz
