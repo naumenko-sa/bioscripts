@@ -1,6 +1,18 @@
 #!/bin/bash
 
-module load gatk
-java -Xmx4g -jar $GATK -R /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa \
-     -T VariantFiltration -V $1 -o `echo $1 | sed s/vcf/DPLT10.vcf/` \
-     --filterExpression " DP < 10" --filterName "DPLT10"
+#PBS -l walltime=10:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=10g,mem=10g
+
+#parameters:
+#vcf
+#DP
+#filters out variants with DP < $DP
+#uses gatk wrapper from bcbio
+
+gatk -R /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa \
+     -T VariantFiltration \
+     -V $vcf \
+     -o `echo $vcf | sed s/vcf/DPLT$DP.vcf/` \
+     --filterExpression " DP < $DP" --filterName "DPLT$DP"

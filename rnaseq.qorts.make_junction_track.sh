@@ -21,9 +21,11 @@ then
 	sample=$2
 fi
 
-java -Xmx1g -jar ~/work/tools/bin/QoRTs.jar \
+#1g is no enough
+java -Xmx10g -jar ~/work/tools/bin/QoRTs.jar \
     makeJunctionTrack \
     --filenames $file \
     --trackTitle $sample \
     ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.qorts.gff.gz \
     $sample.known.bed.gz
+    
