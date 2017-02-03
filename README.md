@@ -17,15 +17,20 @@ It is better to filter those with [prinseq](http://http://prinseq.sourceforge.ne
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler. 
 See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
-For large genomes it is better to have multiple libraries, with substantial amoung of mate pairs with 5k,10k,20k insert size. 
+For large genomes it is better to have multiple libraries, with the substantial amount of mate pairs with 5k,10k,20k insert size. 
 For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
 a cheap 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into server. Avoid vendors and sales persons.
-Look for engineers to cooperate. For smaller genomes I prefer spades, for larger ones velvet + platanus.
+Look for engineers to cooperate. For smaller genomes I prefer spades, for larger ones velvet + platanus. Remember to clean up reads
+(check for contamination, quality trimming).
 
 * [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
 
 # Phylogenetics
+Nothing is comparable to the feeling when you just have plotted a phylogenetic tree. It is very rewarding however the tree might be misleading.
+Read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
+In brief, it is necessary to build a good alignment(!), concatenate many genes, fit the model with modeltest (GTR+Г+I is usuallly the winner),
+and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendroscope](http://dendroscope.org/). It becomes better as years pass.
 
 # RNA-seq
 I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
