@@ -1,6 +1,7 @@
 # bioscripts - scripts I am using on a daily basis
 
 [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
+[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis)
 
 [Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
 
@@ -14,9 +15,18 @@ It is better to filter those with [prinseq](http://http://prinseq.sourceforge.ne
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 
 # Genome assembly
+The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembly. 
+See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
+For large genomes it is better to have multiple libraries, with substantial amoung of mate pairs with 5k,10k,20k insert size. 
+For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
+a cheap 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into server. Avoid vendors and sales persons.
+Look for engeneers to cooperate.
+
 
 * [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
+
+# Phylogenetics
 
 # RNA-seq
 
@@ -27,9 +37,17 @@ for genomes up to 100G.
 but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.proteinatlas.org/) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
 * [rnaseq.load_rpkm_counts.R](../master/rnaseq.load_rpkm_counts.R) calculates RPKM counts from feature_counts output.
 
+### De noto transcriptome assembly
+
 ### Differential expression
 
 * dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
+
+### Micro-RNA
+I did a couple of analysis in *A.thaliana* and *S.tuberosum* (potato). First I run [smallRNA-seq pipeline from bcbio](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#smallrna-seq).
+It is much better tuned for human miRNA, where it does discovery of novel miRNA (because primary tools are developed mostly for human).
+For non-human species it does a good job of mapping to mirBase and has an extensive [report](https://github.com/lpantano/seqcluster/blob/master/seqcluster/templates/report.rmd) in R.  
+For novel miRNA discovery I tried [shortstack](http://sites.psu.edu/axtell/software/shortstack/).
 
 ### Splicing analysis
 
@@ -42,7 +60,7 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.R runs junction seq analysis in R
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
-# Variant analysis
+# Variant analysis, vcf files
 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
