@@ -1,7 +1,7 @@
 # bioscripts - scripts I am using on a daily basis
 
 [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
-[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis)
+[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
 
 [Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
 
@@ -15,13 +15,12 @@ It is better to filter those with [prinseq](http://http://prinseq.sourceforge.ne
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 
 # Genome assembly
-The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembly. 
+The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler. 
 See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
 For large genomes it is better to have multiple libraries, with substantial amoung of mate pairs with 5k,10k,20k insert size. 
 For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
 a cheap 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into server. Avoid vendors and sales persons.
-Look for engeneers to cooperate.
-
+Look for engineers to cooperate. For smaller genomes I prefer spades, for larger ones velvet + platanus.
 
 * [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
@@ -29,6 +28,8 @@ for genomes up to 100G.
 # Phylogenetics
 
 # RNA-seq
+I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
+expression measurements, isoform reconstruction, and quality metrics.
 
 * [rnaseq.star.sh](../master/rnaseq.star.sh) - 2pass on the fly STAR alignment for a single sample. Two passes are recommended to enhance alignment and calculation of counts for novel splice junctions
 (1st pass discovers junctions, 2nd pass makes an alignment).
@@ -37,10 +38,10 @@ for genomes up to 100G.
 but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.proteinatlas.org/) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
 * [rnaseq.load_rpkm_counts.R](../master/rnaseq.load_rpkm_counts.R) calculates RPKM counts from feature_counts output.
 
-### De noto transcriptome assembly
+### De novo transcriptome assembly
 
 ### Differential expression
-
+I use [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html).
 * dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
 
 ### Micro-RNA
@@ -58,8 +59,7 @@ Additionaly you have tracks for IGV. They are useful, because default exon usage
 but for a set of chunks from flattened annotation of many isoforms, and people are asking questions, why here are 125 exons not 108. It is hard to see
 the correspondence to exons of the canonical isoforms for long genes from those plots.
 
-Additionaly I use sailfish relative isoform expression levels which [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq) 
-outputs by default.
+Additionaly I use sailfish relative isoform expression levels which bcbio rna-seq pipeline outputs by default.
 
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
