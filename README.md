@@ -51,6 +51,16 @@ For novel miRNA discovery I tried [shortstack](http://sites.psu.edu/axtell/softw
 
 ### Splicing analysis
 
+[qorts](http://hartleys.github.io/QoRTs/index.html) and [junctionseq](https://bioconductor.org/packages/release/bioc/html/JunctionSeq.html) do the job.
+Finally they produce html report for all differentially expressed genes, plotting exon usage, junction counts, novel juctions, as a nice plots.
+The problem is that RNA is quite noisy by its biological nature, so expect to have many events and many false positives.
+Additionaly you have tracks for IGV. They are useful, because default exon usage plots are not for exons from the canonical isoform,
+but for a set of chunks from flattened annotation of many isoforms, and people are asking questions, why here are 125 exons not 108. It is hard to see
+the correspondence to exons of the canonical isoforms for long genes from those plots.
+
+Additionaly I use sailfish relative isoform expression levels which [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq) 
+outputs by default.
+
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
 * [rnaseq.qorts.qc.sh](../master/rnaseq.qorts.qc.sh) [file.bam] calculates counts from bam file
