@@ -1,8 +1,7 @@
 #!/usr/bin/perl
 
+#test comment test
 #average pairwise distance between sequences in an alignment
-#$1 - fasta file
-#$2 = 1 print all distances
 
 use POSIX;
 
@@ -32,7 +31,7 @@ if ($ARGV[1] == 1)
     print "\t";
     for ($i=0;$i<@aln;$i++)
     {
-    	print $names[$i]."\t";
+	print $names[$i]."\t";
     }
     print "|AVERAGE|\n";
 }
@@ -41,26 +40,24 @@ for ($i=0;$i<@aln;$i++)
 {
     my $av_dist=0;
     if ($pr)
-    { 
-    	print $names[$i]."\t";
-    }
+    { print $names[$i]."\t";}
     for ($j=0;$j<@aln;$j++)
     {
-    	$pdist = hd($aln[$i],$aln[$j]) / length($aln[0]);
-    	$av_dist+=$pdist;
-    	if ($pr)
-    	{
-    		#print $i."<=>".$j.":";
-    		printf("%.3f",$pdist);
-    		print "\t";
-    	}
-    	$dist += $pdist;
-    	$count++;
+	$pdist = hd($aln[$i],$aln[$j]) / length($aln[0]);
+	$av_dist+=$pdist;
+	if ($pr)
+	{
+	    #print $i."<=>".$j.":";
+	    printf("%.3f",$pdist);
+	    print "\t";
+	}
+	$dist += $pdist;
+	$count++;
     }
     if($pr)
     {
-    	printf("|%.3f|",$av_dist/@aln);
-    	print "\n";
+	printf("|%.3f|",$av_dist/@aln);
+	print "\n";
     }
 }
 

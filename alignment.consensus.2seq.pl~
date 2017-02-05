@@ -1,11 +1,7 @@
 #!/usr/bin/perl
-
 #prints alignment consensus of 2 sequences 
 #gaps and N's are not counted if something else present
 #first sequence has a priority when alleles are different
-
-# $1 - alignment.fasta
-
 use strict;
 
 my @sp;
@@ -35,7 +31,7 @@ for (my $i=0;$i < length($al{$sp[0]});$i++)
     
     if (($a eq 'N' or $a eq '-') and ($b ne 'N' and $b ne '-'))
     {
-    	$c = $b;
+	$c = $b;
     }
     
     $consensus .= $c;
