@@ -7,6 +7,8 @@
 
 # Alignment
 
+Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/) from UCSC  
+
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances 
 * alignment.check_3x.sh [alignment.fasta] prints how many sequences in an alignment are not 3x in length
 * alignment.check_conservative_site.sh
