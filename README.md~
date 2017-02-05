@@ -1,6 +1,7 @@
 # bioscripts - scripts I am using on a daily basis
 
 [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
+[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
 
 [Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
 
@@ -14,11 +15,26 @@ It is better to filter those with [prinseq](http://http://prinseq.sourceforge.ne
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 
 # Genome assembly
+The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler. 
+See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
+For large genomes it is better to have multiple libraries, with the substantial amount of mate pairs with 5k,10k,20k insert size. 
+For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
+a cheap 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into server. Avoid vendors and sales persons.
+Look for engineers to cooperate. For smaller genomes I prefer spades, for larger ones velvet + platanus. Remember to clean up reads
+(check for contamination, quality trimming).
 
 * [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
 
+# Phylogenetics
+Nothing is comparable to the feeling when you just have plotted a phylogenetic tree. It is very rewarding however the tree might be misleading.
+Read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
+In brief, it is necessary to build a good alignment(!), concatenate many genes, fit the model with modeltest (GTR+Г+I is usuallly the winner),
+and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendroscope](http://dendroscope.org/). It becomes better as years pass.
+
 # RNA-seq
+I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
+expression measurements, isoform reconstruction, and quality metrics.
 
 * [rnaseq.star.sh](../master/rnaseq.star.sh) - 2pass on the fly STAR alignment for a single sample. Two passes are recommended to enhance alignment and calculation of counts for novel splice junctions
 (1st pass discovers junctions, 2nd pass makes an alignment).
@@ -27,11 +43,29 @@ for genomes up to 100G.
 but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.proteinatlas.org/) values are in RPKMs, and still many people think in terms of RPKMs. GTEX has much more samples than HPA.
 * [rnaseq.load_rpkm_counts.R](../master/rnaseq.load_rpkm_counts.R) calculates RPKM counts from feature_counts output.
 
-### Differential expression
+### De novo transcriptome assembly
 
+### Differential expression
+I use [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html).
 * dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
 
+### Micro-RNA
+I did a couple of analysis in *A.thaliana* and *S.tuberosum* (potato). First I run [smallRNA-seq pipeline from bcbio](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#smallrna-seq).
+It is much better tuned for human miRNA, where it does discovery of novel miRNA (because primary tools are developed mostly for human).
+For non-human species it does a good job of mapping to mirBase and has an extensive [report](https://github.com/lpantano/seqcluster/blob/master/seqcluster/templates/report.rmd) in R.  
+For novel miRNA discovery I tried [shortstack](http://sites.psu.edu/axtell/software/shortstack/).
+
 ### Splicing analysis
+
+[qorts](http://hartleys.github.io/QoRTs/index.html) and [junctionseq](https://bioconductor.org/packages/release/bioc/html/JunctionSeq.html) do the job.
+Finally they produce html report for all differentially expressed genes, plotting exon usage, junction counts, novel juctions, as a nice plots.
+The problem is that RNA is quite noisy by its biological nature, so expect to have many events and many false positives.
+Additionaly you have tracks for IGV. They are useful, because default exon usage plots are not for exons from the canonical isoform,
+but for a set of chunks from the flattened annotation of many isoforms, and people are asking questions, why here are 125 exons not 108. It is hard to see
+the correspondence to exons of the canonical isoforms for long genes from those plots. Loading tracks in IGV helps: you see junctions, counts, and the alignment,
+people begin to understand you.
+
+Additionaly I use sailfish relative isoform expression levels which bcbio rna-seq pipeline outputs by default.
 
 #### [qorts](http://hartleys.github.io/QoRTs/index.html)
 * rnaseq.qorts.makeflatgff.sh
@@ -42,7 +76,7 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.R runs junction seq analysis in R
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
-# Variant analysis
+# Variant analysis, vcf files
 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
