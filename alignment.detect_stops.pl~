@@ -2,7 +2,7 @@
 
 #################################################################
 #    default : show number of internal stop codons TAA, TAG,TGA #
-#    alignment.detect_stops.pl file.fasta			  			#
+#    alignment.detect_stops.pl file.fasta			#
 #    --print_pos -also show positions of stops                  #
 #################################################################
 

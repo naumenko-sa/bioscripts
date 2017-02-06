@@ -9,20 +9,21 @@
 
 Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/) from UCSC  
 
-* alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances 
+* alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
 * alignment.check_3x.sh [alignment.fasta] prints how many sequences in an alignment are not 3x in length
 * alignment.check_conservative_site.sh
 * alignment.consensus.2seq.pl [alignment.fasta] prints a consensus of two DNA sequences
 * alignment.consensus.pl
 * alignment.count_nongappy_columns.sh
-* alignment.detect_stops.pl
+* [alignment.detect_stops.pl](../master/alignment.detect_stops.pl) [alignment.fasta] [--print_pos] prints internal stops and their positions
 * alignment.fa2fasta.pl
 * alignment.fasta2slice.pl
 * alignment.filter_not3x.sh
 * alignment.fix_ends.sh
 * alignment.nucleotide_diversity.pl
 * alignment.occupancy.pl
-* [alignment.pep2dna.sh](../master/alignment.pep2dna.sh) [name.aln.fasta] reverse translates amino acid alignment into DNA alignment
+* [alignment.pep2dna.sh](../master/alignment.pep2dna.sh) [name.aln.fasta] reverse translates amino acid alignment into DNA alignment.
+It is useful when making COGs. First amino acids sequenced are clustered with OrthoMCL, then aligned, and then reverse translated. 
 * alignment.remove_ambiguity.pl
 * alignment.remove_cons_n_gaps.pl
 * alignment.remove_gaps.pl

@@ -285,6 +285,21 @@ select_and_write = function(variants,samples,prefix)
     write.table(variants,paste0(prefix,".txt"),quote=F,sep = ";",row.names=F)  
 }
 
+# writes in CSV format
+select_and_write2 = function(variants,samples,prefix)
+{
+  variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
+                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Quality"),
+                        paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
+                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
+                                                        "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
+                                                        "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
+                                                        "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
+                                                        "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
+  
+  write.csv(variants,paste0(prefix,".csv"),row.names = F)  
+}
+
 # merges ensembl and gatk-haplotype reports to 
 # - fill alt_depths, Trio_coverage, qual_depths columns
 # fix NO_CALL issue
@@ -596,6 +611,6 @@ for (family in families)
   
     variants = merge(variants,seen_in_c4r_samples,by.x = "superindex", by.y="superindex",all.x = T)
     variants$Seen_in_C4R_samples=variants$samples
-    select_and_write(variants,samples,paste0(family,".report"))
+    select_and_write2(variants,samples,family)
     setwd("..")
 }
