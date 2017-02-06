@@ -114,6 +114,9 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
 * [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
+* [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
+Sometimes it is useful when studying cohorts of families. When samples are mislabeled (it happens), the whole study makes no sense,
+at least until relatives are placed together to call and interpret variants.
 
 ### Gemini staff - for CHEO, MH, and Muscular projects
 

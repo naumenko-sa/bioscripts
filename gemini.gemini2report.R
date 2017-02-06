@@ -469,11 +469,17 @@ library(plyr)
 
 reference_tables_path="~/Desktop/reference_tables"
 
-#Hernan samples
+#Muscular samples
 setwd("/home/sergey/Desktop/project_muscular/Fibroblast8/")
 family="fibroblast8"
 samples=c("Fibroblast8")
 create_report(family,samples)
+
+setwd("/home/sergey/Desktop/project_muscular/Muscle2/60_PF_S4/")
+family="varese"
+samples=c("62_AF_S5")
+create_report(family,samples)
+merge_reports(family,samples)
 
 setwd("/home/sergey/Desktop/project_muscular/DMD/")
 family="dmd"
