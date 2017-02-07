@@ -183,8 +183,6 @@ expression_unfiltered = function()
 # plots the heatmap of title.png for gene_panel using sample_rpkm and gtex_rpkm
 plot_panel= function(gene_panel, sample_rpkm, gtex_rpkm, filename,title, breaks)
 {
-    gene_panel = vacuolar_and_others
-    sample_rpkm = rpkms
     panel_rpkm = sample_rpkm[sample_rpkm$external_gene_name %in% gene_panel,]
     gtex_panel_rpkm = gtex_rpkm[gtex_rpkm$gene_name %in% gene_panel,]
   
@@ -192,13 +190,13 @@ plot_panel= function(gene_panel, sample_rpkm, gtex_rpkm, filename,title, breaks)
     row.names(all_rpkm) = all_rpkm$external_gene_name
     all_rpkm$external_gene_name=NULL
   
-  png(filename,res=100,width=600)
-  pheatmap(all_rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+    png(filename,res=100,width=600)
+    pheatmap(all_rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
            display_number =T,cluster_rows=T, cluster_cols=T,
            main=title,
            breaks=breaks,
            colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
-  dev.off()
+    dev.off()
 }
 
 
