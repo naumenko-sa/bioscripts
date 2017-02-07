@@ -58,12 +58,17 @@ Look for engineers to cooperate. For smaller genomes I prefer spades, for larger
 
 * [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
+* [genome_assembly.n50.sh](../master/genome_assembly.n50.sh) [contigs.fasta] calculates N50 metrics.
 
 # Phylogenetics
 Nothing is comparable to the feeling when you just have plotted a phylogenetic tree. It is very rewarding however the tree might be misleading.
 Read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
 In brief, it is necessary to build a good alignment(!), concatenate many genes, fit the model with modeltest (GTR+Г+I is usuallly the winner),
 and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendroscope](http://dendroscope.org/). It becomes better as years pass.
+
+# MISC
+
+* [hla.athlates.sh](../master/hla.athlates.sh) runs Athlates probram for HLA allele typing.
 
 # RNA-seq
 I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
