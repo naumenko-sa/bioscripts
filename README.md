@@ -68,7 +68,7 @@ and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendrosc
 
 # MISC
 
-* [hla.athlates.sh](../master/hla.athlates.sh) runs Athlates probram for HLA allele typing.
+* [hla.athlates.sh](../master/hla.athlates.sh) runs Athlates program for HLA allele typing.
 
 # RNA-seq
 I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
