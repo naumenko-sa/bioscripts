@@ -30,3 +30,12 @@ load_rpkm_counts = function(filename)
     
     return(counts)
 }
+
+# merge two dataframes by row.names and fix the row.names of the resulting df
+merge_row_names = function(df1,df2)
+{
+  merged = merge(df1,df2,by.x='row.names',by.y='row.names')
+  row.names(merged) = merged$Row.names
+  merged$Row.names = NULL
+  return(merged)
+}
