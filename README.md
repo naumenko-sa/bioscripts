@@ -135,6 +135,9 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
 
+# Visualization
+* [Pedigre char designers](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
+
 # By project
 
 ## 6. Muscle [2016-] is a study of genetic causes of muscular diseases
