@@ -15,10 +15,10 @@ details:
   genome_build: GRCh37
 resources:
   default:
-    cores: 10
+    cores: 5
     jvm_opts:
     - -Xms750m
-    - -Xmx2000m
-    memory: 2G
+    - -Xmx7000m
+    memory: 7G
 upload:
   dir: ../final

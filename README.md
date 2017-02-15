@@ -136,7 +136,7 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
 
 # Visualization
-* [Pedigre char designers](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
+* [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
 
 # By project
 

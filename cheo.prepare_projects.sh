@@ -3,7 +3,8 @@
 # prepares a run of multiples samples to generate bam files
 # $1 - file from DCC Re-analysis Queue Final google spreadsheet, columns 2-4
 # creates one project per sample
-# for the preparation of variant calling on the per family basis use another script
+# for the preparation of variant calling on the per family basis use another script and template
+# run with cheo.prepare_projects.sh table.txt > file.log for the case of failed projects
 
 prepare_sample()
 {
