@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#  array script to create bam files with bcbio
+#  for alignment only use 10 cores 25g ram, for variant calling use 7 cores 50G ram
+#  run with qsub -t 1-500%100 bcbio.array.pbs
+#  100 is amount of maximum running jobs from the array
+#  uses projects.txt for the list of projects
+
+#PBS -l walltime=240:00:00,nodes=1:ppn=10
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=25g,mem=25g
+
+echo "START: " `date`;
+
+module load java/1.8.0_91
+project=`cat projects.txt | head -n $PBS_ARRAYID | tail -n1`
+
+cd ${project}/work
+
+bcbio_nextgen.py ../config/${project}.yaml -n 10
+
+echo "END: " `date`;
+
+
+cd ../../

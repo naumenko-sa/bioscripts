@@ -1,0 +1,1 @@
+samplename,description,batch,phenotype,sex,variant_regions
