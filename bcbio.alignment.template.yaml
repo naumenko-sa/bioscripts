@@ -1,0 +1,24 @@
+details:
+- algorithm:
+    aligner: bwa
+    realign: true
+    recalibrate: true
+    save_diskspace: true
+    tools_on:
+    - svplots
+    - qualimap
+    variantcaller: false
+  analysis: variant2
+  description: '166.3_5'
+  files:
+  - /hpf/largeprojects/ccmbio/naumenko/project_c4r_run10/input/166.3_5.bam
+  genome_build: GRCh37
+resources:
+  default:
+    cores: 10
+    jvm_opts:
+    - -Xms750m
+    - -Xmx2000m
+    memory: 2G
+upload:
+  dir: ../final
