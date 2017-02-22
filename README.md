@@ -115,6 +115,9 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
 # Variant analysis, vcf files
+For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
+on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
+This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
@@ -156,9 +159,6 @@ variant calling pipeline outputs variants in gemini format.
 3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
 
 ## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
-For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
-on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
-This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 1. [cheo.prepare_projects.sh](../master/cheo.prepare_projects.sh) creates symlinks, folder structure, config files to run multiple projects
 2. [bcbio.array.pbs](../master/bcbio.array.pbs) runs multiple bcbio projects as a job array. I have tried a parallel execution of BCBIO, with IPython,
