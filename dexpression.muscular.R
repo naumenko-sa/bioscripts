@@ -205,6 +205,28 @@ expression_fibroblasts = function()
                "Fibroblasts expr(rpkm), congenital md panel",breaks)
 }
 
+#2017-02-22: expression of DGKE gene for Hernan and Mathieu
+expression_rpkm_blood12 = function()
+{
+    setwd("~/Desktop/project_muscular/9_Blood1_2/")
+    blood1 = load_rpkm_counts("blood1.counts_for_rpkm.txt")
+    blood2 = load_rpkm_counts("blood2.counts_for_rpkm.txt")
+    
+    blood2$external_gene_name = NULL
+    
+    rpkm.counts = merge_row_names(blood1,blood2)
+    
+    write.table(rpkm.counts,"blood1_2.rpkms.txt",quote=F,sep = "\t")
+    #sometimes contains duplicate entries, delete them
+    rpkm.counts = read.delim("blood1_2.rpkms.txt", row.names=1, stringsAsFactors=F)
+    
+    breaks = c(0,5,10,50,100,500,1000)
+    
+    dgke = c("DGKE")
+    
+    plot_panel(dgke,rpkm.counts,"blood1_2.DGKE.png","Blood1_2 expr(rpkm), DGKE gene",breaks)
+}
+
 expression_rpkm_muscle2 = function()
 {
     setwd("~/Desktop/project_muscular/1_Family_V_chr19_Muscle2/expression/")
@@ -369,6 +391,7 @@ init = function()
     library(edgeR)
     library(RColorBrewer)
     source("~/Desktop/bioscripts/rnaseq.load_rpkm_counts.R")
+    source("~/Desktop/bioscripts/rnaseq.muscular_gene_panels.R")
     setwd("~/Desktop/project_muscular/")
     
     gene_lengths = read.delim("~/Desktop/project_muscular/reference/gene_lengths.txt", stringsAsFactors=F, row.names=1)

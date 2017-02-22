@@ -68,7 +68,7 @@ gene_lengths = read.delim("~/Desktop/project_muscular/reference/gene_lengths.txt
 library(pheatmap)
 
 # plots the heatmap of title.png for gene_panel using sample_rpkm and gtex_rpkm
-plot_panel= function(gene_panel, sample_rpkm, gtex_rpkm, filename,title, breaks)
+plot_panel= function(gene_panel, sample_rpkm, filename,title, breaks)
 {
   panel_rpkm = sample_rpkm[sample_rpkm$external_gene_name %in% gene_panel,]
   gtex_panel_rpkm = gtex_rpkm[gtex_rpkm$gene_name %in% gene_panel,]
@@ -89,32 +89,32 @@ plot_panel= function(gene_panel, sample_rpkm, gtex_rpkm, filename,title, breaks)
 
 
 # plot expression for 8 gene panels
-plot_all_panels = function(rpkms,gtex_rpkm)
+plot_all_panels = function(rpkms)
 {
     #rpkms=counts
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,
              5000,6000,7000,8000,9000,10000,15000)
-    plot_panel(congenital_myopathy, rpkms, gtex_rpkm, "1_congenital_myopaties.png","Congenital myopaties RPKM",breaks)
+    plot_panel(congenital_myopathy, rpkms, "1_congenital_myopaties.png","Congenital myopaties RPKM",breaks)
   
     breaks = c(0,5,10,20,30,40,50,100)
-    plot_panel(congenital_myastenic_syndromes, rpkms, gtex_rpkm, "2_congenital_myastenic_syndromes.png","Congenital myastenic syndromes RPKM",breaks)
+    plot_panel(congenital_myastenic_syndromes, rpkms, "2_congenital_myastenic_syndromes.png","Congenital myastenic syndromes RPKM",breaks)
   
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,110)
-    plot_panel(channelopathies, rpkms, gtex_rpkm, "3_channelopathies.png","Channelopathies RPKM",breaks)
+    plot_panel(channelopathies, rpkms, "3_channelopathies.png","Channelopathies RPKM",breaks)
   
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000,2000)
-    plot_panel(vacuolar_and_others, rpkms, gtex_rpkm, "4_vacuolar_and_others.png","Vacuolar and others RPKM",breaks)
+    plot_panel(vacuolar_and_others, rpkms, "4_vacuolar_and_others.png","Vacuolar and others RPKM",breaks)
   
     breaks = c(0,5,10,50,100,500,1000,2000,5000,5200)
-    plot_panel(distal_myopathies, rpkms, gtex_rpkm, "5_distal_myopathies.png","Distal myopathies RPKM",breaks)
+    plot_panel(distal_myopathies, rpkms, "5_distal_myopathies.png","Distal myopathies RPKM",breaks)
   
     breaks = c(0,5,10,50,100,500,1000,2000,5000,10000,15000)
-    plot_panel(congenital_muscular_dystrophies, rpkms, gtex_rpkm, "6_congenital_muscular_dystrophies.png","Congenital MD RPKM",breaks)
+    plot_panel(congenital_muscular_dystrophies, rpkms, "6_congenital_muscular_dystrophies.png","Congenital MD RPKM",breaks)
   
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000,2000,3000,4000,
              5000)
-    plot_panel(limb_girdle, rpkms, gtex_rpkm, "7_Limb_girdle_dystrophies.png","Limb_girdle_dystrophies RPKM",breaks)
+    plot_panel(limb_girdle, rpkms, "7_Limb_girdle_dystrophies.png","Limb_girdle_dystrophies RPKM",breaks)
   
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000,2000)
-    plot_panel(muscular_dystrophies, rpkms, gtex_rpkm, "8_Muscular_dystrophies.png","Muscular_dystrophies RPKM",breaks)
+    plot_panel(muscular_dystrophies, rpkms, "8_Muscular_dystrophies.png","Muscular_dystrophies RPKM",breaks)
 }
