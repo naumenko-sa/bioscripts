@@ -135,6 +135,11 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
 
+# Useful resources
+* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
+* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
+
+
 # Visualization
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
 

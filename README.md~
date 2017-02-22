@@ -141,6 +141,7 @@ variant calling pipeline outputs variants in gemini format.
 # By project
 
 ## 6. Muscle [2016-] is a study of genetic causes of muscular diseases
+1. [rnaseq.muscular_gene_panels.R](../master/rnaseq.muscular_gene_panels.R) - key genes relevant to diseases.
 
 ---
 
