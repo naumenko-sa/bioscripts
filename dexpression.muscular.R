@@ -196,6 +196,8 @@ expression_fibroblasts = function()
     fibroblasts = merge_row_names(fibroblasts,fibroblast7)
     fibroblasts = merge_row_names(fibroblasts,fibroblast8)
     
+    write.table(fibroblasts,"fibroblasts.rpkms.txt",quote=F,sep = "\t")
+    
     breaks = c(0,5,10,50,100,500,1000)
     
     plot_panel(congenital_muscular_dystrophies,fibroblast8,gtex_rpkm,"fibroblast8.congenital_m_dystrophies.png",
