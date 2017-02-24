@@ -45,7 +45,11 @@ It is useful when making COGs. First amino acids sequenced are clustered with Or
 * [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
+* [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data into the basespace cloud.
+bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
+* `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
+
 
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler. 
@@ -115,6 +119,9 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
 # Variant analysis, vcf files
+For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
+on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
+This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 * vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
@@ -135,6 +142,11 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
 
+# Useful resources
+* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
+* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
+
+
 # Visualization
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
 
@@ -151,9 +163,6 @@ variant calling pipeline outputs variants in gemini format.
 3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
 
 ## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
-For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
-on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
-This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 1. [cheo.prepare_projects.sh](../master/cheo.prepare_projects.sh) creates symlinks, folder structure, config files to run multiple projects
 2. [bcbio.array.pbs](../master/bcbio.array.pbs) runs multiple bcbio projects as a job array. I have tried a parallel execution of BCBIO, with IPython,

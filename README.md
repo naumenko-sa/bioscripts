@@ -123,7 +123,8 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
-* vcf.validate.sh - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
+* [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator 
+* [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
 * [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 * [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
@@ -168,7 +169,7 @@ variant calling pipeline outputs variants in gemini format.
 2. [bcbio.array.pbs](../master/bcbio.array.pbs) runs multiple bcbio projects as a job array. I have tried a parallel execution of BCBIO, with IPython,
 quite successfully, but finally with enigmatic faults,maybe because of the cluster issues.
 3. [cheo.check_if_done.sh](../master/cheo.check_if_done.sh) [bcbio_job.output] check which bcbio jobs are done, useful when running 100x families
-4. [cheo.postprocess.sh](../master/cheo.postprocess.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator
+4. [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator
 5. [gemini.gemini2report.R](../master/gemini.gemini2report.R) generates reports for excel import 
 6. [cheo.c4r_database.sh](../master/cheo.c4r_database.sh) prepares variants from a family to be merged in a database seen_in_c4r
 7. [cheo.c4r_database_merge.pl](../master/cheo.c4r_database_merge.pl) merges variant evidence from many samples
