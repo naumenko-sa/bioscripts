@@ -174,6 +174,8 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 5. [gemini.gemini2report.R](../master/gemini.gemini2report.R) generates reports for excel import 
 6. [cheo.c4r_database.sh](../master/cheo.c4r_database.sh) prepares variants from a family to be merged in a database seen_in_c4r
 7. [cheo.c4r_database_merge.pl](../master/cheo.c4r_database_merge.pl) merges variant evidence from many samples
+8. gemini.gemini2report.R again, to add information about C4R frequencies.
+9. [cheo.filtered_vcf.sh](../master/cheo.filtered_vcf.sh) prepares filtered vcf file corresponding to excel report.
 
 ---
 ## 3. Gammaruses [2012-]
