@@ -16,8 +16,6 @@ prepare_family()
 
     cp ~/bioscripts/bcbio.sample_sheet_header.csv $family.csv
 
-    file=`cat $sample.txt | awk '{print $5}'`
-    
     while read sample fam bam
     do
 	ln -s $bam ${family}/input/${sample}.bam
