@@ -596,7 +596,6 @@ for (family in families)
 }
 
 #add seen in c4r information
-setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded")
 setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
@@ -608,6 +607,10 @@ for (family in families)
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
+    
+    create_report(family,samples)
+    merge_reports(family,samples)
+    
     variants = read.csv(paste0(family,".txt"), sep=";", stringsAsFactors=F,quote="")
     
     variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
