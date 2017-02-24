@@ -123,6 +123,7 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
+* [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator 
 * [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
