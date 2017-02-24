@@ -1,0 +1,35 @@
+details:
+- algorithm:
+    aligner: bwa
+    effects: vep
+    effects_transcripts: all
+    ensemble:
+      numpass: 2
+      use_filtered: false
+    realign: true
+    recalibrate: true
+    save_diskspace: true
+    tools_on:
+    - svplots
+    - qualimap
+    variantcaller:
+    - freebayes
+    - gatk-haplotype
+    - samtools
+    - platypus
+  analysis: variant2
+  description: '166.3_5'
+  files:
+  - /hpf/largeprojects/ccmbio/naumenko/project_c4r_run10/input/166.3_5.bam
+  genome_build: GRCh37
+  metadata:
+    batch: 166
+resources:
+  default:
+    cores: 5
+    jvm_opts:
+    - -Xms750m
+    - -Xmx7000m
+    memory: 7G
+upload:
+  dir: ../final

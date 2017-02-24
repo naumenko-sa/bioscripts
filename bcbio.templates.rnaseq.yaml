@@ -1,0 +1,16 @@
+details:
+- algorithm:
+    aligner: star
+    variantcaller: gatk
+    merge_bamprep: true
+    trim_reads: read_through
+    adapters: [nextera,polya]
+    effects: vep
+  analysis: RNA-seq
+  description: katie
+  files:
+  - /hpf/largeprojects/ccmbio/naumenko/RIVAL/bcbio_run/input/SRR307897_1.fq.gz
+  - /hpf/largeprojects/ccmbio/naumenko/RIVAL/bcbio_run/input/SRR307897_2.fq.gz
+  genome_build: GRCh37
+upload:
+  dir: ../final

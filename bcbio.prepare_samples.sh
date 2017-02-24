@@ -2,8 +2,8 @@
 
 # prepares a run of multiples samples to generate bam files
 # $1 - a file from DCC Re-analysis Queue Final google spreadsheet, columns 2,7:
-# mapped_sample		bam
-# mapped sample id is unique
+# mapped_sample_id		bam
+# mapped_sample_id is unique
 # creates one project per sample
 # for the preparation of variant calling on the per family basis use another script and template
 # run with bcbio.prepare_samples.sh table.txt &> file.log to track failed bams
@@ -25,7 +25,7 @@ prepare_sample()
     #no batch for single sample
     echo $sample","$sample",,,," >> $sample.csv
     
-    bcbio_nextgen.py -w template ~/bioscripts/bcbio.alignment.template.yaml ${sample}.csv ${sample}/input/${sample}.bam
+    bcbio_nextgen.py -w template ~/bioscripts/bcbio.templates.alignment.yaml ${sample}.csv ${sample}/input/${sample}.bam
     
     rm $sample.csv
 }
