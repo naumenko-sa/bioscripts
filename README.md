@@ -124,8 +124,9 @@ on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes,
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 * [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
-* [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator 
-* [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool
+* [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.
+* [bcbio.prepare_samples.sh](../master/bcbio.prepare_samples.sh) creates symlinks, folder structure, config files to run multiple projects for bam file generation.
+* [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool.
 * [VT: biallelic sites decomposition](https://github.com/atks/vt)
 * [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 * [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
@@ -166,7 +167,7 @@ variant calling pipeline outputs variants in gemini format.
 
 ## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
 
-1. [cheo.prepare_projects.sh](../master/cheo.prepare_projects.sh) creates symlinks, folder structure, config files to run multiple projects
+1. [bcbio.prepare_samples.sh](../master/bcbio.prepare_samples.sh) creates symlinks, folder structure, config files to run multiple projects for bam file generation.
 2. [bcbio.array.pbs](../master/bcbio.array.pbs) runs multiple bcbio projects as a job array. I have tried a parallel execution of BCBIO, with IPython,
 quite successfully, but finally with enigmatic faults,maybe because of the cluster issues.
 3. [cheo.check_if_done.sh](../master/cheo.check_if_done.sh) [bcbio_job.output] check which bcbio jobs are done, useful when running 100x families
