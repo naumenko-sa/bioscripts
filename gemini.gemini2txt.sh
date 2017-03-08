@@ -16,7 +16,8 @@ fi
 
 gemini query -q "select name from samples" $file > samples.txt
 
-sQuery="select 
+sQuery="select
+	v.variant_id as Variant_id,
         v.ref as Ref,
         v.alt as Alt,
         v.impact as Variation,
@@ -55,8 +56,8 @@ do
 done < samples.txt
 
 
-sQuery=$sQuery"v.vep_hgvsp as Protein_change from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and max_aaf_all <0.01"
+sQuery=$sQuery"v.vep_hgvsc as Nucleotide_change,v.vep_hgvsp as Protein_change from variants v, gene_detailed g
+        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01"
 
 echo $sQuery
 gemini query --header -q "$sQuery" $file > ${file}.txt;
