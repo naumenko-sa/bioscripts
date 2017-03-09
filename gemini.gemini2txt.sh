@@ -55,9 +55,10 @@ do
 	sQuery=$sQuery"gt_depths."$sample","
 done < samples.txt
 
-
+# gene_detailed may contain 2 records per single transcript - because of synonymous gene names, and some genes may have None in the name,for example TSRM
+# https://groups.google.com/forum/#!topic/gemini-variation/U3uEvWCzuQo
 sQuery=$sQuery"v.vep_hgvsc as Nucleotide_change,v.vep_hgvsp as Protein_change from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01"
+        where v.transcript=g.transcript and (v.gene=g.gene or g.gene is NULL) and v.impact_severity <> 'LOW' and v.max_aaf_all < 0.01"
 
 echo $sQuery
 gemini query --header -q "$sQuery" $file > ${file}.txt;
