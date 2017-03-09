@@ -123,13 +123,13 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
+* [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt)
+* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 * [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.
 * [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families.
 * [bcbio.prepare_samples.sh](../master/bcbio.prepare_samples.sh) creates symlinks, folder structure, config files to run multiple projects for bam file generation.
 * [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool.
-* [VT: biallelic sites decomposition](https://github.com/atks/vt)
-* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 * [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
 Sometimes it is useful when studying cohorts of families. When samples are mislabeled (it happens), the whole study makes no sense,
 at least until relatives are placed together to call and interpret variants.
