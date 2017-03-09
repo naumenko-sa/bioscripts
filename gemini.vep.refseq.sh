@@ -21,6 +21,6 @@ unset PERL5LIB && export PATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/ana
     --canonical --gene_phenotype --ccds --fields Consequence,Codons,Amino_acids,Gene,SYMBOL,Feature,EXON,PolyPhen,SIFT,Protein_position,BIOTYPE,CANONICAL,CCDS,HGVSc,HGVSp \
     --plugin LoF,human_ancestor_fa:/hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/variation/human_ancestor.fa.gz --sift b --polyphen b --hgvs --shift_hgvs 1 \
     --fasta /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa \
-    | sed '/^#/! s/;;/;/g' | bgzip -c > $bname.vepeffects.vcf.gz
+    | sed '/^#/! s/;;/;/g' | bgzip -c > $bname.vepeffects_refseq.vcf.gz
 
-tabix $bname.vepeffects.vcf.gz
+tabix $bname.vepeffects_refseq.vcf.gz

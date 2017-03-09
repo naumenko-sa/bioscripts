@@ -123,7 +123,7 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
-* [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt)
+* [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt):biallelic sites decomposition, info fields removal
 * [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
 * [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.
