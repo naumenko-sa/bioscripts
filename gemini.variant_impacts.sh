@@ -34,9 +34,6 @@ sQuery="select
 	i.sift_score,
 	i.vep_canonical,
 	i.vep_ccds,
-	i.vep_lof,
-	i.vep_lof_filter,
-	i.vep_lof_flags,
 	i.vep_hgvsc,
 	i.vep_hgvsp 
 	from variants v, variant_impacts i 

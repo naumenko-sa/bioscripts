@@ -13,7 +13,7 @@
 
 #gemini.decompose.sh ${family}.no_vep.vcf.gz
 
-#gemini.vep.refseq.sh ${family}.no_vep.decomposed.vcf.gz
+gemini.vep.refseq.sh ${family}.no_vep.decomposed.vcf.gz
 
 gemini.vep2gemini.sh ${family}.no_vep.decomposed.vepeffects_refseq.vcf.gz
 
