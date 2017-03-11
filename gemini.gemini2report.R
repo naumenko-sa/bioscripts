@@ -119,59 +119,88 @@ create_report = function(family,samples)
     #family="NA12878-1"
     #samples=c("NA12878.1")
   
+    #test: 
+    setwd("~/Desktop/project_cheo/2017-01-30_dorin/1092R")
+    family="1092R"
+    samples = c("1092R_1613029","1092R_1613440","1092R_1613445")
+  
     file=paste0(family,"-ensemble.db.txt")
   
     variants = get_variants_from_file(file)
 
-  #field1 - Position
-  variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
-  columns = ncol(variants)
-  variants=variants[c(columns,1:columns-1)]
+    #field1 - Position
+    variants$Position=with(variants,paste(Chrom,Pos,sep=':'))
+    
+    #field2 - UCSC link
+    sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.out3=10x&position="
+    sUCSC2="\",\"UCSC_link\""
+    variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,")",sep=''))
 
-  #field2 - UCSC link
-  sUCSC1="=HYPERLINK(\"http://genome.ucsc.edu/cgi-bin/hgTracks?db=hg19&hgt.out3=10x&position="
-  sUCSC2="\",\"UCSC_link\""
-  variants$UCSC_Link=with(variants,paste(sUCSC1,Position,sUCSC2,")",sep=''))
+    #fields 3,4: Ref,Alt
 
-  #fields 3,4: Ref,Alt
-
-  # field5 - Zygocity
-  # use new loader vcf2db.py - with flag  to load plain text
-  # for genotype and depth - Noah
-  # otherwise have to decode BLOB 
-  # snappy decompression
-  # https://github.com/arq5x/gemini/issues/700
-  # https://github.com/lulyon/R-snappy
-  #variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
+    # field5 - Zygocity
+    # use new loader vcf2db.py - with flag  to load plain text
+    # for genotype and depth - Noah
+    # otherwise have to decode BLOB 
+    # snappy decompression
+    # https://github.com/arq5x/gemini/issues/700
+    # https://github.com/lulyon/R-snappy
+    #variants = cbind(variants,lapply(variants$gts.100940,genotype2zygocity))
     for(sample in samples)
     {
-      #DEBUG: gene = IL20RA
-      #sample=samples[1]
-      zygocity_column_name = paste0("Zygosity.",sample)
-      #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
-      #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
-      t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
-      variants[,zygocity_column_name] = unlist(t)
+        #DEBUG: gene = IL20RA
+        #sample=samples[1]
+        zygocity_column_name = paste0("Zygosity.",sample)
+        #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+        #t = lapply(variants[,paste0("gts.",sample),"Ref"],genotype2zygocity)
+        t=unlist(mapply(genotype2zygocity,variants[,paste0("gts.",sample)],variants[,"Ref"]))
+        variants[,zygocity_column_name] = unlist(t)
     
-      burden_column_name = paste0("Burden.",sample)
-      t = subset(variants, get(zygocity_column_name) == 'Hom' | get(zygocity_column_name) == 'Het',select=c("Ensembl_gene_id",zygocity_column_name))
-      df_burden = count(t,'Ensembl_gene_id')    
-      colnames(df_burden)[2] = burden_column_name
-      variants = merge(variants,df_burden,all.x=T)
-      variants[,burden_column_name][is.na(variants[,burden_column_name])] = 0
+        burden_column_name = paste0("Burden.",sample)
+        t = subset(variants, get(zygocity_column_name) == 'Hom' | get(zygocity_column_name) == 'Het',select=c("Ensembl_gene_id",zygocity_column_name))
+        df_burden = count(t,'Ensembl_gene_id')    
+        colnames(df_burden)[2] = burden_column_name
+        variants = merge(variants,df_burden,all.x=T)
+        variants[,burden_column_name][is.na(variants[,burden_column_name])] = 0
     }
 
-    #field 6 - Variation
+    #field 8 - Variation
     #add splicing and splicing extended annotation - just use RefSeq annotation and chr:pos
     #in the meawhile we have splice_region_variant
     #http://sequenceontology.org/browser/current_svn/term/SO:0001630
     #1-3 bases of exon, 3-8 bases of intron
 
-    #field 7 - Info, we want all transcripts, not it is more more severily affected
-    #gemini bug: https://github.com/arq5x/gemini/issues/798
-    ensembl_refseq = read.delim(paste0(reference_tables_path,"/ensembl_refseq_no_duplicates.txt"), stringsAsFactors=F)
-    variants = merge(variants,ensembl_refseq,all.x=T)
-    variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
+    #field9: Info_ensembl
+    #Info, we want all transcripts, not it is more more severily affected
+    #example from Kristin: PHLPP2:NM_001289003:exon2:c.A250G:p.S84G,PHLPP2:NM_015020:exon2:c.A250G:p.S84G
+    
+    variants = add_placeholder(variants,"Info_ensembl","Info_ensembl")
+    impact_file=paste0(family,"-ensemble.db.impacts.txt")
+    impacts = get_variants_from_file(impact_file)
+    
+    for (i in 1:nrow(variants))
+    {
+        #debug: i=1  
+        v_id = variants[i,"Variant_id"]
+        gene = variants[i,"Gene"]
+        gene_impacts = subset(impacts,variant_id==v_id,select=c("exon","vep_hgvsc","vep_hgvsp"))
+        gene_impacts$gene = rep(gene,nrow(gene_impacts))
+        
+        gene_impacts$exon[gene_impacts$exon=='']='NA'
+        
+        gene_impacts = gene_impacts[c("gene","exon","vep_hgvsc","vep_hgvsp")]
+        
+        v_impacts = paste0(gene_impacts$gene,":exon",gene_impacts$exon,":",gene_impacts$vep_hgvsc,":",gene_impacts$vep_hgvsp)
+        s_impacts = paste(v_impacts,collapse=",")
+      
+        variants[i,"Info_ensembl"] = s_impacts
+    }
+    
+    #refseq_impacts in merge_reports
+    
+    
+    #variants = merge(variants,ensembl_refseq,all.x=T)
+    #variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
 
     #fields 8,9 - Depth, Qual_depth
 
@@ -274,7 +303,7 @@ create_report = function(family,samples)
 select_and_write = function(variants,samples,prefix)
 {
     variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Quality"),
+                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Info_refseq","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                                                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
@@ -289,7 +318,7 @@ select_and_write = function(variants,samples,prefix)
 select_and_write2 = function(variants,samples,prefix)
 {
   variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info","Depth","Quality"),
+                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Info_refseq","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                                                         "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
@@ -317,6 +346,19 @@ merge_reports = function(family,samples)
     
     ensemble = read.csv(ensemble_file, sep=";", quote="", stringsAsFactors=F)
     ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
+    
+    
+    ensemble = add_placeholder(ensemble,"Info_refseq","Info_refseq")
+    refseq_file = paste0(family,".ref_seq.hgvs")
+    refseq = read.delim(refseq_file, stringsAsFactors=F)
+    ensemble = merge(ensemble,refseq,by.x = "superindex", by.y="superindex",all.x = T)
+    
+    for (i in 1:nrow(ensemble))
+    {
+        v_impacts = strsplit(ensemble[i,"Info_refseq_no_gene"],",",fixed=T)
+        gene = ensemble[i,"Gene"]
+        ensemble[i,"Info_refseq"]=paste(paste(gene,v_impacts[[1]],sep=":"),collapse=",")
+    }
     
     gatk_file = paste0(family,"-gatk-haplotype.decomposed.table")
     gatk = read.delim(gatk_file, stringsAsFactors=F)
@@ -603,7 +645,7 @@ seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_count
 seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F, sep=";")
 for (family in families)
 {
-    #family="100"
+    family="1092R"
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
