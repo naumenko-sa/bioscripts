@@ -8,6 +8,10 @@
 #PBS -d .
 #PBS -l vmem=50g,mem=50g
 
+if [ -z $family ];
+then
+    family=$1
+fi
 
 #vt rminfo ${family}-ensemble.vcf.gz -t CSQ -o ${family}.no_vep.vcf.gz
 

@@ -10,10 +10,12 @@ then
 fi
 
 #extract positions of the variants in the final report
-cat ${family}-ensemble.db.txt  | awk -F "\t" '{print $23"\t"$24"\t"$24}' | sed 1d | sed s/chr// > $family.bug.bed
+cat ${family}.no_vep.decomposed.vepeffects.db.txt  | awk -F "\t" '{print $23"\t"$24}' | sed 1d | sed s/chr// > $family.bug.tab
 #extract variants with their VEP annotations
-bedtools intersect -header -a ${family}-ensemble.vcf.gz -b $family.bug.bed > $family.bug.vcf
+bcftools view -o $family.bug.tosort.vcf -R $family.bug.tab ${family}.no_vep.decomposed.vepeffects_refseq.vcf.gz 
+#sort vcf
+picard SortVcf I=$family.bug.tosort.vcf O=$family.bug.vcf
 #convert vcf to table
-gatk -R ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa -T VariantsToTable -V ${family}.bug.vcf -F CHROM -F POS -F REF -F ALT -F CSQ -o $family.bug.table
+gatk -R ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa -T VariantsToTable -V ${family}.bug.vcf -F CHROM -F POS -F REF -F ALT -F CSQ -o $family.bug.table -U ALLOW_SEQ_DICT_INCOMPATIBILITY
 #parse vcf and VEP CSQ field
-gemini.bug.parse_vep.pl $family.bug.table > $family.impacts.hgvs
+gemini.bug.parse_vep.pl $family.bug.table > $family.ref_seq.hgvs
