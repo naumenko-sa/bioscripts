@@ -5,8 +5,21 @@
 #PBS -d .
 #PBS -l vmem=10g
 
+if [ -z $bam ]
+then
+    bam=$1
+fi
+
+if [ -z $pref ]
+then
+    pref=$2
+fi
+
 module load samtools
 module load bedtools
 
-samtools sort -n -O BAM -o sorted.bam -T temp -@ 10 $file
+samtools sort -n -O BAM -o sorted.bam -T temp -@ 10 $bam
 bedtools bamtofastq -i sorted.bam -fq ${pref}_1.fq -fq2 ${pref}_2.fq
+
+bgzip ${pref}_1.fq
+bgzip ${pref}_2.fq
