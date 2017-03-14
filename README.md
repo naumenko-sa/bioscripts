@@ -47,6 +47,7 @@ Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low compl
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
 * [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data into the basespace cloud.
 bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
+* [bcl2fastq.sh](../master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
 
@@ -149,7 +150,7 @@ variant calling pipeline outputs variants in gemini format.
 # Useful resources
 * [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
 * [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
-
+* [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
 
 # Visualization
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
