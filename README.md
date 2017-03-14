@@ -182,6 +182,7 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 
 ---
 ## 3. Gammaruses [2012-]
+* gam.blastp.pbs, gam.blastp.sh - blastp for othomcl
 ---
 
 ## 2. Spectrum [2010-2012]

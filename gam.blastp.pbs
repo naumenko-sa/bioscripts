@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=100:00:00,nodes=1:ppn=24
+
+gam.blastp.sh $qry goodProteins.fasta
