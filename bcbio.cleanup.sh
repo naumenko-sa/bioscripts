@@ -43,8 +43,8 @@ function prepare_for_report
 {
     cd $family
 
-    gemini.gemini2txt.sh ${family}-ensemble-annotated-decomposed.db
-    gemini.variant_impacts.sh ${family}-ensemble-annotated-decomposed.db
+    gemini.gemini2txt.sh ${family}-ensemble.db
+    gemini.variant_impacts.sh ${family}-ensemble.db
     gemini.refseq.sh $family
 
     #decompose first for the old version of bcbio!
@@ -66,5 +66,5 @@ then
 fi
 
 echo $family
-cleanup
+#cleanup
 prepare_for_report

@@ -22,7 +22,7 @@ vt rminfo ${family}-ensemble-annotated-decomposed.vcf.gz -t CSQ -o ${family}.no_
 gemini.vep.refseq.sh ${family}.no_vep.vcf.gz
 
 # 3.extract positions of the variants in the final report
-cat ${family}-ensemble-annotated-decomposed.db.txt  | awk -F "\t" '{print $23"\t"$24}' | sed 1d | sed s/chr// > $family.report.tab
+cat ${family}-ensemble.db.txt  | awk -F "\t" '{print $23"\t"$24}' | sed 1d | sed s/chr// > $family.report.tab
 
 # 4.extract variants with their VEP annotations
 bcftools view -o $family.tosort.vcf -R $family.report.tab ${family}.no_vep.vepeffects_refseq.vcf.gz 
