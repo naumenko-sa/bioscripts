@@ -23,8 +23,7 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * alignment.muscle.sh.
 * alignment.nucleotide_diversity.pl
 * alignment.occupancy.pl
-* [alignment.pep2dna.sh](../master/alignment.pep2dna.sh) [name.aln.fasta] reverse translates amino acid alignment into DNA alignment.
-It is useful when making COGs. First amino acids sequenced are clustered with OrthoMCL, then aligned, and then reverse translated. 
+* [alignment.protein2dna.sh](../master/alignment.protein2dna.sh) [name.aln.fasta] reverse translates amino acid alignment into DNA alignment.
 * alignment.remove_ambiguity.pl
 * alignment.remove_cons_n_gaps.pl
 * alignment.remove_gaps.pl
