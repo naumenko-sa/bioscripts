@@ -158,12 +158,15 @@ at least until relatives are placed together to call and interpret variants.
 [Gemini](https://gemini.readthedocs.io/en/latest/) is a database and framework for variant analysis. [Bcbio](http://bcbio-nextgen.readthedocs.io/en/latest/)
 variant calling pipeline outputs variants in gemini format.
 
-* [gemini.decompose.sh](../master/gemini.decompose.sh) decomposes and normalizes variants with vt
-* [gemini.vep.sh](../master/gemini.vep.sh) annotates vcf file with VEP
-* [gemini.vep2gemini.sh](../master/gemini.vep2gemini.sh) loads VEP annotated vcf to the GEMINI database
-* [gemini.gemini2txt.sh](../master/gemini.gemini2txt.sh) dumps gemini database into txt file with decompressed genotypes
-* [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump
-* [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
+* [gemini.decompose.sh](../master/gemini.decompose.sh) decomposes and normalizes variants with vt.
+* [gemini.vep.sh](../master/gemini.vep.sh) annotates vcf file with VEP.
+* [gemini.vep2gemini.sh](../master/gemini.vep2gemini.sh) loads VEP annotated vcf to the GEMINI database.
+* [gemini.gemini2txt.sh](../master/gemini.gemini2txt.sh) dumps gemini database into txt file with decompressed genotypes.
+* [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump.
+* [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output.
+* [gemini.refseq.sh](../master/gemini.refseq.sh) annotates variants with RefSeq transcripts (NMs) using VEP.
+* [gemini.variant_impacts.sh](../master/gemini.variant_impacts.sh) extracts variant impacts for all transcripts.
+
 
 # Visualization
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.

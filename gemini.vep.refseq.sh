@@ -3,6 +3,10 @@
 # gemini.vep.refseq.sh - annotate vcf with vep before loading into gemini database
 # based on  bcbio.log
 # uses hgvs notation with refseq transcript coordinates and no --pick - all effects for a gene
+# first you have to download refseq annotation
+# ftp://ftp.ensembl.org/pub/current_variation/VEP/homo_sapiens_refseq_vep_87_GRCh37.tar.gz
+# to
+# bcbio/genomes/Hsapiens/GRCh37/vep
 
 #PBS -l walltime=2:00:00,nodes=1:ppn=1
 #PBS -joe .

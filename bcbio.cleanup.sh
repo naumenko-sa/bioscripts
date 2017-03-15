@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # cleans up after bcbio - when running large cohort only the final folder is kept
-# and only ensemble gemini database: 2-3G per family
+# and only one ensemble gemini database: 2-3G per family
 # keeps bam files for new samples
 # prepares tables for report generation
-# note that family forder name shoule be the same as family name, i.e. db should be family-ensembl.db
 
 # parameters:
-# family = [family_id] (=folder_name)
+# family = [family_id] (=folder_name,main result file should be family-ensembl.db)
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
@@ -48,7 +47,7 @@ function prepare_for_report
     gemini.variant_impacts.sh ${family}-ensemble-annotated-decomposed.db
     gemini.refseq.sh $family
 
-    #decomposed for old version of bcbio
+    #decompose first for the old version of bcbio!
     #gemini.decompose.sh ${family}-freebayes.vcf.gz
     vcf.freebayes.getAO.sh ${family}-freebayes-annotated-decomposed.vcf.gz
 
