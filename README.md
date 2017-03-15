@@ -1,9 +1,14 @@
 # bioscripts - scripts I am using on a daily basis
 
-[Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
-[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
-
-[Ordered by project](https://github.com/naumenko-sa/bioscripts#by-project)
+# Outline
+# By subject
+* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) 
+* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
+* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) 
+* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
+# [By project](https://github.com/naumenko-sa/bioscripts#by-project)
+* [6.Muscle](https://github.com/naumenko-sa/bioscripts#6-muscle-2016--is-a-study-of-genetic-causes-of-muscular-diseases)
+* [5.MH](https://github.com/naumenko-sa/bioscripts#5-mh-2016--studies-malignant-hyperthermia)
 
 # Alignment
 
@@ -184,9 +189,10 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 
 ---
 ## 3. Gammaruses [2012-]
+* [gam.filter.sh](../master/gam.filter.sh) - filters reads
 * gam.blastp.pbs, gam.blastp.sh - blastp for othomcl
 * [gam.ortho.sh](../master/gam.ortho.sh) - orthologization of transcript with orthomcl
-* gam.orthomcl.make_alignments.pl - writes fasta alignments for N species (1:1 orthologs) after orthomcl
+* [gam.orthomcl.make_alignments.pl](../master/gam.orthomcl.make_alignments.pl) - writes fasta alignments for N species (1:1 orthologs) after orthomcl
 ---
 
 ## 2. Spectrum [2010-2012]

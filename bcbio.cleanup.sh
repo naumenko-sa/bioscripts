@@ -44,6 +44,8 @@ function prepare_for_report
     cd $family
 
     gemini.gemini2txt.sh ${family}-ensemble.db 
+    gemini.variant_impacts.sh ${family}-ensemble.db
+    gemini.refseq.sh $family
 
     gemini.decompose.sh ${family}-freebayes.vcf.gz
     vcf.freebayes.getAO.sh ${family}-freebayes.decomposed.vcf.gz

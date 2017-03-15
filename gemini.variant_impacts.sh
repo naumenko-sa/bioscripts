@@ -1,5 +1,5 @@
 #!/bin/bash
-#   exports variant_effects from gemini.db database to gemini.db.variant_effects.txt file
+#   exports variant_impacts from gemini.db database to gemini.db.variant_impacts.txt file
 #   database schema: https://gemini.readthedocs.io/en/latest/content/database_schema.html#the-variants-table
 #   by default bcbio writes PASS only variants to the database
 

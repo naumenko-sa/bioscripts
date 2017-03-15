@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# creates gemini database with vep annotations, 
+# creates gemini database with vep annotations and all impacts
+# it is for projects that were done with previous version - with one impact per gene
 # dumps text file and variant_impacts for rare harmful variants
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=10

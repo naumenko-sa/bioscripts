@@ -2,7 +2,7 @@
 
 # parses vcf with VEP annotation - CSQ field
 # works for VEP - refseq !
-# for ensembl:
+# for ensembl fields are different:
 # f_exon = 9
 # f_hgvsc = 16
 # f_hgvsp = 17
