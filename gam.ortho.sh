@@ -62,3 +62,17 @@ for f in *.align.fasta;do gaps=`alignment.count_gaps.sh $f`;if [ $gaps -le 10 ];
 
 #17. reverse translate alignments
 alignment.pep2dna.sh
+
+#18  remove stops and gaps
+for f in *.fasta;do alignment.remove_stops_n_gaps.pl $f > $f.nogaps;done;
+
+#19. check bad alignments
+for f in *.nogaps;do echo $f `cat $f | grep -v '>' | awk '{print length}' | sort | uniq | wc -l` >> check.list;done;
+for f in `cat check.list| grep -v "1$" | awk '{print $1}'`;do mv $f bad/;done;
+      
+for f in *.nogaps;do echo $f `cat $f | grep '>' | awk -F '|' '{print $1}' | sort | uniq | wc -l` >> check1.list;done;
+
+
+#20. concatenate alignments
+alignments.concatenate.pl
+

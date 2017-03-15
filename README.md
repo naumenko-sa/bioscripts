@@ -29,8 +29,8 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * alignment.remove_gaps.pl
 * alignment.remove_seqs_having_stops.pl
 * alignment.remove_sp4occupancy.pl
-* alignment.remove_stops_n_gaps2.pl
-* alignment.remove_stops_n_gaps.pl
+* [alignment.remove_stops_n_gaps2.pl](../master/alignment.remove_stops_n_gaps2.pl) removes stops, gaps, and sites around indels.
+* [alignment.remove_stops_n_gaps.pl](../master/alignment.remove_stops_n_gaps.pl) removes triplets with stops or gaps.
 * alignment.reverse_complement.pl
 * alignments.concatenate1.pl
 * alignments.concatenate.pl
@@ -70,6 +70,7 @@ Nothing is comparable to the feeling when you just have plotted a phylogenetic t
 Read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
 In brief, it is necessary to build a good alignment(!), concatenate many genes, fit the model with modeltest (GTR+Г+I is usuallly the winner),
 and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendroscope](http://dendroscope.org/). It becomes better as years pass.
+* [tree.raxml_boot.pbs](../master/tree.raxml_boot.pbs) infers a phylogenetic tree for cdna alignment with 100 bootstrap replicates.
 
 # MISC
 
