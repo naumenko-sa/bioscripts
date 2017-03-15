@@ -1,12 +1,13 @@
 # bioscripts - scripts I am using on a daily basis
 
-# Outline
-# By subject
+Outline
+By subject
 * [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) 
 * [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
 * [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) 
 * [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
-# [By project](https://github.com/naumenko-sa/bioscripts#by-project)
+
+[By project](https://github.com/naumenko-sa/bioscripts#by-project-1)
 * [6.Muscle](https://github.com/naumenko-sa/bioscripts#6-muscle-2016--is-a-study-of-genetic-causes-of-muscular-diseases)
 * [5.MH](https://github.com/naumenko-sa/bioscripts#5-mh-2016--studies-malignant-hyperthermia)
 
