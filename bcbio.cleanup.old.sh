@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# cleans up after bcbio - when running large cohort only the final folder is kept
+# cleans up after bcbio - when running large cohort only the final folder is kept, 
 # and only ensemble gemini database: 2-3G per family
 # keeps bam files for new samples
 # prepares tables for report generation
 # note that family forder name shoule be the same as family name, i.e. db should be family-ensembl.db
+
+# in a new version of output project folder has annotated-decomposed files
 
 # parameters:
 # family = [family_id] (=folder_name)
@@ -18,7 +20,7 @@ function cleanup
 {
 
     # better to look for project-summary than hardcode the year
-    # save bam files for new samples
+    # don't forget to extract bam files from sample directories for new samples
     cd $family
     result_dir=`find final -name project-summary.yaml | sed s/"\/project-summary.yaml"//`
     mv $result_dir/* .
@@ -28,8 +30,8 @@ function cleanup
     rm -rf final/
     rm -rf work/
 
-    #don't remove input files for new projects
-    #rm -rf input/
+    don't remove input files for new projects
+    rm -rf input/
 
     # we don't need gemini databases for particular calling algorythms
     rm ${family}-freebayes.db
@@ -44,19 +46,18 @@ function prepare_for_report
 {
     cd $family
 
-    gemini.gemini2txt.sh ${family}-ensemble-annotated-decomposed.db
-    gemini.variant_impacts.sh ${family}-ensemble-annotated-decomposed.db
+    gemini.gemini2txt.sh ${family}-ensemble.db 
+    gemini.variant_impacts.sh ${family}-ensemble.db
     gemini.refseq.sh $family
 
-    #decomposed for old version of bcbio
-    #gemini.decompose.sh ${family}-freebayes.vcf.gz
-    vcf.freebayes.getAO.sh ${family}-freebayes-annotated-decomposed.vcf.gz
+    gemini.decompose.sh ${family}-freebayes.vcf.gz
+    vcf.freebayes.getAO.sh ${family}-freebayes.decomposed.vcf.gz
 
-    #gemini.decompose.sh ${family}-gatk-haplotype.vcf.gz
-    vcf.gatk.get_depth.sh ${family}-gatk-haplotype-annotated-decomposed.vcf.gz
+    gemini.decompose.sh ${family}-gatk-haplotype.vcf.gz
+    vcf.gatk.get_depth.sh ${family}-gatk-haplotype.decomposed.vcf.gz
 
-    #gemini.decompose.sh ${family}-platypus.vcf.gz
-    vcf.platypus.getNV.sh ${family}-platypus-annotated-decomposed.vcf.gz
+    gemini.decompose.sh ${family}-platypus.vcf.gz
+    vcf.platypus.getNV.sh ${family}-platypus.decomposed.vcf.gz
 
     cd ..
 }
@@ -67,5 +68,5 @@ then
 fi
 
 echo $family
-cleanup
+#cleanup
 prepare_for_report
