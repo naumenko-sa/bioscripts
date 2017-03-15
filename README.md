@@ -185,7 +185,7 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 ---
 ## 3. Gammaruses [2012-]
 * gam.blastp.pbs, gam.blastp.sh - blastp for othomcl
-* gam.ortho.sh - orthomcl pipeline
+* [gam.ortho.sh](../master/gam.ortho.sh) - orthologization of transcript with orthomcl
 * gam.orthomcl.make_alignments.pl - writes fasta alignments for N species (1:1 orthologs) after orthomcl
 ---
 
