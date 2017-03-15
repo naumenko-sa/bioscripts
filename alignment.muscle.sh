@@ -1,7 +1,9 @@
 #!/bin/bash
 
+#align a fasta file with muscle
+
 muscle -in $1 -out _tmp.fa;
-align2fasta.pl _tmp.fa > $1.aln;
+alignment.fa2fasta.pl _tmp.fa > $1.aln;
 rm _tmp.fa;
 
 python ~/bioscripts/muscle.stabilize.py $1 $1.aln > $1.stab

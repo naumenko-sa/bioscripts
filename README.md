@@ -14,12 +14,13 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * alignment.check_conservative_site.sh
 * alignment.consensus.2seq.pl [alignment.fasta] prints a consensus of two DNA sequences
 * alignment.consensus.pl
-* alignment.count_nongappy_columns.sh
+* alignment.count_gaps.sh counts % of positions with gaps in an alignment
 * [alignment.detect_stops.pl](../master/alignment.detect_stops.pl) [alignment.fasta] [--print_pos] prints internal stops and their positions
-* alignment.fa2fasta.pl
+* alignment.fa2fasta.pl converts fixed line lengths fasta to long line format.
 * alignment.fasta2slice.pl
 * alignment.filter_not3x.sh
 * alignment.fix_ends.sh
+* alignment.muscle.sh.
 * alignment.nucleotide_diversity.pl
 * alignment.occupancy.pl
 * [alignment.pep2dna.sh](../master/alignment.pep2dna.sh) [name.aln.fasta] reverse translates amino acid alignment into DNA alignment.
@@ -185,6 +186,7 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 ## 3. Gammaruses [2012-]
 * gam.blastp.pbs, gam.blastp.sh - blastp for othomcl
 * gam.ortho.sh - orthomcl pipeline
+* gam.orthomcl.make_alignments.pl - writes fasta alignments for N species (1:1 orthologs) after orthomcl
 ---
 
 ## 2. Spectrum [2010-2012]
