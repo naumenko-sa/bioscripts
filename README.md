@@ -3,12 +3,17 @@
 Outline
 
 By subject
-* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram) 
+* [Alignment](https://github.com/naumenko-sa/bioscripts#alignment)
+* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)
 * [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
-* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq) 
+* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)
+* [MISC](https://github.com/naumenko-sa/bioscripts#misc)
+* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)
+* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)
 * [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
+* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)
 
-[By project](https://github.com/naumenko-sa/bioscripts#by-project-1)
+[By project](https://github.com/naumenko-sa/bioscripts#by-project)
 * [6.Muscle](https://github.com/naumenko-sa/bioscripts#6-muscle-2016--is-a-study-of-genetic-causes-of-muscular-diseases)
 * [5.MH](https://github.com/naumenko-sa/bioscripts#5-mh-2016--studies-malignant-hyperthermia)
 
@@ -127,6 +132,11 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.R runs junction seq analysis in R
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
+# Useful resources
+* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
+* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
+* [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
+
 # Variant analysis, vcf files
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
@@ -154,11 +164,6 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.gemini2txt.sh](../master/gemini.gemini2txt.sh) dumps gemini database into txt file with decompressed genotypes
 * [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output
-
-# Useful resources
-* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
-* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
-* [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
 
 # Visualization
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
