@@ -43,9 +43,9 @@ function prepare_for_report
 {
     cd $family
 
-    #gemini.gemini2txt.sh ${family}-ensemble.db
-    #gemini.variant_impacts.sh ${family}-ensemble.db
-    #gemini.refseq.sh $family
+    gemini.gemini2txt.sh ${family}-ensemble.db
+    gemini.variant_impacts.sh ${family}-ensemble.db
+    gemini.refseq.sh $family
 
     for f in *.vcf.gz;
     do

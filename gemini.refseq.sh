@@ -34,7 +34,7 @@ picard SortVcf I=$family.tosort.vcf O=$family.refseq.vcf
 gatk -R ~/work/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa -T VariantsToTable -V ${family}.refseq.vcf -F CHROM -F POS -F REF -F ALT -F CSQ -o $family.refseq.table -U ALLOW_SEQ_DICT_INCOMPATIBILITY
 
 # 7.parse vcf and VEP CSQ field
-gemini.vep.parse.pl $family.refseq.table > $family.refseq
+gemini.vep.parse.pl $family.refseq.table > $family.refseq.txt
 
 rm $family.report.tab $family.tosort.vcf $family.refseq.table
 
