@@ -123,8 +123,8 @@ create_report = function(family,samples)
     #setwd("~/Desktop/project_cheo/2017-01-30_dorin/1092R")
     #family="1092R"
     #samples = c("1092R_1613029","1092R_1613440","1092R_1613445")
-    family="muscle1_wes"
-    samples=c("muscle1_wes")  
+    #family="muscle1_wes"
+    #samples=c("muscle1_wes")  
   
   
     file=paste0(family,"-ensemble.db.txt")
@@ -332,13 +332,13 @@ select_and_write2 = function(variants,samples,prefix)
   write.csv(variants,paste0(prefix,".csv"),row.names = F)  
 }
 
-fix_column_name = function(column)
+fix_column_name = function(column_name)
 {
-    if(grepl("^[0-9]",sample))
+    if(grepl("^[0-9]",column_name))
     {
-      column = paste0("X",column)
+      column_name = paste0("X",column_name)
     }
-    return(column)
+    return(column_name)
 }
 
 # merges ensembl and gatk-haplotype reports to 
@@ -359,7 +359,7 @@ merge_reports = function(family,samples)
     ensemble = read.csv(ensemble_file, sep=";", quote="", stringsAsFactors=F)
     ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
     
-    refseq_file = paste0(family,".refseq")
+    refseq_file = paste0(family,".refseq.txt")
     refseq = read.delim(refseq_file, stringsAsFactors=F)
     ensemble = merge(ensemble,refseq,by.x = "superindex", by.y="superindex",all.x = T)
     
@@ -675,13 +675,13 @@ for (family in families)
 }
 
 #add seen in c4r information
-setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
+setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
 
 for (family in families)
 {
-    family="1092R"
+    #family="1092R"
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
@@ -692,3 +692,5 @@ for (family in families)
 
     setwd("..")
 }
+
+
