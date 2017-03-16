@@ -138,7 +138,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     #cpm(y)[o[1:10],]
     #write.table(cpm(y)[o[1:12566],],"allgenes.cpm")
     
-    efilename="all_hi_vs_lo.genes.txt"
+    efilename=paste0(prefix,".all_hi_vs_lo.genes.txt")
     write.table(topTags(lrt,p.value=0.05,n=10000),efilename,quote=F)
 
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
@@ -166,19 +166,35 @@ calc_de = function(all_counts,samples,prefix,filter)
     
 }
  
-plot_heatmap_separate = function(counts,samples,de_results,prefix)
+plot_heatmap_separate = function(counts,samples,de_results,prefix,ntop)
 {
-  logcpm = cpm(counts,prior.count=1,log=T)
-  #cpm0  = log(cpm(y$counts+1))
-  top_genes_cpm = logcpm[de_results$genes,]
-  top_genes_cpm = top_genes_cpm[,samples]
-  rownames(top_genes_cpm) = de_results$external_gene_name
-  
-  png(paste0(prefix,".heatmap.png"))
-  
-  pheatmap(top_genes_cpm,scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
-  
-  dev.off()
+    #how many genes to plot
+    ntop=20
+    logcpm = cpm(counts,prior.count=1,log=T)
+    #cpm0  = log(cpm(y$counts+1))
+    top_genes_cpm = logcpm[de_results$genes,]
+    top_genes_cpm = top_genes_cpm[,samples]
+    rownames(top_genes_cpm) = de_results$external_gene_name
+    
+    #expressed higher in WNT-dependent cells.
+    upregulated_genes = head(de_results[de_results$logFC<0,]$external_gene_name,ntop)
+    downregulated_genes = head(de_results[de_results$logFC>0,]$external_gene_name,ntop)
+    
+    png(paste0(prefix,".upregulated.scaled.heatmap.png"))
+    pheatmap(top_genes_cpm[upregulated_genes,],scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
+    dev.off()
+    
+    png(paste0(prefix,".upregulated.unscaled.heatmap.png"))
+    pheatmap(top_genes_cpm[upregulated_genes,],treeheight_row=0,treeheight_col=0,cellwidth = 20)
+    dev.off()
+    
+    png(paste0(prefix,".downregulated.scaled.heatmap.png"))
+    pheatmap(top_genes_cpm[downregulated_genes,],scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
+    dev.off()
+    
+    png(paste0(prefix,".downregulated.unscaled.heatmap.png"))
+    pheatmap(top_genes_cpm[downregulated_genes,],treeheight_row=0,treeheight_col=0,cellwidth = 20)
+    dev.off()
 }   
 
 plot_heatmap = function (counts,de_results,prefix)
@@ -385,6 +401,16 @@ test8samples = function()
     prefix = "DMSO_6lines"
     all_counts=read.csv("DMSO_counts.txt", row.names=1, sep="", stringsAsFactors=F)
     calc_de(all_counts,samples,prefix,1)
+}
+
+test_lgk_8samples = function()
+{
+    setwd("~/Desktop/project_katie_csc/LGK_expression/")
+    counts_lgk = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    prefix = "8lines_lgk"
+    samples = c("G432","G511","G472","G523", 
+                "G440","G481","G510","G564")
+    calc_de(counts_lgk,samples,prefix,1)
 }
 
 test_lgk_dmso = function()
