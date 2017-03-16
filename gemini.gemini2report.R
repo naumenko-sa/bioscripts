@@ -332,6 +332,15 @@ select_and_write2 = function(variants,samples,prefix)
   write.csv(variants,paste0(prefix,".csv"),row.names = F)  
 }
 
+fix_column_name = function(column)
+{
+    if(grepl("^[0-9]",sample))
+    {
+      column = paste0("X",column)
+    }
+    return(column)
+}
+
 # merges ensembl and gatk-haplotype reports to 
 # - fill alt_depths, Trio_coverage, qual_depths columns
 # fix NO_CALL issue
@@ -373,16 +382,20 @@ merge_reports = function(family,samples)
     prefix = ""
     ensemble$Trio_coverage=""
     
-    #what if sample is not numerical
     for(sample in samples)
     {
-        #R fixes numerical column names with X
-        column = paste0("X",sample,".DP")
+        #R fixes numerical column names with X?
+        #what if sample is not numerical
+      
+        column = fix_column_name(sample)  
+        column = paste0(column,".DP")
+        
         if (n_sample>1) prefix="/"
         ensemble$Trio_coverage = with(ensemble,paste0(Trio_coverage,prefix,get(column)))
       
         column = paste0("Alt_depths.",sample)
-        column_gatk = paste0("X",sample,".AD")
+        column_gatk = fix_column_name(sample)
+        column_gatk = paste0(column_gatk,".AD")
         
         ensemble[,column] = ensemble[,column_gatk]
       
@@ -399,10 +412,9 @@ merge_reports = function(family,samples)
         }
     }
     
-    ensemble[c("DP",paste0("X",samples,".DP"),paste0("X",samples,".AD"))]=NULL
-    #ensemble[c("DP",paste0(samples,".DP"),paste0(samples,".AD"))]=NULL
+    ensemble[c("DP",paste0(fix_column_name(samples),".DP"),paste0(fix_column_name(samples),".AD"))]=NULL
     
-    freebayes_file = paste0(family,"-freebayes.decomposed.table")
+    freebayes_file = paste0(family,"-freebayes-annotated-decomposed.table")
     freebayes = read.delim(freebayes_file, stringsAsFactors=F)
     freebayes$superindex=with(freebayes,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     freebayes[c("CHROM","POS","REF","ALT")]=NULL
@@ -420,7 +432,7 @@ merge_reports = function(family,samples)
             for (sample in samples)
             {
                 field_depth = paste0("Alt_depths.",sample)
-                field_bayes = paste0("X",sample,".AO")
+                field_bayes = paste0(fix_column_name(sample),".AO")
                 #field_bayes = paste0(sample,".AO")
                       
                 ensemble[i,field_depth] = ensemble[i,field_bayes]
@@ -432,7 +444,7 @@ merge_reports = function(family,samples)
             
             for(sample in samples)
             {
-                column = paste0("X",sample,".DP")
+                column = paste0(fix_column_name(sample),".DP")
                 if (n_sample>1) prefix="/"
                 ensemble[i,"Trio_coverage"] = paste(ensemble[i,"Trio_coverage"],ensemble[i,column],sep = prefix)
               
@@ -441,9 +453,9 @@ merge_reports = function(family,samples)
         }
     }
     
-    ensemble[c("DP",paste0("X",samples,".DP"),paste0("X",samples,".AO"))]=NULL
+    ensemble[c("DP",paste0(fix_column_name(samples),".DP"),paste0(fix_column_name(samples),".AO"))]=NULL
     
-    platypus_file = paste0(family,"-platypus.decomposed.table")
+    platypus_file = paste0(family,"-platypus-annotated-decomposed.table")
     platypus = read.delim(platypus_file, stringsAsFactors=F)
     platypus$superindex=with(platypus,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     platypus[c("CHROM","POS","REF","ALT")]=NULL
@@ -459,7 +471,7 @@ merge_reports = function(family,samples)
         for (sample in samples)
         {
           field_depth = paste0("Alt_depths.",sample)
-          field_bayes = paste0("X",sample,".NV")
+          field_bayes = paste0(fix_column_name(sample),".NV")
           
           #sometimes freebayes has 10,10,10 for decomposed alleles
           ensemble[i,field_depth] = strsplit(ensemble[i,field_bayes],",",fixed=T)[[1]][1]
@@ -471,7 +483,7 @@ merge_reports = function(family,samples)
         
         for(sample in samples)
         {
-          column = paste0("X",sample,".NR")
+          column = paste0(fix_column_name(sample),".NR")
           if (n_sample>1) prefix="/"
           #sometimes freebayes has 10,10,10 for decomposed alleles
           cov_value=strsplit(ensemble[i,column],",",fixed=T)[[1]][1]
@@ -483,8 +495,7 @@ merge_reports = function(family,samples)
     }
     
     
-    ensemble[c("TC",paste0("X",samples,".NV"),paste0("X",samples,".NR"))]=NULL
-    #ensemble[c("TC",paste0(samples,".NV"),paste0(samples,".NR"))]=NULL
+    ensemble[c("TC",paste0(fix_column_name(samples),".NV"),paste0(fix_column_name(samples),".NR"))]=NULL
     ensemble[,"Trio_coverage"] = with(ensemble,gsub("NA","0",get("Trio_coverage"),fixed=T))  
    
     for (i in 1:nrow(ensemble))
@@ -505,6 +516,20 @@ merge_reports = function(family,samples)
     select_and_write(ensemble,samples,family)
 }
 
+annotate_w_care4rare = function(family,samples)
+{
+  variants = read.csv(paste0(family,".txt"), sep=";", stringsAsFactors=F,quote="")
+  
+  variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
+  variants = merge(variants,seen_in_c4r_counts,by.x = "superindex", by.y="superindex",all.x = T)
+  variants$Frequency_in_C4R = variants$counts
+  variants$counts=NULL
+  
+  variants = merge(variants,seen_in_c4r_samples,by.x = "superindex", by.y="superindex",all.x = T)
+  variants$Seen_in_C4R_samples=variants$samples
+  select_and_write2(variants,samples,family)
+}
+
 library(RSQLite)
 library(stringr)
 library(genetics)
@@ -512,6 +537,9 @@ library(data.table)
 library(plyr)
 
 reference_tables_path="~/Desktop/reference_tables"
+#load c4r information
+seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
+seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F, sep=";")
 
 #Muscular samples
 #muscle1_wes
@@ -519,7 +547,7 @@ setwd("/home/sergey/Desktop/project_muscular/muscle1_wes/")
 family="muscle1_wes"
 samples=c("muscle1_wes")
 create_report(family,samples)
-
+annotate_w_care4rare(family,samples)
 
 setwd("/home/sergey/Desktop/project_muscular/Fibroblast8/")
 family="fibroblast8"
@@ -650,8 +678,7 @@ for (family in families)
 setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
-seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
-seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F, sep=";")
+
 for (family in families)
 {
     family="1092R"
@@ -661,16 +688,7 @@ for (family in families)
     
     create_report(family,samples)
     merge_reports(family,samples)
-    
-    variants = read.csv(paste0(family,".txt"), sep=";", stringsAsFactors=F,quote="")
-    
-    variants$superindex=with(variants,paste(Position,Ref,Alt,sep='-'))
-    variants = merge(variants,seen_in_c4r_counts,by.x = "superindex", by.y="superindex",all.x = T)
-    variants$Frequency_in_C4R = variants$counts
-    variants$counts=NULL
-  
-    variants = merge(variants,seen_in_c4r_samples,by.x = "superindex", by.y="superindex",all.x = T)
-    variants$Seen_in_C4R_samples=variants$samples
-    select_and_write2(variants,samples,family)
+    annotate_w_care4rare(family,samples)
+
     setwd("..")
 }
