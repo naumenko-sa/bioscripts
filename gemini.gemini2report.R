@@ -120,9 +120,12 @@ create_report = function(family,samples)
     #samples=c("NA12878.1")
   
     #test: 
-    setwd("~/Desktop/project_cheo/2017-01-30_dorin/1092R")
-    family="1092R"
-    samples = c("1092R_1613029","1092R_1613440","1092R_1613445")
+    #setwd("~/Desktop/project_cheo/2017-01-30_dorin/1092R")
+    #family="1092R"
+    #samples = c("1092R_1613029","1092R_1613440","1092R_1613445")
+    family="muscle1_wes"
+    samples=c("muscle1_wes")  
+  
   
     file=paste0(family,"-ensemble.db.txt")
   
@@ -197,7 +200,7 @@ create_report = function(family,samples)
     }
     
     #refseq_impacts in merge_reports
-    
+    variants = add_placeholder(variants,"Info_refseq","Info_refseq")
     
     #variants = merge(variants,ensembl_refseq,all.x=T)
     #variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
@@ -347,9 +350,7 @@ merge_reports = function(family,samples)
     ensemble = read.csv(ensemble_file, sep=";", quote="", stringsAsFactors=F)
     ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
     
-    
-    ensemble = add_placeholder(ensemble,"Info_refseq","Info_refseq")
-    refseq_file = paste0(family,".ref_seq.hgvs")
+    refseq_file = paste0(family,".refseq")
     refseq = read.delim(refseq_file, stringsAsFactors=F)
     ensemble = merge(ensemble,refseq,by.x = "superindex", by.y="superindex",all.x = T)
     
@@ -360,7 +361,7 @@ merge_reports = function(family,samples)
         ensemble[i,"Info_refseq"]=paste(paste(gene,v_impacts[[1]],sep=":"),collapse=",")
     }
     
-    gatk_file = paste0(family,"-gatk-haplotype.decomposed.table")
+    gatk_file = paste0(family,"-gatk-haplotype-annotated-decomposed.table")
     gatk = read.delim(gatk_file, stringsAsFactors=F)
     gatk$superindex=with(gatk,paste(paste0("chr",CHROM,":",POS),REF,ALT,sep='-'))
     gatk[c("CHROM","POS","REF","ALT")]=NULL
@@ -372,6 +373,7 @@ merge_reports = function(family,samples)
     prefix = ""
     ensemble$Trio_coverage=""
     
+    #what if sample is not numerical
     for(sample in samples)
     {
         #R fixes numerical column names with X
@@ -512,6 +514,13 @@ library(plyr)
 reference_tables_path="~/Desktop/reference_tables"
 
 #Muscular samples
+#muscle1_wes
+setwd("/home/sergey/Desktop/project_muscular/muscle1_wes/")
+family="muscle1_wes"
+samples=c("muscle1_wes")
+create_report(family,samples)
+
+
 setwd("/home/sergey/Desktop/project_muscular/Fibroblast8/")
 family="fibroblast8"
 samples=c("Fibroblast8")

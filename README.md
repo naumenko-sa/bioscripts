@@ -185,7 +185,7 @@ variant calling pipeline outputs variants in gemini format.
 2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
 3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
 
-## 4. CHEO [2016-] is a study of families with rare genetic conditions - [Care For Rare](http://care4rare.ca/) at [Children's Hospital of Eastern Ontario](http://www.cheori.org/)
+## 4. CHEO [2016-]
 
 1. [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families,
 or use bcbio.prepare_samples.sh if some samples need to re-generate bam files.
