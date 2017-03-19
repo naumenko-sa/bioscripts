@@ -77,5 +77,5 @@ then
 fi
 
 echo $family
-#cleanup
+cleanup
 prepare_for_report
