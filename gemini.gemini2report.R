@@ -412,7 +412,10 @@ merge_reports = function(family,samples)
         }
     }
     
-    ensemble[c("DP",paste0(fix_column_name(samples),".DP"),paste0(fix_column_name(samples),".AD"))]=NULL
+    for (sample in samples)
+    {
+        ensemble[c("DP",paste0(fix_column_name(sample),".DP"),paste0(fix_column_name(sample),".AD"))]=NULL
+    }
     
     freebayes_file = paste0(family,"-freebayes-annotated-decomposed.table")
     freebayes = read.delim(freebayes_file, stringsAsFactors=F)
@@ -453,7 +456,10 @@ merge_reports = function(family,samples)
         }
     }
     
-    ensemble[c("DP",paste0(fix_column_name(samples),".DP"),paste0(fix_column_name(samples),".AO"))]=NULL
+    for (sample in samples)
+    {
+        ensemble[c("DP",paste0(fix_column_name(sample),".DP"),paste0(fix_column_name(sample),".AO"))]=NULL
+    }
     
     platypus_file = paste0(family,"-platypus-annotated-decomposed.table")
     platypus = read.delim(platypus_file, stringsAsFactors=F)
@@ -494,8 +500,11 @@ merge_reports = function(family,samples)
       }
     }
     
+    for (sample in samples)
+    {
+        ensemble[c("TC",paste0(fix_column_name(sample),".NV"),paste0(fix_column_name(sample),".NR"))]=NULL
+    }
     
-    ensemble[c("TC",paste0(fix_column_name(samples),".NV"),paste0(fix_column_name(samples),".NR"))]=NULL
     ensemble[,"Trio_coverage"] = with(ensemble,gsub("NA","0",get("Trio_coverage"),fixed=T))  
    
     for (i in 1:nrow(ensemble))
@@ -677,8 +686,6 @@ for (family in families)
 #add seen in c4r information
 setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
-
-
 for (family in families)
 {
     #family="1092R"
