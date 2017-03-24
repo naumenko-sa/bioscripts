@@ -70,7 +70,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
   
-    #all_counts = counts
+    all_counts = counts
     #samples = c("G432","G511", "G472","G523", 
     #            "G440","G481", "G510","G564")
     
@@ -87,6 +87,9 @@ calc_de = function(all_counts,samples,prefix,filter)
     x=all_counts[samples]
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
 
+    
+    logcpm = cpm(all_counts,prior.count=1,log=T)
+    
     plotMDS(y)
     #filter - 1 or 0.5
     #filter=1
@@ -123,7 +126,7 @@ calc_de = function(all_counts,samples,prefix,filter)
 #nc=cpm(y,normalized.lib.sizes=F)
 #write.table(nc,"filtered.normalized_counts.txt",col.names=NA)
 
-    png(paste0(prefix,".png"))
+    png(paste0(prefix,".mds.png"))
     plotMDS(y,las=1)
     dev.off()
 
@@ -134,12 +137,9 @@ calc_de = function(all_counts,samples,prefix,filter)
     fit=glmFit(y,design)
     lrt=glmLRT(fit)
 
-    #o=order(lrt$table$PValue)
-    #cpm(y)[o[1:10],]
-    #write.table(cpm(y)[o[1:12566],],"allgenes.cpm")
-    
-    efilename=paste0(prefix,".all_hi_vs_lo.genes.txt")
-    write.table(topTags(lrt,p.value=0.05,n=10000),efilename,quote=F)
+    efilename=paste0(prefix,".de_genes.txt")
+    de_results = topTags(lrt,p.value=0.05,n=10000,sort.by="logFC")
+    write.table(de_results,efilename,quote=F)
 
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
     s_rownames = row.names(de_results)
@@ -151,12 +151,21 @@ calc_de = function(all_counts,samples,prefix,filter)
     de_results = merge(de_results,gene_descriptions,by.x="genes",by.y="ensembl_gene_id",all.x=T)
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
-    de_results = de_results[order(de_results$PValue),]
-    rownames(de_results) = s_rownames
+    de_results = de_results[order(abs(de_results$logFC),decreasing = T),]
+    #rownames(de_results) = s_rownames
+    
+    top_genes_cpm = logcpm[de_results$genes,]
+    rownames(top_genes_cpm) = de_results$external_gene_name
+    colnames(top_genes_cpm)=paste0(colnames(top_genes_cpm),".cpm")
+    
+    #why some cpms are NA?
+    de_results = merge(de_results,top_genes_cpm,by.x = "Symbol", by.y="row.names",all.x=T)
     
     result_file=paste0(prefix,".txt")
-    write.table(de_results,result_file,quote=F,sep=';')
+    write.table(de_results,result_file,quote=F)
 
+    #prepare a file for GSEA
+    
     plot_heatmap_separate(all_counts,samples,de_results,prefix)    
     #return(de_results)
     
@@ -403,13 +412,17 @@ test8samples = function()
     calc_de(all_counts,samples,prefix,1)
 }
 
+# figure 2C - use lgk samples only, because lgk samples = dmso
+# G481 = G361
 test_lgk_8samples = function()
 {
     setwd("~/Desktop/project_katie_csc/LGK_expression/")
     counts_lgk = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
     prefix = "8lines_lgk"
     samples = c("G432","G511","G472","G523", 
-                "G440","G481","G510","G564")
+                "G440","G361","G510","G564")
+    counts = counts_lgk
+    filter=1
     calc_de(counts_lgk,samples,prefix,1)
 }
 
