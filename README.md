@@ -137,6 +137,7 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
 * [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
 * [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
+* [Gene set enrichment analysis](http://software.broadinstitute.org/gsea/index.jsp)
 
 # Variant analysis, vcf files
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
