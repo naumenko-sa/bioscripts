@@ -70,7 +70,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
   
-    all_counts = counts
+    #all_counts = counts
     #samples = c("G432","G511", "G472","G523", 
     #            "G440","G481", "G510","G564")
     
@@ -89,6 +89,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     max_genes = nrow(x)
     
     logcpm = cpm(all_counts,prior.count=1,log=T)
+    logcpm = logcpm[,samples]
     
     plotMDS(y)
     #filter - 1 or 0.5
@@ -126,7 +127,7 @@ calc_de = function(all_counts,samples,prefix,filter)
 #nc=cpm(y,normalized.lib.sizes=F)
 #write.table(nc,"filtered.normalized_counts.txt",col.names=NA)
 
-    png(paste0(prefix,".mds.png"))
+    png(paste0(prefix,".mds.png"),res = 300,width=2000,height=2000)
     plotMDS(y,las=1)
     dev.off()
 
@@ -154,68 +155,90 @@ calc_de = function(all_counts,samples,prefix,filter)
     #rownames(de_results) = s_rownames
     
     top_genes_cpm = logcpm[de_results$genes,]
-    colnames(top_genes_cpm)=paste0(colnames(top_genes_cpm),".cpm")
+    colnames(top_genes_cpm)=paste0(colnames(top_genes_cpm),".log2cpm")
     
     de_results = merge(de_results,top_genes_cpm,by.x = "genes", by.y="row.names",all.x=T)
     de_results = de_results[order(abs(de_results$logFC),decreasing = T),]
     
+    colnames(de_results)[1]="Ensembl_gene_id"
+    colnames(de_results)[2]="Gene_name"
+    de_results$external_gene_name = NULL
     result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=T,row.names=F)
     
     #prepare a file for GSEA - positive and negative in a separate file
     result_file=paste0(prefix,".pos.4gsea.txt")
     for_gsea_logfc_pos = de_results[de_results$logFC>0,]
-    for_gsea_logfc_pos = de_results[,c("Symbol","genes",paste0(samples,".cpm"))]
-    colnames(for_gsea) = c("Gene","Ensembl_id",samples)
+    for_gsea_logfc_pos = de_results[,c("Gene_name","Ensembl_gene_id",paste0(samples,".log2cpm"))]
     write.table(for_gsea_logfc_pos,result_file,quote=F,row.names = F)
     
     result_file=paste0(prefix,".neg.4gsea.txt")
     for_gsea_logfc_neg = de_results[de_results$logFC<0,]
-    for_gsea_logfc_neg = de_results[,c("Symbol","genes",paste0(samples,".cpm"))]
-    colnames(for_gsea) = c("Gene","Ensembl_id",samples)
+    for_gsea_logfc_neg = de_results[,c("Gene_name","Ensembl_gene_id",paste0(samples,".log2cpm"))]
     write.table(for_gsea_logfc_neg,result_file,quote=F,row.names = F)
     
-    plot_heatmap_separate(all_counts,samples,de_results,prefix)    
+    plot_heatmap_separate (all_counts,samples,de_results,prefix)
+    plot_heatmap_separate (all_counts,samples,de_results,paste0(prefix,".top50genes"),50)
     #return(de_results)
     
-    go_analysis(lrt,prefix)
+    #go_analysis(lrt,prefix)
     
     #kegg_analysis(lrt,prefix)
     
 }
- 
-plot_heatmap_separate = function(counts,samples,de_results,prefix,ntop)
+
+# usually heatmap is a part of a panel - we don't need a title
+# rows are not clustered to save alpabetical gene order
+# cols are not clustered to save sample order
+plot_heatmap = function(prefix,expression_table)
 {
-    #how many genes to plot
-    ntop=20
+    rows = nrow(expression_table)
+    cellheight = 10
+    res = 300
+    filename = paste0(prefix,".",res,"ppi.png")
+    
+    png(filename,res = res,height=rows * cellheight * 4.5,width=1500)
+    pheatmap(expression_table,scale="row",treeheight_row=0,treeheight_col=0,
+             display_numbers = T,cellheight = cellheight,cellwidth = 30,
+             cluster_rows = F, cluster_cols = F)
+    dev.off()
+}
+
+# plot separate heatmaps for upregulated and downregulated genes 
+# parameters:
+# counts - initial row count for all genes
+# samples
+# de_results
+# prefix  
+# ntop - how many top genes to plot
+plot_heatmap_separate = function(counts,samples,de_results,prefix,ntop = NULL)
+{
     logcpm = cpm(counts,prior.count=1,log=T)
     #cpm0  = log(cpm(y$counts+1))
-    top_genes_cpm = logcpm[de_results$genes,]
+    top_genes_cpm = logcpm[de_results$Ensembl_gene_id,]
     top_genes_cpm = top_genes_cpm[,samples]
-    rownames(top_genes_cpm) = de_results$external_gene_name
+    rownames(top_genes_cpm) = de_results$Gene_name
     
     #expressed higher in WNT-dependent cells.
-    upregulated_genes = head(de_results[de_results$logFC<0,]$external_gene_name,ntop)
-    downregulated_genes = head(de_results[de_results$logFC>0,]$external_gene_name,ntop)
+    upregulated_genes = de_results[de_results$logFC<0,]$Gene_name
+    downregulated_genes = de_results[de_results$logFC>0,]$Gene_name
     
-    png(paste0(prefix,".upregulated.scaled.heatmap.png"))
-    pheatmap(top_genes_cpm[upregulated_genes,],scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
-    dev.off()
+    if (!is.null(ntop))
+    {
+        upregulated_genes = head(upregulated_genes,ntop)
+        downregulated_genes = head(downregulated_genes,ntop)
+    }
     
-    png(paste0(prefix,".upregulated.unscaled.heatmap.png"))
-    pheatmap(top_genes_cpm[upregulated_genes,],treeheight_row=0,treeheight_col=0,cellwidth = 20)
-    dev.off()
+    #sort genes alphabetically - it is much easier to read heatmap
+    upregulated_genes = sort(upregulated_genes)
+    downregulated_genes = sort (downregulated_genes)
     
-    png(paste0(prefix,".downregulated.scaled.heatmap.png"))
-    pheatmap(top_genes_cpm[downregulated_genes,],scale="row",treeheight_row=0,treeheight_col=0,cellwidth = 20)
-    dev.off()
     
-    png(paste0(prefix,".downregulated.unscaled.heatmap.png"))
-    pheatmap(top_genes_cpm[downregulated_genes,],treeheight_row=0,treeheight_col=0,cellwidth = 20)
-    dev.off()
+    plot_heatmap(paste0(prefix,".left"),top_genes_cpm[upregulated_genes,])
+    plot_heatmap(paste0(prefix,".right"),top_genes_cpm[downregulated_genes,])
 }   
 
-plot_heatmap = function (counts,de_results,prefix)
+plot_heatmap1 = function (counts,de_results,prefix)
 {
     logcpm = cpm(counts,prior.count=1,log=T)
     #cpm0  = log(cpm(y$counts+1))
@@ -397,6 +420,7 @@ init = function()
 
 }
 
+# merge pipeline output counts into 1 count file 
 test8samples = function()
 {
     counts = read.delim("wG432_DMSO.txt", stringsAsFactors=F, row.names=1)
@@ -411,36 +435,30 @@ test8samples = function()
         counts$Row.names=NULL
     }
     
-    samples = c("G432","G511", "G472","G523", 
-                "G440","G481", "G510","G564")
-    
-    samples = c("G511", "G472","G523", 
-                "G440", "G510","G564")
-    prefix = "DMSO_6lines"
-    all_counts=read.csv("DMSO_counts.txt", row.names=1, sep="", stringsAsFactors=F)
-    
-    
-    
-    calc_de(all_counts,samples,prefix,1)
 }
 
-# figure 2C - use lgk samples only, because lgk samples = dmso
+# figure 2C - use lgk samples only, because lgk samples = dmso, same expression
 # G481 = G361
-test_lgk_8samples = function()
+figure2C_8samples = function()
 {
-    setwd("~/Desktop/project_katie_csc/LGK_expression/")
-    counts_lgk = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
-    prefix = "8lines_lgk"
-    samples = c("G432","G511","G472","G523", 
-                "G440","G361","G510","G564")
-    counts = counts_lgk
+    setwd("~/Desktop/project_katie_csc/Figure2C/")
+    counts = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    prefix = "Figure2C.supp.8cell_lines.log2cpm"
+    #columns are clustered like on the left picture G361 - outlier, G432 is close to G564
+    samples = c("G472","G511","G523","G432","G564","G440","G510","G361")
     filter=1
-    calc_de(counts_lgk,samples,prefix,1)
+    calc_de(counts_lgk,samples,prefix,filter)
+}
 
-    #write all raw counts with gene name and function    
-    counts_w_gene_name = merge(all_counts,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
-    colnames(counts_w_gene_name) = c("Ensembl_gene_id",samples,"Gene_name","Gene_description")
-    write.table(counts_w_gene_name,paste0(prefix,".counts_w_names.txt"),quote=T,row.names = F)
+figure2C_6samples = function()
+{
+    setwd("~/Desktop/project_katie_csc/Figure2C/")
+    counts = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    prefix = "Figure2C.supp.6cell_lines.log2cpm"
+    samples = c("G472","G511","G523", 
+                "G564","G440","G510")
+    filter=1
+    calc_de(counts,samples,prefix,1)
 }
 
 test_lgk_dmso = function()

@@ -18,4 +18,4 @@ featureCounts -T 8 \
 	-C \
 	--largestOverlap \
 	-a /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rnaseq/ref-transcripts.gtf \
-	-o $bam.counts.txt $bam
+	-o $bam.rpkm_counts.txt $bam
