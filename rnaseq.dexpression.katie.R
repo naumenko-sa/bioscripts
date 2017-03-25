@@ -86,7 +86,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     
     x=all_counts[samples]
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = T)
-
+    max_genes = nrow(x)
     
     logcpm = cpm(all_counts,prior.count=1,log=T)
     
@@ -138,8 +138,8 @@ calc_de = function(all_counts,samples,prefix,filter)
     lrt=glmLRT(fit)
 
     efilename=paste0(prefix,".de_genes.txt")
-    de_results = topTags(lrt,p.value=0.05,n=10000,sort.by="logFC")
-    write.table(de_results,efilename,quote=F)
+    de_results = topTags(lrt,p.value=0.05,n=max_genes,sort.by="logFC")
+    write.table(de_results,efilename,quote=F,row.names=F)
 
     de_results = read.csv(efilename, sep="", stringsAsFactors=FALSE)
     s_rownames = row.names(de_results)
@@ -151,20 +151,29 @@ calc_de = function(all_counts,samples,prefix,filter)
     de_results = merge(de_results,gene_descriptions,by.x="genes",by.y="ensembl_gene_id",all.x=T)
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
     de_results = merge(de_results,x,by.x = "genes", by.y="row.names",all.x=T)
-    de_results = de_results[order(abs(de_results$logFC),decreasing = T),]
     #rownames(de_results) = s_rownames
     
     top_genes_cpm = logcpm[de_results$genes,]
-    rownames(top_genes_cpm) = de_results$external_gene_name
     colnames(top_genes_cpm)=paste0(colnames(top_genes_cpm),".cpm")
     
-    #why some cpms are NA?
-    de_results = merge(de_results,top_genes_cpm,by.x = "Symbol", by.y="row.names",all.x=T)
+    de_results = merge(de_results,top_genes_cpm,by.x = "genes", by.y="row.names",all.x=T)
+    de_results = de_results[order(abs(de_results$logFC),decreasing = T),]
     
     result_file=paste0(prefix,".txt")
-    write.table(de_results,result_file,quote=F)
-
-    #prepare a file for GSEA
+    write.table(de_results,result_file,quote=T,row.names=F)
+    
+    #prepare a file for GSEA - positive and negative in a separate file
+    result_file=paste0(prefix,".pos.4gsea.txt")
+    for_gsea_logfc_pos = de_results[de_results$logFC>0,]
+    for_gsea_logfc_pos = de_results[,c("Symbol","genes",paste0(samples,".cpm"))]
+    colnames(for_gsea) = c("Gene","Ensembl_id",samples)
+    write.table(for_gsea_logfc_pos,result_file,quote=F,row.names = F)
+    
+    result_file=paste0(prefix,".neg.4gsea.txt")
+    for_gsea_logfc_neg = de_results[de_results$logFC<0,]
+    for_gsea_logfc_neg = de_results[,c("Symbol","genes",paste0(samples,".cpm"))]
+    colnames(for_gsea) = c("Gene","Ensembl_id",samples)
+    write.table(for_gsea_logfc_neg,result_file,quote=F,row.names = F)
     
     plot_heatmap_separate(all_counts,samples,de_results,prefix)    
     #return(de_results)
@@ -409,6 +418,9 @@ test8samples = function()
                 "G440", "G510","G564")
     prefix = "DMSO_6lines"
     all_counts=read.csv("DMSO_counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    
+    
+    
     calc_de(all_counts,samples,prefix,1)
 }
 
@@ -424,6 +436,11 @@ test_lgk_8samples = function()
     counts = counts_lgk
     filter=1
     calc_de(counts_lgk,samples,prefix,1)
+
+    #write all raw counts with gene name and function    
+    counts_w_gene_name = merge(all_counts,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
+    colnames(counts_w_gene_name) = c("Ensembl_gene_id",samples,"Gene_name","Gene_description")
+    write.table(counts_w_gene_name,paste0(prefix,".counts_w_names.txt"),quote=T,row.names = F)
 }
 
 test_lgk_dmso = function()
