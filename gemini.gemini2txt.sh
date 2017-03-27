@@ -25,7 +25,7 @@ sQuery="select
         v.qual as Quality,
         v.gene as Gene,
         g.ensembl_gene_id as Ensembl_gene_id,
-        v.clinvar_disease_name as Clinvar,
+        v.clinvar_sig_name as Clinvar,
         v.transcript as Ensembl_transcript_id,
         v.aa_length as AA_position,
         v.exon as Exon,
