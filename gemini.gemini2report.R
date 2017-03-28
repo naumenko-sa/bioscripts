@@ -201,6 +201,7 @@ create_report = function(family,samples)
     
     #refseq_impacts in merge_reports
     variants = add_placeholder(variants,"Info_refseq","Info_refseq")
+    variants = add_placeholder(variants,"Protein_change_refseq","Protein_change_refseq")
     
     #variants = merge(variants,ensembl_refseq,all.x=T)
     #variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
@@ -239,7 +240,7 @@ create_report = function(family,samples)
 
     #fields19-20-21-22 - protein change, aa_position, exon, pfam domain
 
-    #fields 23-24, will add when all samples will be done
+    #fields 23-24
     variants = add_placeholder(variants,"Frequency_in_C4R","Frequency_in_C4R")
     variants = add_placeholder(variants,"Seen_in_C4R_samples","Seen_in_C4R_samples")
 
@@ -290,7 +291,6 @@ create_report = function(family,samples)
         variants[,field] = with(variants,gsub("-1",NA,get(field),fixed=T))  
     }
 
-
     #fields 41-42 - imprinting
     imprinting = read.delim(paste0(reference_tables_path,"/imprinting.txt"), stringsAsFactors=FALSE)
     variants = merge(variants,imprinting,all.x=T)
@@ -306,9 +306,9 @@ create_report = function(family,samples)
 select_and_write = function(variants,samples,prefix)
 {
     variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Info_refseq","Depth","Quality"),
+                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Protein_change_ensembl","Info_refseq","Protein_change_refseq","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
-                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
+                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
                                                         "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
                                                         "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
@@ -321,9 +321,9 @@ select_and_write = function(variants,samples,prefix)
 select_and_write2 = function(variants,samples,prefix)
 {
   variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Info_refseq","Depth","Quality"),
+                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Protein_change","Info_refseq","Protein_change_refseq","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
-                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","Protein_change","AA_position","Exon","Pfam_domain",
+                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
                                                         "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
                                                         "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
@@ -368,6 +368,15 @@ merge_reports = function(family,samples)
         v_impacts = strsplit(ensemble[i,"Info_refseq_no_gene"],",",fixed=T)
         gene = ensemble[i,"Gene"]
         ensemble[i,"Info_refseq"]=paste(paste(gene,v_impacts[[1]],sep=":"),collapse=",")
+        for (impact in v_impacts)
+        {
+            if (grepl(":NP_",impact,fixed = T))
+            {
+                v_subimpacts = strsplit(impact,":",fixed=T)
+                ensemble[i,"Protein_change_refseq"] = v_subimpacts[3]
+                break
+            }
+        }
     }
     
     gatk_file = paste0(family,"-gatk-haplotype-annotated-decomposed.table")
@@ -688,7 +697,7 @@ setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 for (family in families)
 {
-    #family="1092R"
+    family="CHEO_0001"
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
