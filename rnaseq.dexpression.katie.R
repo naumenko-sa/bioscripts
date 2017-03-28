@@ -70,7 +70,8 @@ calc_de = function(all_counts,samples,prefix,filter)
     #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
   
-    #all_counts = counts
+    #test:
+    all_counts = counts
     #samples = c("G432","G511", "G472","G523", 
     #            "G440","G481", "G510","G564")
     
@@ -89,7 +90,9 @@ calc_de = function(all_counts,samples,prefix,filter)
     max_genes = nrow(x)
     
     logcpm = cpm(all_counts,prior.count=1,log=T)
+    t_cpm = cpm(all_counts,prior.count=1,log=F)
     logcpm = logcpm[,samples]
+    t_cpm = t_cpm[,samples]
     
     plotMDS(y)
     #filter - 1 or 0.5
@@ -109,6 +112,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     y$genes$Symbol = egSYMBOL$symbol[m]
     
     #remove duplications - just 1 gene in this dataset
+    #first order by counts to remove duplicated names with 0 counts
     o = order(rowSums(y$counts),decreasing = T)
     y = y[o,]
     d = duplicated(y$genes$Symbol)
@@ -166,16 +170,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=T,row.names=F)
     
-    #prepare a file for GSEA - positive and negative in a separate file
-    result_file=paste0(prefix,".pos.4gsea.txt")
-    for_gsea_logfc_pos = de_results[de_results$logFC>0,]
-    for_gsea_logfc_pos = de_results[,c("Gene_name","Ensembl_gene_id",paste0(samples,".log2cpm"))]
-    write.table(for_gsea_logfc_pos,result_file,quote=F,row.names = F)
-    
-    result_file=paste0(prefix,".neg.4gsea.txt")
-    for_gsea_logfc_neg = de_results[de_results$logFC<0,]
-    for_gsea_logfc_neg = de_results[,c("Gene_name","Ensembl_gene_id",paste0(samples,".log2cpm"))]
-    write.table(for_gsea_logfc_neg,result_file,quote=F,row.names = F)
+    prepare_file_4gsea(all_counts,samples,prefix,gene_descriptions)
     
     plot_heatmap_separate (all_counts,samples,de_results,prefix)
     plot_heatmap_separate (all_counts,samples,de_results,paste0(prefix,".top50genes"),50)
@@ -185,6 +180,31 @@ calc_de = function(all_counts,samples,prefix,filter)
     
     #kegg_analysis(lrt,prefix)
     
+}
+
+prepare_file_4gsea = function(counts,samples,prefix,gene_descriptions)
+{
+  #prepare a file for GSEA - positive and negative in a separate file
+  #http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#Expression_Data_Formats
+  #for GSEA it is important to report all genes - genome wide
+  
+    t_cpm = cpm(counts,prior.count=1,log=F)
+    t_cpm = t_cpm[,samples]
+  
+    result_file=paste0(prefix,".4gsea.txt")
+    t_cpm =  merge(t_cpm,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
+    colnames(t_cpm)[1]="Ensembl_gene_id"
+    t_cpm = t_cpm[c("external_gene_name","Ensembl_gene_id",paste0(samples))]
+    colnames(t_cpm)[1:2]=c("NAME","DESCRIPTION")
+  
+    o = order(rowSums(t_cpm[,c(samples)]),decreasing = T)
+    t_cpm = t_cpm[o,]
+    d = duplicated(t_cpm$NAME)
+    dy = t_cpm[d,]$NAME
+    t_cpm = t_cpm[!d,]
+    nrow(t_cpm)
+  
+    write.table(t_cpm,result_file,quote=F,row.names = F,sep = "\t")
 }
 
 # usually heatmap is a part of a panel - we don't need a title
