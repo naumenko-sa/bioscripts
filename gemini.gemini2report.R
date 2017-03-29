@@ -360,21 +360,29 @@ merge_reports = function(family,samples)
     ensemble$superindex=with(ensemble,paste(Position,Ref,Alt,sep='-'))
     
     refseq_file = paste0(family,".refseq.txt")
-    refseq = read.delim(refseq_file, stringsAsFactors=F)
+    refseq = read.delim(refseq_file, stringsAsFactors=F,na.strings = "")
     ensemble = merge(ensemble,refseq,by.x = "superindex", by.y="superindex",all.x = T)
     
     for (i in 1:nrow(ensemble))
     {
-        v_impacts = strsplit(ensemble[i,"Info_refseq_no_gene"],",",fixed=T)
-        gene = ensemble[i,"Gene"]
-        ensemble[i,"Info_refseq"]=paste(paste(gene,v_impacts[[1]],sep=":"),collapse=",")
-        for (impact in v_impacts)
+        if (is.na(ensemble[i,"Info_refseq_no_gene"]))
         {
-            if (grepl(":NP_",impact,fixed = T))
+              ensemble[i,"Info_refseq"] = NA
+              ensemble[i,"Protein_change_refseq"] = NA
+        }
+        else
+        {
+            v_impacts = strsplit(ensemble[i,"Info_refseq_no_gene"],",",fixed=T)[[1]]
+            gene = ensemble[i,"Gene"]
+            ensemble[i,"Info_refseq"]=paste(paste(gene,v_impacts,sep=":"),collapse=",")
+            for (impact in v_impacts)
             {
-                v_subimpacts = strsplit(impact,":",fixed=T)
-                ensemble[i,"Protein_change_refseq"] = v_subimpacts[3]
-                break
+                if (grepl(":NP_",impact,fixed = T))
+                {
+                    v_subimpacts = strsplit(impact,":",fixed=T)[[1]]
+                    ensemble[i,"Protein_change_refseq"] = v_subimpacts[5]
+                    break
+                }
             }
         }
     }
