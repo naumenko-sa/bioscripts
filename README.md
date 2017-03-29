@@ -106,9 +106,9 @@ but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.p
 
 ### Differential expression (DE)
 * [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html).
-* [rnaseq.dexpression.R](../master/rnaseq.dexpression.R] - common utils for DE.
-* [rnaseq.dexpression.katie.R](../master/rnaseq.dexpression.katie.R] - edgeR DE, batch effect correction, pheatmap, GO, pathways.
-* [Gene Set Enrichment Analysis (GSEA)](../http://software.broadinstitute.org/gsea/index.jsp). Run with all protein-coding genes, expression in cpm.
+* [rnaseq.dexpression.R](../master/rnaseq.dexpression.R) - common utils for DE.
+* [rnaseq.dexpression.katie.R](../master/rnaseq.dexpression.katie.R) - edgeR DE, batch effect correction, pheatmap, GO, pathways.
+* [Gene Set Enrichment Analysis (GSEA)](http://software.broadinstitute.org/gsea/index.jsp). Run with all protein-coding genes, expression in cpm.
 
 ### Micro-RNA
 I did a couple of analysis in *A.thaliana* and *S.tuberosum* (potato). First I run [smallRNA-seq pipeline from bcbio](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#smallrna-seq).
