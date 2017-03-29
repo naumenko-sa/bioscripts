@@ -93,9 +93,8 @@ and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendrosc
 * [hla.athlates.sh](../master/hla.athlates.sh) runs Athlates program for HLA allele typing.
 
 # RNA-seq
-I run [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq). It does STAR alignment, variant calling,
-expression measurements, isoform reconstruction, and quality metrics.
-
+* [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq) does STAR alignment, variant calling,
+expression measurements, isoform reconstruction, and quality metrics. Run sample-wise to speed up.
 * [rnaseq.star.sh](../master/rnaseq.star.sh) - 2pass on the fly STAR alignment for a single sample. Two passes are recommended to enhance alignment and calculation of counts for novel splice junctions
 (1st pass discovers junctions, 2nd pass makes an alignment).
 * [rnaseq.feature_counts.sh](../master/rnaseq.feature_counts.sh) [file.bam] calculates features (reads) for RPKM calculation in R, outputs length of the genes. TPMs are generally better
@@ -105,9 +104,11 @@ but [GTEX](http://www.gtexportal.org) values unlike [Protein Atlas](http://www.p
 
 ### De novo transcriptome assembly
 
-### Differential expression
-I use [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html).
-* dexpression.katie.R - edgeR DE, batch effect correction, pheatmap, GO, pathways
+### Differential expression (DE)
+* [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html).
+* [rnaseq.dexpression.R](../master/rnaseq.dexpression.R] - common utils for DE.
+* [rnaseq.dexpression.katie.R](../master/rnaseq.dexpression.katie.R] - edgeR DE, batch effect correction, pheatmap, GO, pathways.
+* [Gene Set Enrichment Analysis (GSEA)](../http://software.broadinstitute.org/gsea/index.jsp). Run with all protein-coding genes, expression in cpm.
 
 ### Micro-RNA
 I did a couple of analysis in *A.thaliana* and *S.tuberosum* (potato). First I run [smallRNA-seq pipeline from bcbio](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#smallrna-seq).
