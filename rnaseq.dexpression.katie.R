@@ -182,19 +182,26 @@ calc_de = function(all_counts,samples,prefix,filter)
     
 }
 
+#  prepares an expression profile for GSEA
+#  http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#Expression_Data_Formats
+#  for GSEA it is important to report all genes - genome wide
+#  hopefully cpms are better than logcpms
 prepare_file_4gsea = function(counts,samples,prefix,gene_descriptions)
 {
-  #prepare a file for GSEA - positive and negative in a separate file
-  #http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#Expression_Data_Formats
-  #for GSEA it is important to report all genes - genome wide
-  
     t_cpm = cpm(counts,prior.count=1,log=F)
-    t_cpm = t_cpm[,samples]
-  
+    
+    #select only protein coding genes
+    protein_coding_genes = read.delim(paste0(reference_tables_path,"/protein_coding_genes.txt"), row.names=1, stringsAsFactors=F)
+    
+    t_cpm = merge(protein_coding_genes,t_cpm,by.x='row.names',by.y='row.names',all = F)
+    
+    rownames(t_cpm)=t_cpm$Row.names
+    t_cpm$Row.names = NULL
+    
     result_file=paste0(prefix,".4gsea.txt")
     t_cpm =  merge(t_cpm,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
-    colnames(t_cpm)[1]="Ensembl_gene_id"
-    t_cpm = t_cpm[c("external_gene_name","Ensembl_gene_id",paste0(samples))]
+    colnames(t_cpm)[1]="ensembl_gene_id"
+    t_cpm = t_cpm[c("gene_name","ensembl_gene_id",paste0(samples))]
     colnames(t_cpm)[1:2]=c("NAME","DESCRIPTION")
   
     o = order(rowSums(t_cpm[,c(samples)]),decreasing = T)
