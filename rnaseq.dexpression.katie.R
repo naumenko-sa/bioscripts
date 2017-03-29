@@ -71,7 +71,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
   
     #test:
-    all_counts = counts
+    #all_counts = counts
     #samples = c("G432","G511", "G472","G523", 
     #            "G440","G481", "G510","G564")
     
@@ -186,9 +186,13 @@ calc_de = function(all_counts,samples,prefix,filter)
 #  http://software.broadinstitute.org/cancer/software/gsea/wiki/index.php/Data_formats#Expression_Data_Formats
 #  for GSEA it is important to report all genes - genome wide
 #  hopefully cpms are better than logcpms
-prepare_file_4gsea = function(counts,samples,prefix,gene_descriptions)
+prepare_file_4gsea = function(counts,samples,prefix)
 {
     t_cpm = cpm(counts,prior.count=1,log=F)
+    t_cpm = t_cpm[,samples]
+    
+    #remove rows with 0 expression
+    t_cpm = t_cpm[rowSums(t_cpm)>0,]
     
     #select only protein coding genes
     protein_coding_genes = read.delim(paste0(reference_tables_path,"/protein_coding_genes.txt"), row.names=1, stringsAsFactors=F)
@@ -199,8 +203,9 @@ prepare_file_4gsea = function(counts,samples,prefix,gene_descriptions)
     t_cpm$Row.names = NULL
     
     result_file=paste0(prefix,".4gsea.txt")
-    t_cpm =  merge(t_cpm,gene_descriptions,by.x="row.names",by.y="ensembl_gene_id",all.x=T)
-    colnames(t_cpm)[1]="ensembl_gene_id"
+    
+    t_cpm$ensembl_gene_id = row.names(t_cpm)
+    
     t_cpm = t_cpm[c("gene_name","ensembl_gene_id",paste0(samples))]
     colnames(t_cpm)[1:2]=c("NAME","DESCRIPTION")
   
@@ -507,6 +512,22 @@ test_lgk_dmso = function()
     prefix = "8lines"
     
     calc_de(counts,samples,prefix,1)
+}
+
+Figure511_523 = function()
+{
+    setwd("~/Desktop/project_katie_csc/Figure511_523/")
+    samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
+                "SG511_ven_lo_4_13","SG511_ven_lo_4_27",
+                "SG523_ven_hi_2_27","SG523_ven_hi_4_10",
+                "SG511_ven_hi_4_13","SG511_ven_hi_4_27")
+    
+    counts = read.csv("counts.txt", row.names=1, sep="", stringsAsFactors=F)
+    prefix = "Figure511_523.4cell_lines"
+    
+    samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10",
+                "SG523_ven_hi_2_27","SG523_ven_hi_4_10")
+    prefix = "Figure523.4cell_lines"
 }
 
 samples5 = c("SG511_ven_lo_4_13","SG511_ven_lo_4_27",
