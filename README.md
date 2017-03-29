@@ -50,6 +50,10 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * alignment.substitution_profile.pl
 * alignment.tr_trv.pl
 
+# Annotation
+
+* [gene.R](../master/gene.R) - various annotations from biomaRt
+
 # Fastq,bam,cram
 
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
@@ -63,7 +67,6 @@ bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Ru
 * [bcl2fastq.sh](../master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
-
 
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler. 

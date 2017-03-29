@@ -1,5 +1,4 @@
-# project: CHEO
-# biomart wrappers to get gene information and exon coordinates
+# biomart wrappers to get gene information, exon coordinates etc
 
 init = function()
 {
@@ -18,6 +17,17 @@ init = function()
   grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
   
   chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
+}
+
+get_protein_coding_genes = function()
+{
+    setwd("~/Desktop/reference_tables/")
+    protein_coding_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+                                 filters = c('biotype'),
+                                 values='protein_coding',
+                                 mart=grch37)
+    colnames(protein_coding_genes)[2] = 'gene_name'
+    write.table(protein_coding_genes,file="protein_coding_genes.txt",quote=F,row.names=F,sep="\t")
 }
 
 get_gene_descriptions = function()
