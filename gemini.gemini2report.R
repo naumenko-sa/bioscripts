@@ -17,53 +17,6 @@ add_placeholder=function(variants,column_name,placeholder)
    return(variants)
 }
 
-get_variants_from_db = function (dbname)
-{
-    dbname="NA12878-1-ensemble.db"
-    con = dbConnect(RSQLite::SQLite(),dbname=dbname)
-    dbListTables(con)
-
-    qrySample="select name from samples"
-    sample = dbGetQuery(con,qrySample)[1,1]
-
-qryReport=paste0("select 
-        v.ref as Ref,
-        v.alt as Alt,
-        v.impact as Variation,
-        v.depth as Depth,
-        v.qual_depth as Qual_depth,
-        v.gene as Gene,
-        g.ensembl_gene_id as Ensembl_gene_id,
-        v.clinvar_disease_name as Clinvar,
-        v.transcript as Ensembl_transcript_id,
-        v.aa_length as AA_position,
-        v.exon as Exon,
-        v.pfam_domain as Pfam_domain,
-        v.rs_ids as rsIDs,
-        v.aaf_1kg_all as Maf_1000g,
-        v.aaf_exac_all as Exac_maf,
-        v.max_aaf_all as Maf_all,
-        v.exac_num_het as Exac_het,
-        v.exac_num_hom_alt as Exac_hom_alt,
-        v.sift_score as Sift_score,
-        v.polyphen_score as Polyphen_score,
-        v.cadd_scaled as Cadd_score,gts,
-        v.chrom as Chrom,
-        v.start+1  as Pos,
-        v.aa_change as AA_change
-        from variants v, gene_detailed g
-        where v.transcript=g.transcript and v.gene=g.gene and v.chrom = \"chr20\"");
-
-        variants = dbGetQuery(con,qryReport)
-    return (variants)
-}
-
-close_database = function()
-{
-  dbClearResult(variants)
-  dbDisconnect(con)
-}
-
 #in the meanwhile using cheo.gemini2txt.single_sample.sh query in bash to decode 
 #blob fields
 get_variants_from_file = function (filename)
@@ -201,7 +154,7 @@ create_report = function(family,samples)
     
     #refseq_impacts in merge_reports
     variants = add_placeholder(variants,"Info_refseq","Info_refseq")
-    variants = add_placeholder(variants,"Protein_change_refseq","Protein_change_refseq")
+    variants = add_placeholder(variants,"Protein_change_refseq","NA")
     
     #variants = merge(variants,ensembl_refseq,all.x=T)
     #variants$Info = with(variants,paste(Gene,Refseq_mrna,Codon_change,Protein_change,sep=':'))
@@ -323,7 +276,7 @@ select_and_write = function(variants,samples,prefix)
 select_and_write2 = function(variants,samples,prefix)
 {
   variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
-                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Protein_change","Info_refseq","Protein_change_refseq","Depth","Quality"),
+                        paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Protein_change_ensembl","Info_refseq","Protein_change_refseq","Depth","Quality"),
                         paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
                                                         "Orphanet", "Clinvar","Ensembl_transcript_id","AA_position","Exon","Pfam_domain",
                                                         "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
@@ -558,9 +511,7 @@ annotate_w_care4rare = function(family,samples)
   select_and_write2(variants,samples,family)
 }
 
-#library(RSQLite)
 library(stringr)
-library(genetics)
 library(data.table)
 library(plyr)
 
