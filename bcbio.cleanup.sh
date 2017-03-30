@@ -44,13 +44,13 @@ function prepare_for_report
     cd $family
 
     gemini.gemini2txt.sh ${family}-ensemble.db
-    gemini.variant_impacts.sh ${family}-ensemble.db
-    gemini.refseq.sh $family
+    #gemini.variant_impacts.sh ${family}-ensemble.db
+    #gemini.refseq.sh $family
 
-    for f in *.vcf.gz;
-    do
-	tabix $f;
-    done
+    #for f in *.vcf.gz;
+    #do
+#	tabix $f;
+    #done
 
     #report filtered vcf for import in phenotips
     #note that if there is a multiallelic SNP, with one rare allele and one frequent one, both will be reported in the VCF,
@@ -60,13 +60,13 @@ function prepare_for_report
 
     #decompose first for the old version of bcbio!
     #gemini.decompose.sh ${family}-freebayes.vcf.gz
-    vcf.freebayes.getAO.sh ${family}-freebayes-annotated-decomposed.vcf.gz
+    #vcf.freebayes.getAO.sh ${family}-freebayes-annotated-decomposed.vcf.gz
 
     #gemini.decompose.sh ${family}-gatk-haplotype.vcf.gz
-    vcf.gatk.get_depth.sh ${family}-gatk-haplotype-annotated-decomposed.vcf.gz
+    #vcf.gatk.get_depth.sh ${family}-gatk-haplotype-annotated-decomposed.vcf.gz
 
     #gemini.decompose.sh ${family}-platypus.vcf.gz
-    vcf.platypus.getNV.sh ${family}-platypus-annotated-decomposed.vcf.gz
+    #vcf.platypus.getNV.sh ${family}-platypus-annotated-decomposed.vcf.gz
 
     cd ..
 }
@@ -77,5 +77,5 @@ then
 fi
 
 echo $family
-cleanup
+#cleanup
 prepare_for_report
