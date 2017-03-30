@@ -39,7 +39,7 @@ function cleanup
     cd ..
 }
 
-function prepare_for_report
+function make_report
 {
     cd $family
 
@@ -68,6 +68,9 @@ function prepare_for_report
     #gemini.decompose.sh ${family}-platypus.vcf.gz
     #vcf.platypus.getNV.sh ${family}-platypus-annotated-decomposed.vcf.gz
 
+    module load R
+    Rscript ~/bioscripts/gemini.gemini2report.R $family
+
     cd ..
 }
 
@@ -78,4 +81,4 @@ fi
 
 echo $family
 #cleanup
-prepare_for_report
+make_report
