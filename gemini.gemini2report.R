@@ -556,7 +556,7 @@ annotate_w_care4rare = function(family,samples)
   select_and_write2(variants,samples,family)
 }
 
-library(RSQLite)
+#library(RSQLite)
 library(stringr)
 library(genetics)
 library(data.table)
@@ -567,145 +567,15 @@ reference_tables_path="~/Desktop/reference_tables"
 seen_in_c4r_counts = read.delim(paste0(reference_tables_path,"/seen_in_c4r_counts.txt"), stringsAsFactors=F)
 seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_samples.txt"), stringsAsFactors=F, sep=";")
 
-#Muscular samples
-#muscle1_wes
-setwd("/home/sergey/Desktop/project_muscular/muscle1_wes/")
-family="muscle1_wes"
-samples=c("muscle1_wes")
-create_report(family,samples)
-annotate_w_care4rare(family,samples)
-
-setwd("/home/sergey/Desktop/project_muscular/Fibroblast8/")
-family="fibroblast8"
-samples=c("Fibroblast8")
-create_report(family,samples)
-
-setwd("/home/sergey/Desktop/project_muscular/Muscle2/60_PF_S4/")
-family="varese"
-samples=c("62_AF_S5")
-create_report(family,samples)
-merge_reports(family,samples)
-
-setwd("/home/sergey/Desktop/project_muscular/DMD/")
-family="dmd"
-samples=c("DMD")
-create_report(family,samples)
-
-#cheo 10 samples
-setwd("/home/sergey/Desktop/project_cheo/2016-11-09_rerun10")
-family="166"
-samples=c("166_3_5","166_4_10","166_4_8")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="181"
-samples = c("181_121141J","181_WG0927")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="241"
-samples=c("241_44845","241_52062","241_52063")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family = "246"
-samples = c("246_90137","246_CH0015","246_CH0016")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="380"
-samples=c("380_120890B","380_120891B")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="391"
-samples=c("391_121030T","391_121031C","391_CH0073")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="394"
-samples=c("394_60638BD")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="411"
-samples=c("411_G0071AG","411_G0091AG")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="412"
-samples=c("412_120880N","412_120886B","412_120887D")
-create_report(family,samples)
-merge_reports(family,samples)
-
-family="417"
-samples=c("417_120882D")
-create_report(family,samples)
-merge_reports(family,samples)
-
-
-#mutations for katie
-setwd("/home/sergey/Desktop/project_katie_csc_large")
-families=c("wG432_DMSO","wG432_LGK","wG440_DMSO","wG440_LGK","wG472_DMSO","wG472_LGK",
-           "wG481_DMSO","wG481_LGK","wG510_DMSO","wG510_LGK","wG511_DMSO","wG511_LGK",
-           "wG523_DMSO","wG523_LGK","wG564_DMSO","wG564_LGK")
-for (family in families)
-{
-  samples=c("gbm")
-  create_report(family,samples)
-}
-
-#V
-setwd("/home/sergey/Desktop/project_exomes/1_v/2016-12-19_new_report_decomposed/")
-family="bnu7823"
-samples=c("nu7823")
-create_report(family,samples)
-merge_reports(family,samples)
-
-#N
-setwd("/home/sergey/Desktop/project_exomes/2_n/2016-12-19_new_report_decomposed")
-family="b100940"
-samples=c("100940")
-create_report(family,samples)
-merge_reports(family,samples)
-
-#mh
-setwd("/home/sergey/Desktop/project_mh/B175/")
-family="B175"
-samples = c("1130-BD-B175","2064-BA-B175")
-create_report(family,samples)
-merge_reports(family,samples)
-
-#Dorin - 1091R
-setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin/1092R/")
-family="1092R"
-samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
-create_report(family,samples)
-merge_reports(family,samples)
-
 # R substitutes "-" with "." in sample names in columns so fix this in samples.txt
 # sample names starting with letters should be prefixed by X in *.table
 # for correct processing. most of them start with numbers, and R adds X automatically
-setwd("/home/sergey/Desktop/project_cheo/2016-12-26_reports_50_families/uploaded")
-setwd("/home/sergey/Desktop/project_cheo/2017-01-30_dorin")
-families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 
-for (family in families)
-{
-    setwd(family)
-    samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
-    samples = gsub("-",".",samples)
-    create_report(family,samples)
-    merge_reports(family,samples)
-    setwd("..")
-}
-
-#add seen in c4r information
-setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
+#setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
 families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
 for (family in families)
 {
-    family="CHEO_0001"
+    #family="CHEO_0001"
     setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
@@ -716,5 +586,3 @@ for (family in families)
 
     setwd("..")
 }
-
-
