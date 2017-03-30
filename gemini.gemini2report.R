@@ -525,11 +525,15 @@ seen_in_c4r_samples = read.csv(paste0(reference_tables_path,"/seen_in_c4r_sample
 # for correct processing. most of them start with numbers, and R adds X automatically
 
 #setwd("/home/sergey/Desktop/project_cheo/2017-03-16_Kristin/")
-families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
-for (family in families)
-{
-    #family="CHEO_0001"
-    setwd(family)
+#families <- unlist(read.table("families.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
+#for (family in families)
+#{
+
+    args = commandArgs(trailingOnly = T)
+    family = args[1]
+    #we are in the family directory - to call from bcbio.cleanup.sh
+      #family="CHEO_0001"
+#    setwd(family)
     samples = unlist(read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=FALSE))
     samples = gsub("-",".",samples)
     
@@ -537,5 +541,5 @@ for (family in families)
     merge_reports(family,samples)
     annotate_w_care4rare(family,samples)
 
-    setwd("..")
-}
+#    setwd("..")
+#}
