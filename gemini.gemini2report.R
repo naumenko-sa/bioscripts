@@ -305,14 +305,16 @@ create_report = function(family,samples)
 #final selection and order
 select_and_write = function(variants,samples,prefix)
 {
-    variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),paste0("Zygosity.",samples),c("Gene"),
+    variants = variants[c(c("Position","UCSC_Link","Ref","Alt"),
+                        paste0("Zygosity.",samples),c("Gene"),
                         paste0("Burden.",samples),c("gts","Variation","Info_ensembl","Protein_change_ensembl","Info_refseq","Protein_change_refseq","Depth","Quality"),
-                        paste0("Alt_depths.",samples),c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
-                                                        "Orphanet", "Clinvar","Ensembl_transcript_id","AA_position","Exon","Pfam_domain",
-                                                        "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
-                                                        "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
-                                                        "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
-                                                        "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
+                        paste0("Alt_depths.",samples),
+                        c("Trio_coverage","Ensembl_gene_id","Gene_description","Omim_gene_description","Omim_inheritance",
+                          "Orphanet", "Clinvar","Ensembl_transcript_id","AA_position","Exon","Pfam_domain",
+                          "Frequency_in_C4R","Seen_in_C4R_samples","rsIDs","Maf_1000g","EVS_maf_aa","EVS_maf_ea","EVS_maf_all",
+                          "Exac_maf","Maf_all", "Exac_pLi_score","Exac_missense_score","Exac_het","Exac_hom_alt",
+                          "Conserved_in_29_mammals","Sift_score","Polyphen_score","Cadd_score",
+                          "Imprinting_status","Imprinting_expressed_allele","Pseudoautosomal"))]
   
     write.table(variants,paste0(prefix,".txt"),quote=F,sep = ";",row.names=F)  
 }
