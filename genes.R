@@ -2,21 +2,21 @@
 
 init = function()
 {
-  library("biomaRt")  
-  grch37 = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
+    library("biomaRt")  
+    grch37 = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
                    path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
-  datasets=listDatasets(grch37)
+    datasets=listDatasets(grch37)
   
-  grch37 = useDataset(grch37,dataset="hsapiens_gene_ensembl")
+    grch37 = useDataset(grch37,dataset="hsapiens_gene_ensembl")
   
-  attributes=listAttributes(grch37)
-  filters=listFilters(grch37)
+    attributes=listAttributes(grch37)
+    filters=listFilters(grch37)
   
-  grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-  datasets = listDatasets(grch38)
-  grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
-  
-  chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
+    chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
+    
+    grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
+    datasets = listDatasets(grch38)
+    grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
 }
 
 get_protein_coding_genes = function()
@@ -46,36 +46,49 @@ get_refseq_transcript_ids = function()
 }
 
 #use chromosomes because of biomart webservice timeout
+#sometimes people want ccds genes, then use with_ccds
+#some genes don't have CCDS while they are coding, i.e. B4GAT1, ISPD, LARGE1
 get_exon_coordinates_chr = function(chromosome)
 {
-    ccds_genes = getBM(attributes=c('ensembl_gene_id'),
-                     filters=c('with_ccds','chromosome_name'),
-                     values=list(T,chromosome),
-                     mart=grch37)
-    getBM(
-      attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
-        'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end'),
-      filters=c('ensembl_gene_id'),
-      values=list(ccds_genes),
-      mart=grch37)
+    #ccds_genes = getBM(attributes=c('ensembl_gene_id'),
+    #                 filters=c('with_ens_hs_translation','chromosome_name'),
+    #                 values=list(T,chromosome),
+    #                 mart=grch37)
+    
+    #getBM(
+    #  attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
+    #    'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
+    #    'external_gene_name'),
+    #  filters=c('ensembl_gene_id'),
+    #  values=list(ccds_genes),
+    #  mart=grch37)
+  
+    getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
+          'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
+          'external_gene_name'),
+          filters = c('chromosome_name'),
+          values = list(chromosome),
+          mart=grch37)
 }
 
 #print genomic_coding to exclude UTRs
 get_exon_coordinates = function()
 {
-  #18710 genes
-  exon_coordinates=get_exon_coordinates_chr(1)
-  #MT is problematic in ccds
-  for (chr in c(seq(2,22),"X","Y"))
-  {
-    buffer = get_exon_coordinates_chr(chr)
-    exon_coordinates=rbind(buffer,exon_coordinates)
-  }
-  exon_coordinates=na.omit(exon_coordinates)
-  write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
-  write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.codins.genes.ENS",quote=F,row.names=F,col.names=F)
-  exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end"))
-  write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    #18710 genes
+    exon_coordinates=get_exon_coordinates_chr(1)
+    #MT is problematic in ccds
+    for (chr in c(seq(2,22),"X","Y"))
+    {
+        buffer = get_exon_coordinates_chr(chr)
+        exon_coordinates=rbind(buffer,exon_coordinates)
+    }
+    exon_coordinates=na.omit(exon_coordinates)
+    write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
+    write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.codins.genes.ENS",quote=F,row.names=F,col.names=F)
+    exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end","external_gene_name"))
+    write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    
+    ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
 }
 
 get_gene_coordinate = function()

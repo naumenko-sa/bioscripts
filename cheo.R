@@ -140,3 +140,13 @@ names=c("b1","b2","b3","g1","g2","g3")
 
 png(paste0(sample,".",platform,".",type,".png"),width=1000)
 boxplot(v,names=names)
+
+get_muscle_genes_coordinates = function()
+{
+    setwd("~/Desktop/project_cheo/")
+    gene_list = unlist(read.table("cheo.muscular_genes", stringsAsFactors=F))
+    setwd("~/Desktop/reference_tables/")
+    all_exons = read.delim("protein_coding_genes.exons.bed", header=F, stringsAsFactors=F)
+    muscular_exons = all_exons[all_exons$V4 %in% gene_list,]
+    write.table(muscular_exons,"cheo.muscular_exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
+}
