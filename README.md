@@ -56,9 +56,10 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 
 # Fastq,bam,cram
 
-* [jvarkit](https://github.com/lindenb/jvarkit/wiki)
+* [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
-* [bam.coverage.pbs](../master/bam.coverage.pbs) calculates coverage of a bed file using mapped reads from a bam file.
+* [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
+* [bam.coverage.bamstats](../master/bam.coverage.bamstats.sh) prints average coverage for a gene, uses bamstats05.
 * [bam.reads_number.sh](../master/bam.reads_number.sh) reports the number of paired reads in a bam file, uses samtools
 * [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
