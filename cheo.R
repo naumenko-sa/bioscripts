@@ -150,3 +150,32 @@ get_muscle_genes_coordinates = function()
     muscular_exons = all_exons[all_exons$V4 %in% gene_list,]
     write.table(muscular_exons,"cheo.muscular_exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
+
+muscle_genes_coverage = function ()
+{
+    setwd("~/Desktop/project_cheo/2017-04-05_NextSeq_coverage/")
+    samples = unlist(read.table("samples.txt", stringsAsFactors=F))
+    
+    coverage = read.delim(paste0(samples[1],".coverage"),header=T,stringsAsFactors = F)
+    coverage = coverage[,c("gene","mean")]
+    colnames(coverage)[2]=samples[1]
+    
+    
+    for (sample in tail(samples,-1))
+    {
+        sample_coverage = read.delim(paste0(sample,".coverage"),header=T,stringsAsFactors = F)
+        sample_coverage = sample_coverage[,c("gene","mean")]
+        colnames(sample_coverage)[2]=sample
+        coverage = cbind(coverage,sample_coverage[2])
+    }
+    row.names(coverage) = coverage$gene
+    coverage$gene=NULL
+    
+    png("cheo.muscular_genes.coverage.part1.png",res=300,width=5000,height=2000)
+    boxplot(t(coverage[1:60,]),las=2,cex.axis=0.8,main="Coverage in 60 samples of NextSeq for muscle gene panel,part 1")
+    dev.off()
+    
+    png("cheo.muscular_genes.coverage.part2.png",res=300,width=5000,height=2000)
+    boxplot(t(coverage[61:118,]),las=2,cex.axis=0.8,main="Coverage in 60 samples of NextSeq for muscle gene panel,part 2")
+    dev.off()
+}
