@@ -56,6 +56,7 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 
 # Fastq,bam,cram
 
+* [jvarkit](https://github.com/lindenb/jvarkit/wiki)
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
 * [bam.coverage.pbs](../master/bam.coverage.pbs) calculates coverage of a bed file using mapped reads from a bam file.
 * [bam.reads_number.sh](../master/bam.reads_number.sh) reports the number of paired reads in a bam file, uses samtools

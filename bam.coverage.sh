@@ -1,5 +1,7 @@
 #!/bin/bash
 #calculates coverage of a bed file with mapped reads from bam file
+#not very usable, too low level: outputs all reads
+#use bamstats04 instead from jvarkit
 
 # $bam - input.bam
 # $bed - filter.bed
