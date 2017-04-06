@@ -54,9 +54,10 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 
 * [gene.R](../master/gene.R) - various annotations from biomaRt
 
-# Fastq,bam,cram
+# Fastq,bam,cram,bed
 
 * [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
+* [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
 * [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
 * [bam.coverage.bamstats](../master/bam.coverage.bamstats.sh) prints average coverage for a gene, uses bamstats05.
@@ -151,12 +152,13 @@ on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes,
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
 * [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt):biallelic sites decomposition, info fields removal
-* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools)
+* [bcftools](http://www.htslib.org/doc/bcftools.html)
+* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools), vcfstats.
+* [vcf.rtg.validate.sh](../master/vcf.rtg.validate.sh) - how to run rtg vcfeval validation.
 * [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.
 * [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families.
 * [bcbio.prepare_samples.sh](../master/bcbio.prepare_samples.sh) creates symlinks, folder structure, config files to run multiple projects for bam file generation.
-* [vcf.validate.sh](../master/vcf.validate.sh) - validate variant calls with Genome in a bottle callset using RTG vcfeval tool.
 * [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
 Sometimes it is useful when studying cohorts of families. When samples are mislabeled (it happens), the whole study makes no sense,
 at least until relatives are placed together to call and interpret variants.
