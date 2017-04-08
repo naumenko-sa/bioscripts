@@ -3,21 +3,25 @@
 #example: https://www.biostars.org/p/83232/ - misleading
 #tutorial: 
 #http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#format-conversion-from-vcf-files
+#https://www.biostars.org/p/138694/
 
 #install SNPRelate as described here:
 #http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#installation-of-the-package-snprelate
 
+
+# 1.remove VEP annotations with vt
+# 2.extract chrom 1-5
+# 3.prepare multisample vcf with bcftools merge  
+
 library(gdsfmt)
 library(SNPRelate)
 
-setwd("~/Desktop/project_mh/2016-10-06_families_check/")
-setwd("/home/sergey/Desktop/project_muscular/Muscle2/kinship")
+setwd("~/Desktop/project_cheo/2017-04-06_NextSeq_kinship/")
 
-#prepare multisample vcf with bcftools merge 
 #biallelic by default
 #snpgdsVCF2GDS("dataset2.vcf", "dataset2.gds")
 #snpgdsVCF2GDS("S700.vcf", "dataset.gds")
-snpgdsVCF2GDS("varese.chr1_5.vcf", "dataset1.gds")
+snpgdsVCF2GDS("CHEO_0001.no_vep.vcf.gz", "dataset1.gds")
 snpgdsSummary("dataset1.gds")
 genofile = snpgdsOpen("dataset1.gds")
 
@@ -62,7 +66,7 @@ sample.id=c("1333-SL-S700","1422-SE-S700",
             "1414-FJ-F129")
 
 
-dissMatrix  =  snpgdsIBS(genofile , sample.id=sample.id, snp.id=NULL, autosome.only=TRUE,remove.monosnp=TRUE, 
+dissMatrix  =  snpgdsIBS(genofile, snp.id=NULL, autosome.only=TRUE,remove.monosnp=TRUE, 
                          maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)
 
 #snpgdsClose(genofile)
@@ -74,4 +78,4 @@ cutTree = snpgdsCutTree(snpHCluster, z.threshold=15, outlier.n=5, n.perm = 5000,
 snpgdsDrawTree(cutTree, main = "Varese, chr1_5",edgePar=list(col="black",t.col="black"),
                y.label.kinship=T,leaflab="perpendicular",outlier.n = 0)
 
-genofile = snpgdsClose("dataset2.gds")
+snpgdsClose(genofile)

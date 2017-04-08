@@ -47,7 +47,7 @@ get_refseq_transcript_ids = function()
 
 #use chromosomes because of biomart webservice timeout
 #sometimes people want ccds genes, then use with_ccds
-#some genes don't have CCDS while they are coding, i.e. B4GAT1, ISPD, LARGE1
+#some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
 get_exon_coordinates_chr = function(chromosome)
 {
     #ccds_genes = getBM(attributes=c('ensembl_gene_id'),
@@ -69,6 +69,28 @@ get_exon_coordinates_chr = function(chromosome)
           filters = c('chromosome_name'),
           values = list(chromosome),
           mart=grch37)
+}
+
+#LSP1 has exons on chr11 and chr13 - a bug to report
+#CKS1B: chr1 and chr5
+test_lsp1_gene = function()
+{
+  library("biomaRt")  
+  grch37 = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
+                   path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
+  datasets=listDatasets(grch37)
+  
+  grch37 = useDataset(grch37,dataset="hsapiens_gene_ensembl")
+  
+  attributes=listAttributes(grch37)
+  filters=listFilters(grch37)
+  
+  lsp1_bug=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
+                     'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
+                     'external_gene_name'),
+        filters = c('external_gene_name'),
+        values = list("LSP1"),
+        mart=grch37)
 }
 
 #print genomic_coding to exclude UTRs
