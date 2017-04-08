@@ -151,7 +151,7 @@ get_muscle_genes_coordinates = function()
     write.table(muscular_exons,"cheo.muscular_exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
 
-muscle_genes_coverage = function ()
+coverage.muscle_genes = function ()
 {
     setwd("~/Desktop/project_cheo/2017-04-05_NextSeq_coverage/")
     samples = unlist(read.table("samples.txt", stringsAsFactors=F))
@@ -178,4 +178,43 @@ muscle_genes_coverage = function ()
     png("cheo.muscular_genes.coverage.part2.png",res=300,width=5000,height=2000)
     boxplot(t(coverage[61:118,]),las=2,cex.axis=0.8,main="Coverage in 60 samples of NextSeq for muscle gene panel,part 2")
     dev.off()
+}
+
+#when looking at all genes, some samples may have no coverage
+# CA0229.coverage 15325
+# CA0246.coverage 17268
+# CH0317.coverage 15833
+# GM15262.coverage 14435
+coverage.all_genes = function ()
+{
+    library("matrixStats")
+    setwd("~/Desktop/project_cheo/2017-04-05_NextSeq_coverage/all_genes/")
+    samples = unlist(read.table("samples.txt", stringsAsFactors=F))
+  
+    #hopefully 1st sample has most genes
+    coverage = read.delim(paste0(samples[1],".coverage"),header=T,stringsAsFactors = F)
+    coverage = coverage[,c("gene","mean")]
+    colnames(coverage)[2]=samples[1]
+    row.names(coverage)=coverage$gene
+    coverage$gene=NULL
+  
+    for (sample in tail(samples,-1))
+    {
+        sample_coverage = read.delim(paste0(sample,".coverage"),header=T,stringsAsFactors = F)
+        sample_coverage = sample_coverage[,c("gene","mean")]
+        colnames(sample_coverage)[2]=sample
+        coverage = merge(coverage,sample_coverage,by.x="row.names",by.y="gene",all.x=T)
+        row.names(coverage) = coverage$Row.names
+        coverage$Row.names=NULL
+    }
+  
+    coverage[is.na(coverage)]=0  
+    coverage$Mean = rowMeans(coverage)
+    png("cheo.all_genes.coverage.png",res=300,width=5000,height=2000)
+    boxplot(coverage,las=2,cex.axis=0.8,main="Coverage in 60 samples of NextSeq across all protein coding genes, no outliers",outline = F)
+    dev.off()
+    
+    
+    meds=rbind(colnames(coverage),colMedians(as.matrix(coverage)))
+    write.table(meds,"medians.txt",col.names = F, quote = F,row.names = F)
 }
