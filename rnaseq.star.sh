@@ -5,7 +5,7 @@
 #PBS -d .
 #PBS -l vmem=50g
 
-#mofidied from bcbio rna-seq log and STAR manual
+#modified from bcbio rna-seq log and STAR manual
 
 /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/galaxy/../anaconda/bin/STAR --genomeDir /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/star/ \
     --readFilesIn ${project}_1.fq.gz ${project}_2.fq.gz \
@@ -21,5 +21,3 @@
      --sjdbOverhang $len  --readFilesCommand zcat  --outSAMattrRGline ID:$project PL:illumina PU:$project SM:ID  --outSAMstrandField intronMotif  --quantMode TranscriptomeSAM  \
      | /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/galaxy/../anaconda/bin/samtools sort -@ 5 -m 1G  -T . \
      -o $project.bam /dev/stdin
-
-

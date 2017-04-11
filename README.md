@@ -159,6 +159,7 @@ This allows to achieve increased sensitivity required for research, compared to 
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.
 * [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families.
 * [bcbio.prepare_samples.sh](../master/bcbio.prepare_samples.sh) creates symlinks, folder structure, config files to run multiple projects for bam file generation.
+* [vcf.split_multisample.sh](../master/vcf.split_multisample.sh) splits multisample vcfs.
 * [vcf.kinship.R](../master/vcf.kinship.R) calculates kinship for a family using SNPRelate and plots a pedigree.
 Sometimes it is useful when studying cohorts of families. When samples are mislabeled (it happens), the whole study makes no sense,
 at least until relatives are placed together to call and interpret variants.
