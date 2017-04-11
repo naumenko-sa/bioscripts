@@ -49,6 +49,7 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * alignment.sort_by_id.pl
 * alignment.substitution_profile.pl
 * alignment.tr_trv.pl
+* [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of D.melanogaster and D.simulans.
 
 # Annotation
 
