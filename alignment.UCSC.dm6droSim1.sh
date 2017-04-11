@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# how to cook the alignment of D.melanogaster and D.simulans
+
 # multiz: download, make, and add to PATH
 # wget https://www.bx.psu.edu/miller_lab/dist/multiz-tba.012109.tar.gz
 #
