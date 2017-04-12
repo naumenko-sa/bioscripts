@@ -1,81 +1,170 @@
-#calculates kinship for the families using SNPRelate
+# calculates kinship for the families using SNPRelate
 
-#example: https://www.biostars.org/p/83232/ - misleading
-#tutorial: 
-#http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#format-conversion-from-vcf-files
-#https://www.biostars.org/p/138694/
+# example: https://www.biostars.org/p/83232/ - misleading
+# tutorial: 
+# http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#format-conversion-from-vcf-files
+# https://www.biostars.org/p/138694/
+# docs:
+# https://bioconductor.org/packages/release/bioc/manuals/SNPRelate/man/SNPRelate.pdf
+# much simpler : vcftools --relatedness2
+# https://www.biostars.org/p/111573/
+# 1st degree ~0.25, and 2nd-degree ~0.125, and 3rd degree 0.0625.
+# "Unrelated" parents can reach values as high as ~0.04 in my experience.
 
-#install SNPRelate as described here:
-#http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#installation-of-the-package-snprelate
+# install SNPRelate as described here:
+# http://www.bioconductor.org/packages/release/bioc/vignettes/SNPRelate/inst/doc/SNPRelateTutorial.html#installation-of-the-package-snprelate
 
-
+# Data preparation:
 # 1.remove VEP annotations with vt
 # 2.extract chrom 1-5
 # 3.prepare multisample vcf with bcftools merge  
 
-library(gdsfmt)
-library(SNPRelate)
+init = function()
+{
+    library(gdsfmt)
+    library(SNPRelate)
+}
 
-setwd("~/Desktop/project_cheo/2017-04-06_NextSeq_kinship/")
+tutorial = function()
+{
+    genofile = snpgdsOpen(snpgdsExampleFileName())
+    snpgdsSummary(snpgdsExampleFileName())
+    pop_code = read.gdsn(index.gdsn(genofile,path="sample.annot/pop.group"))
+    table(pop_code)
+    set.seed(1000)
+    snpset = snpgdsLDpruning(genofile,ld.threshold = 0.2)
+    names(snpset)
+    snpset.id = unlist(snpset)
+    
+    pca = snpgdsPCA(genofile, snp.id=snpset.id, num.thread=2)
+    pc.percent = pca$varprop*100
+    head(round(pc.percent,2))
+    
+    tab = data.frame(sample.id = pca$sample.id,
+                     EV1 = pca$eigenvect[,1],
+                     EV2 = pca$eigenvect[,2],
+                     stringsAsFactors = F)
+    
+    head(tab)
+    plot(tab$EV2, tab$EV1, xlab="eigenvector 2", ylab="eigenvector 1")
+    
+    sample.id = read.gdsn(index.gdsn(genofile,"sample.id"))
+    pop_code = read.gdsn(index.gdsn(genofile,"sample.annot/pop.group"))
+    
+    head(cbind(sample.id,pop_code))
+    
+    tab <- data.frame(sample.id = pca$sample.id,
+                      pop = factor(pop_code)[match(pca$sample.id, sample.id)],
+                      EV1 = pca$eigenvect[,1],    # the first eigenvector
+                      EV2 = pca$eigenvect[,2],    # the second eigenvector
+                      stringsAsFactors = FALSE)
+    head(tab)
+    
+    plot(tab$EV2, tab$EV1, col=as.integer(tab$pop), xlab="eigenvector 2", ylab="eigenvector 1")
+          legend("bottomright", legend=levels(tab$pop), pch="o", col=1:nlevels(tab$pop))
+          
+    #relatedness analysis
+    sample.id <- read.gdsn(index.gdsn(genofile, "sample.id"))
+    YRI.id <- sample.id[pop_code == "YRI"]
+    ibd <- snpgdsIBDMoM(genofile, sample.id=YRI.id, snp.id=snpset.id,
+                        maf=0.05, missing.rate=0.05, num.thread=2)
+    
+    ibd.coeff <- snpgdsIBDSelection(ibd)
+    head(ibd.coeff)
+    
+    plot(ibd.coeff$k0, ibd.coeff$k1, xlim=c(0,1), ylim=c(0,1),
+         xlab="k0", ylab="k1", main="YRI samples (MoM)")
+    lines(c(0,1), c(1,0), col="red", lty=2)
+    
+    
+    dissMatrix  =  snpgdsIBS(genofile, snp.id=snpset.id,autosome.only=TRUE, 
+                             maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE,sample.id = YRI.id)
+    
+    snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
+    
+    #outlier.n=5
+    cutTree = snpgdsCutTree(snpHCluster, z.threshold=15, outlier.n = 10, n.perm = 5000, samp.group=NULL,
+                            col.outlier="red",col.list=NULL, pch.outlier =4, pch.list=NULL,label.H=FALSE, 
+                            label.Z=TRUE, verbose=TRUE)
+    snpgdsDrawTree(cutTree,type="z-score")
+    png(paste0(prefix,".png"))
+    snpgdsDrawTree(cutTree, main = "YRI",edgePar=list(col="black",t.col="black"),
+                   y.label.kinship=T,leaflab="perpendicular",outlier.n = 0)
+    
+    snpgdsClose(genofile)
+}
 
-#biallelic by default
-#snpgdsVCF2GDS("dataset2.vcf", "dataset2.gds")
-#snpgdsVCF2GDS("S700.vcf", "dataset.gds")
-snpgdsVCF2GDS("CHEO_0001.no_vep.vcf.gz", "dataset1.gds")
-snpgdsSummary("dataset1.gds")
-genofile = snpgdsOpen("dataset1.gds")
+# plots pca and dendrogram for samples listed in samples.txt in dataset.gds
+# dataset.gds should be in the current directory: do coversion vcf -> gds first
+plot_relatedness_picture = function(samples.txt)
+{
+    #test:
+    samples.txt = "all.samples.txt"
+    prefix = gsub(".txt","",samples.txt,fixed = T)  
+    samples = unlist(read.table(samples.txt, stringsAsFactors=F))
+    
+    #biallelic by default
+  
+    #snpgdsSummary("dataset.gds")
+    genofile = snpgdsOpen("dataset.gds")
 
-#LD based SNP pruning
-set.seed(1000)
-#default threshold is 0.2, for many samples it should be relaxed to 0.5
-snpset = snpgdsLDpruning(genofile,ld.threshold = 0.2)
-snp.id=unlist(snpset)
+    #LD based SNP pruning
+    set.seed(1000)
+    #default threshold is 0.2, for many samples it should be relaxed to 0.5
+    snpset = snpgdsLDpruning(genofile,ld.threshold = 0.2,sample.id = samples)
+    snpset.id=unlist(snpset)
 
-#pca
-pca = snpgdsPCA(genofile,snp.id=snp.id,num.thread=2)
+    #pca
+    pca = snpgdsPCA(genofile,snp.id=snpset.id,num.thread=2,sample.id = samples)
 
-tab = data.frame(sample.id = pca$sample.id,
+    pc.percent = pca$varprop*100
+    head(round(pc.percent,2),20)
+    
+    tab = data.frame(sample.id = pca$sample.id,
                  EV1=pca$eigenvect[,1],
                  EV2=pca$eigenvect[,2],
                  stringsAsFactors = F
-)
-plot(tab$EV2,tab$EV1,xlab="eigenvector 2",ylab="eigenvector 1")
+    )
 
-#problematic: 
-#sample.id=c("1419-MJ-M09","1391-MD-M09","1330-DH-C155","1284-MF-M116")
-sample.id=c("57_SF","59_FF","60_PF","62_AF")
-#outliers: 
-#  "1337-UP-U03",
-#  "2118-BS-B440" = 1418-KS-B119
-#   1365-SD-S" = 1393-CS-D255
-# "
+    png(paste0(prefix,".pca.png"))
+    plot(tab$EV2,tab$EV1,xlab="eigenvector 2",ylab="eigenvector 1")
+    text(tab$EV2,tab$EV1,tab$sample.id)
+    dev.off()
+    
+    family.id = c(1,1,1,2,2,2,3,3,3,4,5,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,12,
+                  13,14,15,16,17,18,19,19,19,20,20,20,25,25,25,26,26,26,27,27,27,
+                  28,28,28,29,29,29,30,30,30)
+    ibd.robust = snpgdsIBDKING(genofile, snp.id=snpset.id, num.thread=2,family.id = family.id)
+    dat = snpgdsIBDSelection(ibd.robust,kinship.cutoff = 0.2)
+    
+    dissMatrix  =  snpgdsIBS(genofile, snp.id=snpset.id,autosome.only=TRUE,remove.monosnp=F, 
+                         maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE,sample.id =samples)
 
-sample.id=c("1333-SL-S700","1422-SE-S700",
-            "1418-KS-B199","2115-BK-B199",
-            "2215-DY-G358","2336-HC-G358",
-            "1309-JZ-Z03",
-            "1359-DW-B440",
-            "1311-DV-D133",
-            "1325-WM-W112",
-            "1334-HJ-H203",
-            "1336-HJ-H16",
-            "1358-MT-M128",
-            "1362-MD-M13",
-            "1387-BA-B224",
-            "1393-CS-D255",
-            "1414-FJ-F129")
+    snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
 
-
-dissMatrix  =  snpgdsIBS(genofile, snp.id=NULL, autosome.only=TRUE,remove.monosnp=TRUE, 
-                         maf=NaN, missing.rate=NaN, num.thread=2, verbose=TRUE)
-
-#snpgdsClose(genofile)
-snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
-
-cutTree = snpgdsCutTree(snpHCluster, z.threshold=15, outlier.n=5, n.perm = 5000, samp.group=NULL,
-                         col.outlier="red",col.list=NULL, pch.outlier=4, pch.list=NULL,label.H=FALSE, 
-                         label.Z=TRUE, verbose=TRUE)
-snpgdsDrawTree(cutTree, main = "Varese, chr1_5",edgePar=list(col="black",t.col="black"),
+    #outlier.n=5
+    cutTree = snpgdsCutTree(snpHCluster, z.threshold=5, outlier.n = 0, n.perm = 5000, samp.group=NULL,
+                         col.outlier="red",col.list=NULL, pch.outlier =4, pch.list=NULL,label.H=T, 
+                         label.Z=T, verbose=TRUE)
+    
+    snpgdsDrawTree(cutTree,type="z-score")
+    
+    png(paste0(prefix,".png"))
+    snpgdsDrawTree(cutTree, main = prefix,edgePar=list(col="black",t.col="black"),
                y.label.kinship=T,leaflab="perpendicular",outlier.n = 0)
+    dev.off()
 
-snpgdsClose(genofile)
+    snpgdsClose(genofile)
+}
+
+init()
+setwd("~/Desktop/project_cheo/2017-04-06_NextSeq_kinship/")
+snpgdsVCF2GDS("nextseq.vcf.gz", "dataset.gds")
+
+plot_relatedness_picture("all.samples.txt")
+plot_relatedness_picture("samples.CHEO_0001.txt")
+plot_relatedness_picture("samples.CHEO_0002.txt")
+plot_relatedness_picture("samples.run1.txt")
+plot_relatedness_picture("samples.run2.txt")
+plot_relatedness_picture("samples.run2.part1.txt")
+plot_relatedness_picture("samples.run3.txt")

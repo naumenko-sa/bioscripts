@@ -218,3 +218,44 @@ coverage.all_genes = function ()
     meds=rbind(colnames(coverage),colMedians(as.matrix(coverage)))
     write.table(meds,"medians.txt",col.names = F, quote = F,row.names = F)
 }
+
+omim_table_manipulation = function()
+{
+    setwd("~/Desktop/project_cheo/2016-10-01_omim_orphanet/")
+    mimTitles.percent <- read.delim2("mimTitles.percent.txt", comment.char="#")    
+    genemap2 <- read.delim("genemap2.txt", comment.char="#")
+    mimTitles.percent = merge(mimTitles.percent,genemap2, by.x="Mim.Number",by.y="Mim.Number",all.x=T,all.y=F)
+    write.csv(mimTitles.percent,"mimTitles.percent.location.csv",row.names = F)
+}
+
+read_length_distribution = function(family)
+{
+    
+    family_data = read.delim(paste0(family,".tsv"), stringsAsFactors=F)
+    samples = unique(family_data$sample)
+    
+    for (sample in samples)
+    {
+        tmp = subset(family_data,sample==sample)
+        tmp$sample=NULL
+        print(paste0(sample," ",round(sum(tmp$Length*tmp$Count) / sum(tmp$Count))),quote=F)
+    }
+}
+
+read_lengths = function()
+{
+    setwd("~/Desktop/project_cheo/2017-04-12_read_lengths/")
+    families = unlist(read.table("projects.txt", stringsAsFactors=F))
+    for (family in families)
+    {
+      read_length_distribution(family)
+    }
+
+    read_lengths <- read.csv("read_lengths.txt", sep="", stringsAsFactors=FALSE)
+    read_lengths$id=NULL
+
+    png("read_lengths_all_samples.png",width=2000)
+    barplot(read_lengths$average_read_length, names.arg = read_lengths$sample,main = "Average read lengths for NextSeq samples is 134",
+        las=2)
+    dev.off()
+}
