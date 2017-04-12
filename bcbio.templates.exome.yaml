@@ -13,10 +13,10 @@ details:
     - svplots
     - qualimap
     variantcaller:
-    - freebayes
     - gatk-haplotype
     - samtools
     - platypus
+    - freebayes
   analysis: variant2
   description: '166.3_5'
   files:
