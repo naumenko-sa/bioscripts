@@ -6,6 +6,8 @@
 # mapped sample id is unique, but the real family id is project_cohort, because a project might have many family names
 # creates one project per family
 # run with bcbio.prepare_families.sh table.txt &> file.log to track failed bams
+# to create table.txt from a directory of bam files names family_sample.yyy.bam
+# for f in *.bam;do echo $f | awk -F "." '{print $1"\t"$0}' | awk -F '_' '{print $2"\t"$0}' | awk -v dir=`pwd` '{print $1"\t"$2"\t"dir"/"$4}' >> ~/table.txt;done;
 
 prepare_family()
 {

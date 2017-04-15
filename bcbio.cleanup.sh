@@ -80,5 +80,5 @@ then
 fi
 
 echo $family
-#cleanup
+cleanup
 make_report
