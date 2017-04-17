@@ -6,7 +6,7 @@
 # prepares tables for report generation
 
 # parameters:
-# family = [family_id] (=folder_name,main result file should be family-ensembl.db)
+# family = [family_id] (=folder_name,main result file should be family-ensemble.db)
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
@@ -17,7 +17,7 @@ function cleanup
 {
 
     # better to look for project-summary than hardcode the year
-    # save bam files for new samples
+    # keep bam files for new samples
     cd $family
     result_dir=`find final -name project-summary.yaml | sed s/"\/project-summary.yaml"//`
     mv $result_dir/* .
