@@ -221,7 +221,7 @@ coverage.all_genes = function ()
 
 omim_table_manipulation = function()
 {
-    setwd("~/Desktop/project_cheo/2016-10-01_omim_orphanet/")
+    setwd("~/Desktop/reference_tables/OMIM_2017-04-13/")
     mimTitles.percent <- read.delim2("mimTitles.percent.txt", comment.char="#")    
     genemap2 <- read.delim("genemap2.txt", comment.char="#")
     mimTitles.percent = merge(mimTitles.percent,genemap2, by.x="Mim.Number",by.y="Mim.Number",all.x=T,all.y=F)
