@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#PBS -l walltime=23:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=1g,mem=1g
+
+for f in *
+do 
+    du -sh $f >> `date +%F`.du
+done
