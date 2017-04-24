@@ -26,4 +26,4 @@ tabix $sample.vcf.gz
 gemini.decompose.sh $sample.vcf.gz
 gemini.vep.sh $sample.decomposed.vcf.gz
 gemini.vep2gemini.sh $sample.decomposed.vepeffects.vcf.gz
-gemini.gemini2txt.sh $sample.decomposed.vepeffects.db
+#gemini.gemini2txt.sh $sample.decomposed.vepeffects.db

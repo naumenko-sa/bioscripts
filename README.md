@@ -173,10 +173,10 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.decompose.sh](../master/gemini.decompose.sh) decomposes and normalizes variants with vt.
 * [gemini.vep.sh](../master/gemini.vep.sh) annotates vcf file with VEP.
 * [gemini.vep2gemini.sh](../master/gemini.vep2gemini.sh) loads VEP annotated vcf to the GEMINI database.
-* [gemini.gemini2txt.sh](../master/gemini.gemini2txt.sh) dumps gemini database into txt file with decompressed genotypes.
-* [gemini.gemini2report.R](../master/gemini.gemini2report.R) creates nice report for import to excel from the gemini.txt dump.
+* [gemini.gemini2txt.sh](https://github.com/naumenko-sa/cre/blob/master/gemini.gemini2txt.sh) dumps gemini database into txt file with decompressed genotypes.
+* [cre.R](https://github.com/naumenko-sa/cre/blob/master/cre.R) creates report for import to excel from the gemini.txt dump.
 * [gemini.from_rnaseq.sh](../master/gemini.from_rnaseq.sh) creates gemini database and rare harmful variants report from bcbio's rna-seq pipeline output.
-* [gemini.refseq.sh](../master/gemini.refseq.sh) from vcf to refseq table for excel report generator.
+* [gemini.refseq.sh](https://github.com/naumenko-sa/cre/blob/master/gemini.refseq.sh) from vcf to refseq table for excel report generator.
 * [gemini.vep.parse.pl](../master/gemini.vep.parse.pl) parses VEP annotation.
 * [gemini.vep.refseq.sh](../master/gemini.vep.refseq.sh) annotates variants with RefSeq transcripts (NMs) using VEP.
 * [gemini.variant_impacts.sh](../master/gemini.variant_impacts.sh) extracts variant impacts for all transcripts.
