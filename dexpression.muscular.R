@@ -270,11 +270,19 @@ expression_rpkm_sample5 = function()
     
     setwd("~/Desktop/project_muscular/counts/muscular_filtered/")
     
-    #all samples but 1
     samples = read.table("samples.txt", quote="\"", comment.char="", stringsAsFactors=F)
-    for (sample in unlist(samples))
+    counts = read.delim(paste0(samples[1,],".rpkm"), comment.char = "#",stringsAsFactors=F, row.names=1)
+    counts$Chr=NULL
+    counts$Start=NULL
+    counts$End=NULL
+    counts$Strand=NULL
+    counts$Length=NULL  
+  
+    #all samples but 1
+    for (sample in unlist(tail(samples,-1)))
     {
-        temp = read.delim(paste0(sample,".rpkm.counts.txt"), quote="\"",stringsAsFactors=F, row.names=1)
+        temp = read.delim(paste0(sample,".rpkm"), comment.char = '#',
+                          stringsAsFactors=F, row.names=1)
         temp$Chr=NULL
         temp$Start=NULL
         temp$End=NULL
@@ -285,23 +293,30 @@ expression_rpkm_sample5 = function()
         row.names(counts)=counts$Row.names
         counts$Row.names=NULL
     }
-    samples = c("Muscle5","Fibroblast5","Myotubes5")
-    #counts = counts[c(samples,"symbol")]
     
-    ensembl_w_description <- read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", row.names=1, stringsAsFactors=FALSE)
+    ensembl_w_description <- read.delim2("~/cre/ensembl_w_description.txt", row.names=1, stringsAsFactors=FALSE)
     counts = merge(counts,ensembl_w_description,by.x="row.names",by.y="row.names")
     row.names(counts)=counts$Row.names
     counts$Row.names=NULL
     
-    counts=subset(counts,Muscle5 !=0 & Fibroblast5 !=0 & Myotubes5!=0)
+    #rewrite
+    counts=subset(counts,Muscle5 !=0 & Fibroblast5 !=0 & Myotubes5!=0 & X10.1.M.bam!=0 &
+                    X11.1.K.bam != 0 & X9.1.Myo.bam !=0)
     counts$Gene_description = NULL
     
-    write.table(counts,"sample5.txt",quote=F,sep = "\t")
+    counts = merge(counts,gene_lengths,by.x="row.names",by.y="row.names")
+    row.names(counts)=counts$Row.names
+    counts$Row.names=NULL
     
-    sample5 <- read.csv("sample5.txt", row.names=1, sep="", stringsAsFactors=F)
+    write.table(counts,"9-1-Myo.comparison.txt",quote=F,sep = "\t")
     
-    x=sample5[samples]
-    group = factor(c(1,1,1))
+    sample5 <- read.csv("9-1-Myo.comparison.txt", row.names=1, sep="", stringsAsFactors=F)
+    
+    x=sample5
+    x$external_gene_name=NULL
+    x$Length = NULL
+    
+    group = factor(c(1,1,1,1,1,1))
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = F)
     plotMDS(y)
     #generate counts in the other way
@@ -312,11 +327,13 @@ expression_rpkm_sample5 = function()
     rpkms$Row.names=NULL
     rpkms$Gene_description=NULL
     
-    write.table(rpkms,"sample5.rpkms.txt",quote=F,sep = "\t")
+    write.table(rpkms,"9-1-Myo.rpkms.txt",quote=F,sep = "\t")
     
-    rpkms <- read.delim("~/Desktop/project_muscular/counts/muscular_filtered/sample5.rpkms.txt", stringsAsFactors=FALSE)
+    rpkms <- read.delim("~/Desktop/project_muscular/counts/muscular_filtered/9-1-Myo.rpkms.txt", stringsAsFactors=FALSE)
     
-    MuscleGeneRPKM <- read.csv("~/Desktop/project_muscular/counts/muscular_filtered/MuscleGeneRPKM.txt", sep="", stringsAsFactors = F)
+    #MuscleGeneRPKM <- read.csv("~/Desktop/project_muscular/counts/muscular_filtered/MuscleGeneRPKM.txt", sep="", stringsAsFactors = F)
+    
+    plot_all_panels(rpkms)
     
     breaks = c(0,1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,500,1000,2000,3000,4000)
     plot_panel(congenital_myopathy, rpkms, MuscleGeneRPKM, "congenital_myopaties",breaks)
