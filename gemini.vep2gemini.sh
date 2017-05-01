@@ -3,7 +3,7 @@
 #vep2gemini - loads vep annotated vcf file to gemini database 
 #based on  bcbio.log
 
-#PBS -l walltime=2:00:00,nodes=1:ppn=16
+#PBS -l walltime=23:00:00,nodes=1:ppn=16
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=50g,mem=50g

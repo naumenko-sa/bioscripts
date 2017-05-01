@@ -1,0 +1,33 @@
+details:
+- algorithm:
+    aligner: false
+    effects: false
+    realign: false
+    recalibrate: false
+    save_diskspace: true
+    tools_on:
+    - svplots
+    - qualimap
+    variantcaller: false
+    variant_regions: /hpf/largeprojects/ccmbio/naumenko/project_muscular/62_AF_S5_SV/config/region.bed
+    svcaller:
+    - cnvkit
+    - seq2c
+    - delly
+    - battenberg
+  analysis: variant2
+  description: 62_AF_S5
+  files:
+  - /hpf/largeprojects/ccmbio/naumenko/project_muscular/62_AF_S5_SV/input/62_AF_S5-ready.bam
+  genome_build: GRCh37
+fc_date: '2017-01-25'
+fc_name: muscle2_62-AF
+resources:
+  default:
+    cores: 5
+    jvm_opts:
+    - -Xms750m
+    - -Xmx7000m
+    memory: 7G
+upload:
+  dir: ../final
