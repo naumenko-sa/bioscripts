@@ -300,8 +300,8 @@ expression_rpkm_sample5 = function()
     counts$Row.names=NULL
     
     #rewrite
-    counts=subset(counts,Muscle5 !=0 & Fibroblast5 !=0 & Myotubes5!=0 & X10.1.M.bam!=0 &
-                    X11.1.K.bam != 0 & X9.1.Myo.bam !=0)
+    #counts=subset(counts,Muscle5 !=0 & Fibroblast5 !=0 & Myotubes5!=0 & X10.1.M.bam!=0 &
+    #                X11.1.K.bam != 0 & X9.1.Myo.bam !=0 & X8.1.M.bam != 0)
     counts$Gene_description = NULL
     
     counts = merge(counts,gene_lengths,by.x="row.names",by.y="row.names")
@@ -316,7 +316,8 @@ expression_rpkm_sample5 = function()
     x$external_gene_name=NULL
     x$Length = NULL
     
-    group = factor(c(1,1,1,1,1,1))
+    group = factor(rep(1,nrow(samples)))
+    
     y=DGEList(counts=x,group=group,genes=row.names(x),remove.zeros = F)
     plotMDS(y)
     #generate counts in the other way
