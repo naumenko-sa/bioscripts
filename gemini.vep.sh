@@ -1,8 +1,8 @@
 #/bin/bash
 
-#gemini.vcf2vep - annotate vcf with vep before loading gemini database
-#based on  bcbio.log
-#uses hgvs notation and no --pick - all effects for a gene
+# gemini.vcf2vep - annotate vcf with vep before loading to gemini database
+# based on  bcbio.log
+# uses hgvs notation and no --pick - all effects for a gene
 
 #PBS -l walltime=2:00:00,nodes=1:ppn=1
 #PBS -joe .

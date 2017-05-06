@@ -1,9 +1,9 @@
 #!/bin/bash
-# calculates coverage of nucleotides in a bed file for all bam files in the current directory
+# calculates coverage of nucleotides in a bed file and a bam file
 
 # $bam - input.bam
 # $bed - filter.bed
-# output - filter.bed.coverage
+# output - input.bam.coverage
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
@@ -13,4 +13,4 @@
 #module load bedtools
 #uses bedtools from bcbio
 
-bedtools coverage -a $bed -b *.bam -d -sorted > $bed.coverage
+bedtools coverage -a $bed -b $bam -d -sorted > $bam.coverage
