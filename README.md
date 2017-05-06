@@ -66,6 +66,7 @@ Very useful are Jim Kent's [utilities](http://hgdownload.soe.ucsc.edu/admin/exe/
 * [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
+* [bam.sort.sh](../master/bam.sort.sh) - sorts a bam file before calculating coverage.
 * [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data into the basespace cloud.
 bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
 * [bcl2fastq.sh](../master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
