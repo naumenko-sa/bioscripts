@@ -13,4 +13,4 @@
 #module load bedtools
 #uses bedtools from bcbio
 
-bedtools coverage -a $bed -b $bam -d -sorted > $bam.coverage
+bedtools coverage -a $bed -b $bam -d -sorted -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa > $bam.coverage
