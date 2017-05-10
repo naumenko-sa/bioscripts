@@ -3,7 +3,7 @@
 # vep annotation for import to seqr
 # https://github.com/macarthur-lab/seqr/blob/master/deploy/mac_osx/README.md#load-your-own-data
 
-#PBS -l walltime=2:00:00,nodes=1:ppn=1
+#PBS -l walltime=23:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
