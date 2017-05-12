@@ -53,7 +53,7 @@ By subject
 
 # Annotation
 
-* [gene.R](../master/gene.R) - various annotations from biomaRt
+* [genes.R](../master/genes.R) - various annotations from biomaRt
 
 # Fastq,bam,cram,bed
 
