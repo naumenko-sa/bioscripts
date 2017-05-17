@@ -8,7 +8,7 @@ load_rpkm_counts = function(filename)
     #test:
     #filename="/home/sergey/Desktop/project_muscular/Fibroblast8/fibroblast8.rpkm"
     library(edgeR)   
-    ensembl_w_description = read.delim2("~/Desktop/reference_tables/ensembl_w_description.txt", row.names=1, stringsAsFactors=F)
+    ensembl_w_description = read.delim2("~/cre/ensembl_w_description.txt", row.names=1, stringsAsFactors=F)
     #first line in the file is a comment
     counts = read.delim(filename, stringsAsFactors=F, row.names=1,skip=1)
     counts$Chr=NULL

@@ -14,9 +14,9 @@ init = function()
   
     chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
     
-    grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-    datasets = listDatasets(grch38)
-    grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
+    #grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
+    #datasets = listDatasets(grch38)
+    #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
 }
 
 get_protein_coding_genes = function()
@@ -113,17 +113,15 @@ get_exon_coordinates = function()
     ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
 }
 
-get_gene_coordinate = function()
+# coordinates of the gene start and gene end (all exons)
+get_gene_coordinate = function(gene_list_file)
 {
-    #gene_name = "DMD"
-    setwd("~/Desktop/project_muscular/reference/")
-    muscular_genes = read.table("~/Desktop/project_muscular/reference/muscular_genes.txt", 
-                                quote="\"", comment.char="", stringsAsFactors=F)
+    genes = read.table(gene_list_file,stringsAsFactors=F)
     genes=getBM(
       attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
       filters=c('external_gene_name'),
-      values=muscular_genes,mart=grch37)
-    write.table(genes[c(2:5)],"muscular_genes_coord.bed",sep="\t",quote=F,row.names=F,col.names=F)    
+      values=genes,mart=grch37)
+    write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
 #exon coordinates given ENS ids
@@ -160,10 +158,15 @@ get_omim_orphanet_exon_coordinates = function()
   
 }
 
-setwd("~/Desktop/project_cheo")
+setwd("~/Desktop/tools/MendelianRNA-seq/data/")
 init()
+get_gene_coordinate("kidney.glomerular.genes")
+
 get_exon_coordinates()
 get_omim_orphanet_exon_coordinates()
+
+setwd("~/Desktop/reference_tables/")
+get_gene_coordinate("protein_coding_genes.uniq.list")
 
 #better to use ENS ids from OMIM/Orphanet text files
 #ccds_omim_genes = getBM(attributes=c('ensembl_gene_id','mim_gene_accession','mim_morbid_accession'),

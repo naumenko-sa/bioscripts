@@ -265,6 +265,8 @@ expression_rpkm_muscle2 = function()
     plot_panel(linkage_region3, rpkms, gtex_rpkm, "3_linkage_region.png","Linkage region part 3 RPKM",breaks)
 }
 
+load
+
 expression_rpkm_sample5 = function()
 {
     
@@ -396,6 +398,66 @@ fibroblast8 = function()
            colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1))
   dev.off()
   
+}
+
+sample_11_1_K = function()
+{
+    glomerular_diseases = c("NPHS1","NPHS2","PLCE1","CD2AP","LAMB2","ACTN4","TRPC6","WT1", "LMX1B", "SMARCAL1", "COQ2", 
+                            "PDSS2", "MTTL1", "SCARB2", "FN1", "COL4A5", "COL4A6", "COL4A3", "COL4A4", "ALMS1", "ARHGDIA", 
+                            "MYH9", "GLA", "ANLN", "ARHGAP24", "INF2", "PAX2", "CRB2", "MYO1E", "APOL1", "ADCK4", "ALG1", 
+                            "CUBN", "PDSS2", "PMM2", "PTPRO", "SCARB2", "ZMPSTE24", "WDR73", "FN1", "NLRP3", "APOA1", "FGA", 
+                            "LYZ", "B2M", "LMX1B", "PLCG2", "LAMB2")
+    
+    
+    bardet_biedl = c("BBS1", "BBS2", "ARL6", "BBS4", "BBS5", "MKKS","BBS7", "TTC8", "BBS9", "BBS10", "TRIM32", "BBS12", "MKS1", 
+                     "CEP290","WDPCP", "SDCCAG8", "LZTFL1", "BBIP1", "IFT27")
+    
+    setwd("~/Desktop/project_muscular/11-1-M/")
+    
+    S11_1_K = load_rpkm_counts("11-1-K.rpkm")
+    kidneya = load_rpkm_counts("kidneya.rpkm")
+    kidneyb = load_rpkm_counts("kidneyb.rpkm")
+    kidneyc = load_rpkm_counts("kidneyc.rpkm")
+    kidneyd = load_rpkm_counts("kidneyd.rpkm")
+    
+    kidneya$external_gene_name=NULL
+    kidneyb$external_gene_name=NULL
+    kidneyc$external_gene_name=NULL
+    kidneyd$external_gene_name=NULL
+    
+    
+    kidneys = merge_row_names(S11_1_K,kidneya)
+    kidneys = merge_row_names(kidneys,kidneyb)
+    kidneys = merge_row_names(kidneys,kidneyc)
+    kidneys = merge_row_names(kidneys,kidneyd)
+    
+    write.table(kidneys,"kidneys.rpkms.txt",quote=F,sep = "\t")
+    
+    gene_panel = glomerular_diseases
+    gene_panel = bardet_biedl
+    
+    panel_rpkm = kidneys[kidneys$external_gene_name %in% gene_panel,]
+    row.names(panel_rpkm) = panel_rpkm$external_gene_name
+    panel_rpkm$external_gene_name=NULL
+    panel_rpkm = panel_rpkm[order(row.names(panel_rpkm)),]
+    breaks = c(0,5,10,20,30,40,50,100,200,300,400,500,600)
+    
+    file = "bardet_biedl.png"
+    title = "Glomerular diseases gene panel for 11-1-K and controls"
+    title = "Bardet-Bield gene panel for 11-1-K and controls"
+    
+    
+    breaks = seq(0,10)
+    png(file,res=300,width=2000,height=3000)
+    pheatmap(panel_rpkm,treeheight_row=0,treeheight_col=0,cellwidth = 40,
+             display_number =T,cluster_rows=F, cluster_cols=T,
+             main=title,
+             breaks=breaks,
+             colorRampPalette(rev(brewer.pal(n = 7, name ="RdYlBu")))(length(breaks)-1),
+             fontsize = 8)
+    dev.off()
+    
+    
 }
 
 
