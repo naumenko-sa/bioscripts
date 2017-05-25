@@ -19,7 +19,7 @@ bname=`echo $vcf | sed s/.vcf.gz//`
 #remove GL chromosomes - sometimes they cause problems
 mv $vcf $bname.tmp.vcf.gz
 gunzip -c $bname.tmp.vcf.gz | grep "^#" > $bname.vcf
-gunzip -c $bname.tmp.vcf.gz | grep -v "^#" | grep -v "^GL00" >> $bname.vcf
+gunzip -c $bname.tmp.vcf.gz | grep -v "^#" | grep -v -i "^GL00" >> $bname.vcf
 bgzip $bname.vcf
 tabix $bname.vcf.gz
 rm $bname.tmp.vcf.gz
