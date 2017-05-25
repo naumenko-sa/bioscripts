@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# faster to sort on computing nodes
-
 #PBS -d .
 
 if [ -z $bam ]

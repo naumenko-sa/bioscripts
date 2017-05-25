@@ -11,6 +11,4 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-module load bedtools
-
 bedtools intersect -abam $bam -b $bed -v > `echo $bam | sed s/bam/filtered.bam/`

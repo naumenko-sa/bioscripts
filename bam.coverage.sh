@@ -1,8 +1,4 @@
 #!/bin/bash
-#calculates coverage of a bed file with mapped reads from bam file
-#not very usable, too low level: outputs all reads
-#use bamstats04 instead from jvarkit
-
 # $bam - input.bam
 # $bed - filter.bed
 # output - input.bam.coverage
@@ -11,9 +7,6 @@
 #PBS -joe .
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
-
-#module load bedtools
-#uses bedtools from bcbio
 
 if [ -z $bam ]
 then
@@ -25,4 +18,4 @@ then
     bed=$2
 fi
 
-bedtools coverage -hist -abam $bam -b $bed > $bam.coverage
+bedtools coverage -hist -a $bam -b $bed > $bam.coverage
