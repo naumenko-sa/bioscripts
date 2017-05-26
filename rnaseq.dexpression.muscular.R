@@ -460,6 +460,44 @@ sample_11_1_K = function()
     
 }
 
+# use case: to plot exon coverage for muscular gene panel 
+plot_exon_coverage = function(sample1,sample2,gene,strand)
+{
+    barwidth = 5
+    #strand=-1
+    #in current directory
+    #dir = "~/Desktop/bioscripts/"
+    #gene="DMD"
+    #sample1="9-1-M"
+    #sample2="9-1-Myo"
+    #setwd(dir)
+    
+    s1 = read.delim(paste0(sample1,".",gene,".coverage"), header=T, stringsAsFactors=F)
+    s2 = read.delim(paste0(sample2,".",gene,".coverage"), header=T, stringsAsFactors=F)
+    n_exons = nrow(s1)
+    
+    width=barwidth*n_exons*3+100
+    png(paste0(gene,".png"),width=width)
+    if (strand == 1)
+    {
+        exon_numbers = seq(1,n_exons)
+    }else{
+        exon_numbers = seq(n_exons,1)
+    }
+    df = cbind(s1[5],s2[5])
+    colnames(df)=c(sample1,sample2)
+    barplot(t(df),beside=T,col=c("red","blue"),names.arg = exon_numbers,width=5,xlim=c(0,3*barwidth*n_exons),
+            las=2,main=gene,legend=c(sample1,sample2))
+    dev.off()
+}
+
+plot_exon_coverage_main = function()
+{
+    setwd("~/Desktop/project_RNAseq_diagnostics/2_DMD/exon_coverage/") 
+    plot_exon_coverage("9-1-M","9-1-Myo","DMD",-1)
+    
+    
+}
 
 count_rpkm_for_exons = function()
 {

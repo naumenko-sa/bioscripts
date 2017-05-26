@@ -14,6 +14,8 @@ init = function()
   
     chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
     
+    return(grch37)
+    
     #grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
     #datasets = listDatasets(grch38)
     #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
@@ -124,6 +126,41 @@ get_gene_coordinate = function(gene_list_file)
     write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+# coordinates of the exon starts and ends 
+# some exons of the canonical isoform are non coding - they have NA in genomic_coding_start
+# -001 is NOT always a canonical isoform
+# takes the longest cds from gencode_basic transcripts
+get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
+{
+    gene_name='ALG13'
+    canonical_transcripts = c(paste0(gene_name,"-001"))
+    
+    genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end',
+                                  'external_gene_name','ensembl_exon_id','ensembl_gene_id',
+                                  'start_position','end_position',
+                                  'exon_chrom_start','exon_chrom_end','ensembl_transcript_id','transcript_gencode_basic'),
+                    filters=c('external_gene_name'), values=c(gene_name),mart=mart)
+    
+    genes_info=getBM(attributes=c('external_gene_name','ensembl_transcript_id','cds_length'),
+                     filters=c('external_gene_name','transcript_gencode_basic'), 
+                     values=list(external_gene_name=gene_name,transcript_gencode_basic=T),mart=mart)
+    
+    genes_info = genes_info[order(-genes_info$cds_length),]
+    
+    write.table(genes_info[c(1:5)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+}
+
+get_exon_coordinates_for_muscular_genes = function()
+{
+    mart=init()
+    setwd("~/Desktop/project_RNAseq_diagnostics/2_DMD/exon_coverage/")
+    muscular_gene_panels = read.csv("muscular_gene_panels.csv", stringsAsFactors=F)
+    for(gene in unique(sort(muscular_gene_panels$Gene)))
+    {
+        get_exon_coordinates_for_canonical_isoform(gene,mart)
+    }
+}
+
 #exon coordinates given ENS ids
 get_omim_orphanet_exon_coordinates = function()
 { 
@@ -159,7 +196,9 @@ get_omim_orphanet_exon_coordinates = function()
 }
 
 setwd("~/Desktop/tools/MendelianRNA-seq/data/")
-init()
+mart=init()
+get_exon_coordinates_for_canonical_isoform("DMD",mart)
+
 get_gene_coordinate("kidney.glomerular.genes")
 
 get_exon_coordinates()
