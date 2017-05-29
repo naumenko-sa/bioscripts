@@ -1,8 +1,8 @@
 #!/bin/bash
 # get coverage for a exons in a gene
-# $bam - input.bam
-# $bed - gene.bed
-# output - input.bam.coverage
+# $sample - sample name, $sample.chrom.bam should be in the current directory
+# $gene - gene, gene.bed should be in the current directory
+# output - $sample.$gene.coverage
 # first generate bam files for each chromosome:
 # samtools view -bh DMD.bam X > DMD.X.bam
 
@@ -16,11 +16,12 @@ then
     sample=$1
 fi
 
-if [ -z $bed ]
+if [ -z $gene ]
 then
-    bed=$2
+    gene=$2
 fi
 
-chrom=`cat $bed | head -n1 | cut -f1`
+chrom=`cat $gene.bed | head -n1 | cut -f1`
 
-bedtools coverage -a $bed -b $sample.$chrom.bam -mean > $sample.$bed.coverage
+echo -e "chrom\tstart\tend\texon\t$sample" > $sample.$gene.coverage
+bedtools coverage -a $gene.bed -b $sample.$chrom.bam -mean >> $sample.$gene.coverage
