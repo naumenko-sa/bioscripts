@@ -134,16 +134,15 @@ get_gene_coordinate = function(gene_list_file)
 # takes the longest cds from gencode_basic transcripts
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
-    #gene_name='ACTA1'
-    
+    #gene_name='HNRNPDL'
+    print(gene_name)
     genes_info=getBM(attributes=c('external_gene_name','ensembl_transcript_id','cds_length'),
                      filters=c('external_gene_name','transcript_gencode_basic'), 
                      values=list(external_gene_name=gene_name,transcript_gencode_basic=T),mart=mart)
     
-    if (n)
-    genes_info = genes_info[order(-genes_info$cds_length),]
-    
-    
+    if (nrow(genes_info>1)){
+        genes_info = genes_info[order(-genes_info$cds_length),]  
+    }
     canonical_transcript = genes_info$ensembl_transcript_id[1]
     
     genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
@@ -158,6 +157,9 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
 }
 
+# PLEC gene has two ensembl identifiers:
+# ENSG00000178209 - we need this one
+# ENSG00000261109
 get_exon_coordinates_for_muscular_genes = function()
 {
     mart=init()
@@ -213,7 +215,7 @@ get_exon_coordinates()
 get_omim_orphanet_exon_coordinates()
 
 setwd("~/Desktop/reference_tables/")
-get_gene_coordinate("protein_coding_genes.list")
+get_gene_coordinate("protein_coding_genes")
 
 #better to use ENS ids from OMIM/Orphanet text files
 #ccds_omim_genes = getBM(attributes=c('ensembl_gene_id','mim_gene_accession','mim_morbid_accession'),
