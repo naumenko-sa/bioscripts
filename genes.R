@@ -1,4 +1,4 @@
-# biomart wrappers to get gene information, exon coordinates etc
+# biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
 
 init = function()
 {
@@ -21,15 +21,16 @@ init = function()
     #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
 }
 
-get_protein_coding_genes = function()
+get_protein_coding_genes = function(mart)
 {
     setwd("~/Desktop/reference_tables/")
     protein_coding_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
                                  filters = c('biotype'),
                                  values='protein_coding',
-                                 mart=grch37)
+                                 mart=mart)
     colnames(protein_coding_genes)[2] = 'gene_name'
-    write.table(protein_coding_genes,file="protein_coding_genes.txt",quote=F,row.names=F,sep="\t")
+    #genes might be not unique - polymorphic regions like NCR3 gene
+    write.table(unique(sort(protein_coding_genes[,2])),file="protein_coding_genes.list",quote=F,row.names=F, col.names=F,sep="\t")
 }
 
 get_gene_descriptions = function()
@@ -127,29 +128,38 @@ get_gene_coordinate = function(gene_list_file)
 }
 
 # coordinates of the exon starts and ends 
-# some exons of the canonical isoform are non coding - they have NA in genomic_coding_start
-# -001 is NOT always a canonical isoform
+# some exons of the canonical isoform are non coding - they have NA in genomic_coding_start,
+# they are excluded, for example in ACTA1
+# -001 is NOT always the canonical isoform
 # takes the longest cds from gencode_basic transcripts
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
-    gene_name='ALG13'
-    canonical_transcripts = c(paste0(gene_name,"-001"))
-    
-    genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end',
-                                  'external_gene_name','ensembl_exon_id','ensembl_gene_id',
-                                  'start_position','end_position',
-                                  'exon_chrom_start','exon_chrom_end','ensembl_transcript_id','transcript_gencode_basic'),
-                    filters=c('external_gene_name'), values=c(gene_name),mart=mart)
-    
+    #gene_name='HNRNPDL'
+    print(gene_name)
     genes_info=getBM(attributes=c('external_gene_name','ensembl_transcript_id','cds_length'),
                      filters=c('external_gene_name','transcript_gencode_basic'), 
                      values=list(external_gene_name=gene_name,transcript_gencode_basic=T),mart=mart)
     
-    genes_info = genes_info[order(-genes_info$cds_length),]
+    if (nrow(genes_info>1)){
+        genes_info = genes_info[order(-genes_info$cds_length),]  
+    }
+    canonical_transcript = genes_info$ensembl_transcript_id[1]
     
-    write.table(genes_info[c(1:5)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+    genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
+                                  'external_gene_name','ensembl_gene_id',
+                                  'start_position','end_position',
+                                  'exon_chrom_start','exon_chrom_end','ensembl_transcript_id'),
+                    filters=c('ensembl_transcript_id'), values=c(canonical_transcript),mart=mart)
+    
+    genes_info = na.omit(genes_info)
+    
+    write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=T)
+    write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
 }
 
+# PLEC gene has two ensembl identifiers:
+# ENSG00000178209 - we need this one
+# ENSG00000261109
 get_exon_coordinates_for_muscular_genes = function()
 {
     mart=init()
@@ -205,7 +215,7 @@ get_exon_coordinates()
 get_omim_orphanet_exon_coordinates()
 
 setwd("~/Desktop/reference_tables/")
-get_gene_coordinate("protein_coding_genes.uniq.list")
+get_gene_coordinate("protein_coding_genes")
 
 #better to use ENS ids from OMIM/Orphanet text files
 #ccds_omim_genes = getBM(attributes=c('ensembl_gene_id','mim_gene_accession','mim_morbid_accession'),
