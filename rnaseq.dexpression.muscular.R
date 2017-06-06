@@ -462,20 +462,22 @@ sample_11_1_K = function()
 
 # use case: to plot exon coverage for muscular gene panel 
 # generate coverage tables first with ~/bioscripts/bam.gene_coverage.sh
-plot_exon_coverage = function(sample1,sample2,gene,strand)
+plot_exon_coverage = function(sample1,sample2,gene)
 {
     barwidth = 5
-    #strand=-1
-    #in current directory
-    #dir = "~/Desktop/bioscripts/"
     #gene="DMD"
     #sample1="9-1-M"
     #sample2="9-1-Myo"
-    #setwd(dir)
     
     s1 = read.delim(paste0(sample1,".",gene,".coverage"), header=T, stringsAsFactors=F)
     s2 = read.delim(paste0(sample2,".",gene,".coverage"), header=T, stringsAsFactors=F)
     n_exons = nrow(s1)
+    
+    strand = 1
+    if (n_exons > 1 && s1[1,2] > s1[2,2])
+    {
+         strand = -1
+    }
     
     width=barwidth*n_exons*3+100
     png(paste0(gene,".png"),width=width)
@@ -494,10 +496,14 @@ plot_exon_coverage = function(sample1,sample2,gene,strand)
 
 plot_exon_coverage_main = function()
 {
-    setwd("~/Desktop/project_RNAseq_diagnostics/2_DMD/exon_coverage/") 
-    plot_exon_coverage("9-1-M","9-1-Myo","DMD",-1)
-    
-    
+    setwd("/home/sergey/Desktop/project_RNAseq_diagnostics/Sample12_9-1-M_Muscle10_DMDcase/exon_coverage") 
+    gene_list = read.table("gene.list", stringsAsFactors=F)
+    for (gene in gene_list[[1]])
+    {
+        #gene="ACVR1"
+        print(gene)
+        plot_exon_coverage("9-1-M","9-1-Myo",gene)
+    }
 }
 
 count_rpkm_for_exons = function()
