@@ -9,7 +9,7 @@
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=15g,mem=15g
+#PBS -l vmem=20g,mem=20g
 
 if [ -z $sample ]
 then
@@ -23,7 +23,7 @@ fi
 
 chrom=`cat $gene.bed | head -n1 | cut -f1`
 
-echo $sample $gene
+echo "Calculates coverage of" $gene.bed " in " $sample
 
 echo -e "chrom\tstart\tend\texon\t$sample" > $sample.$gene.coverage
 bedtools coverage -a $gene.bed -b $sample.$chrom.bam -mean >> $sample.$gene.coverage
