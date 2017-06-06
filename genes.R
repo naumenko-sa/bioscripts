@@ -3,18 +3,18 @@
 init = function()
 {
     library("biomaRt")  
-    grch37 = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
+    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
                    path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
-    datasets=listDatasets(grch37)
+    datasets=listDatasets(mart)
   
-    grch37 = useDataset(grch37,dataset="hsapiens_gene_ensembl")
+    mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
   
-    attributes=listAttributes(grch37)
-    filters=listFilters(grch37)
+    attributes=listAttributes(mart)
+    filters=listFilters(mart)
   
-    chromosomes = getBM(attributes=c('chromosome_name'),mart=grch37)
+    chromosomes = getBM(attributes=c('chromosome_name'),mart=mart)
     
-    return(grch37)
+    return(mart)
     
     #grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
     #datasets = listDatasets(grch38)
@@ -109,7 +109,7 @@ get_exon_coordinates = function()
     }
     exon_coordinates=na.omit(exon_coordinates)
     write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
-    write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.codins.genes.ENS",quote=F,row.names=F,col.names=F)
+    write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.coding.genes.ENS",quote=F,row.names=F,col.names=F)
     exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end","external_gene_name"))
     write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
     
@@ -132,13 +132,20 @@ get_gene_coordinate = function(gene_list_file)
 # they are excluded, for example in ACTA1
 # -001 is NOT always the canonical isoform
 # takes the longest cds from gencode_basic transcripts
+# PLEC gene has two ensembl identifiers:
+# ENSG00000178209 - we need this one, which is protein_coding
+# ENSG00000261109 
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
     #gene_name='HNRNPDL'
+    #gene_name = 'PLEC'
     print(gene_name)
-    genes_info=getBM(attributes=c('external_gene_name','ensembl_transcript_id','cds_length'),
-                     filters=c('external_gene_name','transcript_gencode_basic'), 
-                     values=list(external_gene_name=gene_name,transcript_gencode_basic=T),mart=mart)
+    genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id','cds_length','ensembl_gene_id'),
+                     filters=c('external_gene_name','transcript_gencode_basic','biotype'), 
+                     values=list(external_gene_name=gene_name,transcript_gencode_basic=T,'protein_coding'),mart=mart)
+    
+    #remove transcripts placed on patches
+    genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
     
     if (nrow(genes_info>1)){
         genes_info = genes_info[order(-genes_info$cds_length),]  
@@ -153,18 +160,18 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     
     genes_info = na.omit(genes_info)
     
-    write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=T)
+    #bedtools does not like colnames
+    write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
     write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
+    print(paste(gene_name,genes_info[1,4]))
 }
 
-# PLEC gene has two ensembl identifiers:
-# ENSG00000178209 - we need this one
-# ENSG00000261109
 get_exon_coordinates_for_muscular_genes = function()
 {
     mart=init()
-    setwd("~/Desktop/project_RNAseq_diagnostics/2_DMD/exon_coverage/")
-    muscular_gene_panels = read.csv("muscular_gene_panels.csv", stringsAsFactors=F)
+    setwd("~/Desktop/project_RNAseq_diagnostics/gene_panels/")
+    muscular_gene_panels = read.csv("/home/sergey/Desktop/project_RNAseq_diagnostics/gene_panels/muscular_gene_panels.csv", stringsAsFactors=F)
+    
     for(gene in unique(sort(muscular_gene_panels$Gene)))
     {
         get_exon_coordinates_for_canonical_isoform(gene,mart)

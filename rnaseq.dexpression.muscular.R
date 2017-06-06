@@ -461,6 +461,7 @@ sample_11_1_K = function()
 }
 
 # use case: to plot exon coverage for muscular gene panel 
+# generate coverage tables first with ~/bioscripts/bam.gene_coverage.sh
 plot_exon_coverage = function(sample1,sample2,gene,strand)
 {
     barwidth = 5
