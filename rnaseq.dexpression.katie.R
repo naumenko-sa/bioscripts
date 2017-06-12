@@ -12,22 +12,31 @@ go_analysis = function (lrt,prefix)
   
   for(on in c("BP","CC","MF"))
   {
+    on = "BP"
     go.up = topGO(go,on=on,sort="Up",n=4)
     go.up$log2pvalue = -log2(go.up$P.Up)
     
     go.down = topGO(go,ont=on,sort="Down",n=4)
     go.down$log2pvalue = -log2(go.down$P.Down)
     
-    png(paste0(prefix,".HI.",on,".png"),width=1000)
-    barplot(go.up$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    png(paste0(prefix,".HI.",on,".png"),res=200,width=1200,height=1000)
+    barplot(go.up$log2pvalue,
+            horiz=T,
+            xlab = "-Log2 (Pvalue)",
+            col = "cornflowerblue",
+            cex.axis=1.5,cex.lab = 1.5,
+            xlim=c(0,50))
     labels = go.up$Term
     text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
     dev.off()
     
-    png(paste0(prefix,".LO.",on,".png"),width=1000)
-    barplot(go.down$log2pvalue,horiz=T,
-            xlab = "-Log2 (Pvalue)",col = "cornflowerblue",cex.axis=1.5,cex.lab = 1.5)
+    png(paste0(prefix,".LO.",on,".png"),res=200, width=1800,height=1000)
+    barplot(go.down$log2pvalue,
+            horiz=T,
+            xlab = "-Log2 (Pvalue)",
+            col = "cornflowerblue",
+            cex.axis=1.5,cex.lab = 1.5,
+            xlim=c(0,25))
     labels = go.down$Term
     text(x=rep(0.2,4),y=c(0.65,1.85,3.05,4.25),pos=rep(4,1),labels=labels,cex=1.5,font=2)
     dev.off()
@@ -60,25 +69,12 @@ kegg_analysis = function (lrt,prefix)
 
 calc_de = function(all_counts,samples,prefix,filter)
 {
-    ####    test: ###################
-    #samples = c("SG511_ven_hi_2_26","SG511_ven_hi_4_13","SG511_ven_hi_4_27",
-    #            "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24",
-    #            "SG511_ven_lo_2_26","SG511_ven_lo_4_13","SG511_ven_lo_4_27",
-    #            "SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24");
-    #################################
-    
-    #samples = c("SG523_ven_lo_2_27","SG523_ven_lo_4_10","SG523_ven_lo_4_24",
-    #           "SG523_ven_hi_2_27","SG523_ven_hi_4_10","SG523_ven_hi_4_24")
-  
     #test:
-    #all_counts = counts
-    #samples = c("G432","G511", "G472","G523", 
-    #            "G440","G481", "G510","G564")
-    
-    
-    #samples=samples.523.3points
-    #prefix="523.3points_nob_cpm1"
-    #filter=1
+    all_counts = counts
+    samples=samples.523.3points
+    prefix="523.3points_nob_cpm1"
+    filter=1
+    # end test
     
     n_samples = length(samples)
     group=factor(c(rep(1,n_samples/2),rep(2,n_samples/2)))
@@ -151,7 +147,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     #setnames(de_results,"genes","ensembl_gene_id")
     #de_results = lrt$table
     
-    gene_descriptions = read.delim2(paste0(reference_tables_path,"/ensembl_w_description.txt"), stringsAsFactors=FALSE)
+    gene_descriptions = read.delim2(paste0("~/cre/ensembl_w_description.txt"), stringsAsFactors=FALSE)
     
     de_results = merge(de_results,gene_descriptions,by.x="genes",by.y="ensembl_gene_id",all.x=T)
     #de_results = rename(de_results,c("Row.names"="ensembl_gene_id"))
@@ -448,7 +444,7 @@ init = function()
 #SG523_ven_lo_4_10
 #SG523_ven_lo_4_24
 
-  all_counts=read.delim("combined.counts",row.names="id")
+  #all_counts=read.delim("combined.counts",row.names="id")
 
 }
 
