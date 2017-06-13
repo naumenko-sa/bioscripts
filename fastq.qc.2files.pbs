@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#PBS -l walltime=1:00:00,nodes=1:ppn=20
+#PBS -l walltime=1:00:00,nodes=1:ppn=2
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=50g
+#PBS -l vmem=20g
 
-fastq.qc.2files.sh 20 $left $right
+fastq.qc.2files.sh 10 $left $right
