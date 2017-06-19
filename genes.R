@@ -123,7 +123,7 @@ get_gene_coordinate = function(gene_list_file)
     genes=getBM(
       attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
       filters=c('external_gene_name'),
-      values=genes,mart=grch37)
+      values=genes,mart=mart)
     write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
@@ -221,8 +221,8 @@ get_gene_coordinate("kidney.glomerular.genes")
 get_exon_coordinates()
 get_omim_orphanet_exon_coordinates()
 
-setwd("~/Desktop/reference_tables/")
-get_gene_coordinate("protein_coding_genes")
+setwd("/home/sergey/Desktop/project_RNAseq_diagnostics/gene_panels")
+get_gene_coordinate("muscular_gene_panels.genes")
 
 #better to use ENS ids from OMIM/Orphanet text files
 #ccds_omim_genes = getBM(attributes=c('ensembl_gene_id','mim_gene_accession','mim_morbid_accession'),
