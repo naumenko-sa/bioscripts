@@ -3,7 +3,7 @@
 #PBS -l walltime=10:00:00,nodes=1:ppn=10
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=10g
+#PBS -l vmem=20g
 
 if [ -z $bam ]
 then
