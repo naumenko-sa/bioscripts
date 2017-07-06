@@ -71,7 +71,7 @@ get_exon_coordinates_chr = function(chromosome)
           'external_gene_name'),
           filters = c('chromosome_name'),
           values = list(chromosome),
-          mart=grch37)
+          mart=mart)
 }
 
 #LSP1 has exons on chr11 and chr13 - a bug to report
@@ -107,11 +107,12 @@ get_exon_coordinates = function()
         buffer = get_exon_coordinates_chr(chr)
         exon_coordinates=rbind(buffer,exon_coordinates)
     }
+    #remove noncoding exons
     exon_coordinates=na.omit(exon_coordinates)
     write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
     write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.coding.genes.ENS",quote=F,row.names=F,col.names=F)
-    exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end","external_gene_name"))
-    write.table(exon_coordinates.bed,"ccds.coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end","ensembl_exon_id"))
+    write.table(exon_coordinates.bed,"coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
     
     ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
 }
