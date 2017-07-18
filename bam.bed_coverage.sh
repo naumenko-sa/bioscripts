@@ -7,6 +7,7 @@
 # samtools view -bh DMD.bam X > DMD.X.bam
 # samtools index DMD.X.bam
 # otherwise (1chr for bed, 1chr for bam it is not working)
+# -split for RNA-seq coverage
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
@@ -29,4 +30,4 @@ sample=`echo $bam | awk -F "." '{print $1}'`
 echo "Calculates coverage of" $gene.bed " in " $sample " for chr " $chr
 
 echo -e "chrom\tstart\tend\texon\t$sample" > $bam.$bed.coverage
-bedtools coverage -a $bed -b $bam -mean >> $bam.$bed.coverage
+bedtools coverage -a $bed -b $bam -split -mean -sorted >> $bam.$bed.coverage
