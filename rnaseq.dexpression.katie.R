@@ -70,10 +70,10 @@ kegg_analysis = function (lrt,prefix)
 calc_de = function(all_counts,samples,prefix,filter)
 {
     #test:
-    all_counts = counts
-    samples=samples.523.3points
-    prefix="523.3points_nob_cpm1"
-    filter=1
+    #all_counts = counts
+    #samples=samples.523.3points
+    #prefix="523.3points_nob_cpm1"
+    #filter=1
     # end test
     
     n_samples = length(samples)
@@ -166,7 +166,7 @@ calc_de = function(all_counts,samples,prefix,filter)
     result_file=paste0(prefix,".txt")
     write.table(de_results,result_file,quote=T,row.names=F)
     
-    prepare_file_4gsea(all_counts,samples,prefix,gene_descriptions)
+    prepare_file_4gsea(all_counts,samples,prefix)
     
     plot_heatmap_separate (all_counts,samples,de_results,prefix)
     plot_heatmap_separate (all_counts,samples,de_results,paste0(prefix,".top50genes"),50)
@@ -258,9 +258,8 @@ plot_heatmap_separate = function(counts,samples,de_results,prefix,ntop = NULL)
     }
     
     #sort genes alphabetically - it is much easier to read heatmap
-    upregulated_genes = sort(upregulated_genes)
-    downregulated_genes = sort (downregulated_genes)
-    
+    #upregulated_genes = sort(upregulated_genes)
+    #downregulated_genes = sort (downregulated_genes)
     
     plot_heatmap(paste0(prefix,".left"),top_genes_cpm[upregulated_genes,])
     plot_heatmap(paste0(prefix,".right"),top_genes_cpm[downregulated_genes,])
@@ -471,11 +470,11 @@ figure2C_8samples = function()
 {
     setwd("~/Desktop/project_katie_csc/Figure2C/")
     counts = read.csv("LGK_counts.txt", row.names=1, sep="", stringsAsFactors=F)
-    prefix = "Figure2C.supp.8cell_lines.log2cpm"
+    prefix = "Figure2C.8cell_lines.log2cpm.not_alphabetical"
     #columns are clustered like on the left picture G361 - outlier, G432 is close to G564
     samples = c("G472","G511","G523","G432","G564","G440","G510","G361")
     filter=1
-    calc_de(counts_lgk,samples,prefix,filter)
+    calc_de(counts,samples,prefix,filter)
 }
 
 figure2C_6samples = function()
