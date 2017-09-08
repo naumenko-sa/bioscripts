@@ -190,6 +190,7 @@ variant calling pipeline outputs variants in gemini format.
 # By project
 
 ## 6. Muscle [2016-] is a study of genetic causes of muscular diseases
+Developed into crt and Mendelian-RNAseq-DB
 1. [rnaseq.muscular_gene_panels.R](../master/rnaseq.muscular_gene_panels.R) - key genes relevant to diseases.
 
 ---
@@ -200,7 +201,7 @@ variant calling pipeline outputs variants in gemini format.
 3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
 
 ## 4. CHEO [2016-]
-
+Developed into cre
 1. [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families,
 or use bcbio.prepare_samples.sh if some samples need to re-generate bam files.
 2. [bcbio.array.pbs](../master/bcbio.array.pbs) runs multiple bcbio projects as a job array. I have tried a parallel execution of BCBIO, with IPython,
