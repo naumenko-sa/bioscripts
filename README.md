@@ -60,9 +60,10 @@ By subject
 * [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
 * [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
-* [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
-* [bam.coverage.bamstats](../master/bam.coverage.bamstats.sh) prints average coverage for a gene, uses bamstats05.
-* [bam.gene_coverage.sh](../master/bam.gene_coverage.sh) prints mean coverage per region (exon,gene).
+* For coverage first try cre.coverage.sh in cre.
+    * [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
+    * [bam.coverage.bamstats](../master/bam.coverage.bamstats.sh) prints average coverage for a gene, uses bamstats05.
+    * [bam.gene_coverage.sh](../master/bam.gene_coverage.sh) prints mean coverage per region (exon,gene).
 * [bam.reads_number.sh](../master/bam.reads_number.sh) reports the number of paired reads in a bam file, uses samtools
 * [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
