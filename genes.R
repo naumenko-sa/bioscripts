@@ -1,8 +1,9 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
-
 init = function()
 {
     library("biomaRt")  
+    library(readr)
+    
     mart = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
                    path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
     datasets=listDatasets(mart)
@@ -21,9 +22,9 @@ init = function()
     #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
 }
 
+# writes a list of external_gene_names to protein_codin_genes.list
 get_protein_coding_genes = function(mart)
 {
-    setwd("~/Desktop/reference_tables/")
     protein_coding_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
                                  filters = c('biotype'),
                                  values='protein_coding',
@@ -36,7 +37,8 @@ get_protein_coding_genes = function(mart)
 get_gene_descriptions = function()
 {
     #name_1006 is GO_term
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description','name_1006'),mart=grch37)
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description','name_1006'),
+                                  mart=grch37)
     write.table(ensembl_w_description,file="ensembl_w_description.txt1",quote=F,row.names=F,sep="\t")
 }
 
@@ -128,6 +130,16 @@ get_gene_coordinate = function(gene_list_file)
     write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+get_external_gene_names = function(gene_list_file)
+{
+    gene_list_file="omim.gene.list"
+    genes = read.table(gene_list_file,stringsAsFactors=F)
+    genes=getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+                filters=c('ensembl_gene_id'),
+                values=genes,mart=mart)
+    write.table(genes,paste0(gene_list_file,".w_names"),sep="\t",quote=F,row.names=F,col.names=F)
+}
+
 # coordinates of the exon starts and ends 
 # some exons of the canonical isoform are non coding - they have NA in genomic_coding_start,
 # they are excluded, for example in ACTA1
@@ -140,6 +152,9 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
     #gene_name='HNRNPDL'
     #gene_name = 'PLEC'
+    #PATCH gene
+    #gene_name = 'ABBA01057584.1'
+    
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id','cds_length','ensembl_gene_id'),
                      filters=c('external_gene_name','transcript_gencode_basic','biotype'), 
@@ -148,32 +163,41 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #remove transcripts placed on patches
     genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
     
-    if (nrow(genes_info>1)){
+    #otherwise we are not printing it
+    if (nrow(genes_info) > 1)
+    {
         genes_info = genes_info[order(-genes_info$cds_length),]  
-    }
-    canonical_transcript = genes_info$ensembl_transcript_id[1]
     
-    genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
+        canonical_transcript = genes_info$ensembl_transcript_id[1]
+    
+        genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
                                   'external_gene_name','ensembl_gene_id',
                                   'start_position','end_position',
                                   'exon_chrom_start','exon_chrom_end','ensembl_transcript_id'),
                     filters=c('ensembl_transcript_id'), values=c(canonical_transcript),mart=mart)
     
-    genes_info = na.omit(genes_info)
+        genes_info = na.omit(genes_info)
     
-    #bedtools does not like colnames
-    write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
-    write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
-    print(paste(gene_name,genes_info[1,4]))
+        #bedtools does not like colnames
+        write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+    
+        #print all columns and a header
+        #write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
+    
+        print(paste(gene_name,genes_info[1,4]))
+    }
 }
 
-get_exon_coordinates_for_muscular_genes = function()
+#get exon coordinates for canonical isoform for genes in a list
+get_exon_coordinates2 = function()
 {
     mart=init()
-    setwd("~/Desktop/project_RNAseq_diagnostics/gene_panels/")
-    muscular_gene_panels = read.csv("/home/sergey/Desktop/project_RNAseq_diagnostics/gene_panels/muscular_gene_panels.csv", stringsAsFactors=F)
+    setwd("~/Desktop/work")
+    get_protein_coding_genes(mart)
     
-    for(gene in unique(sort(muscular_gene_panels$Gene)))
+    genes = read_csv("protein_coding_genes.list", col_names = c('Gene'))
+    
+    for(gene in unique(sort(genes$Gene)))
     {
         get_exon_coordinates_for_canonical_isoform(gene,mart)
     }
