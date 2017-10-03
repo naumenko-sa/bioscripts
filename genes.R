@@ -68,9 +68,10 @@ get_exon_coordinates_chr = function(chromosome)
     #  values=list(ccds_genes),
     #  mart=grch37)
   
-    getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
-          'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
-          'external_gene_name'),
+    getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
+                         'ensembl_exon_id','chromosome_name','exon_chrom_start',
+                         'exon_chrom_end','genomic_coding_start','genomic_coding_end',
+                         'external_gene_name'),
           filters = c('chromosome_name'),
           values = list(chromosome),
           mart=mart)
@@ -109,14 +110,33 @@ get_exon_coordinates = function()
         buffer = get_exon_coordinates_chr(chr)
         exon_coordinates=rbind(buffer,exon_coordinates)
     }
+    
     #remove noncoding exons
     exon_coordinates=na.omit(exon_coordinates)
-    write.table(exon_coordinates,"ccds.coding.exons",quote=F,row.names=F,col.names=F)
-    write.table(unique(exon_coordinates$ensembl_gene_id),"ccds.coding.genes.ENS",quote=F,row.names=F,col.names=F)
-    exon_coordinates.bed=subset(exon_coordinates,select=c("chromosome_name","genomic_coding_start","genomic_coding_end","ensembl_exon_id"))
+    
+    write.table(exon_coordinates,"coding.exons",quote=F,row.names=F,col.names=F)
+    write.table(unique(exon_coordinates$ensembl_gene_id),"coding.genes.enseml_ids",quote=F,row.names=F,col.names=F)
+    
+    exon_coordinates.bed = subset(exon_coordinates,
+                                  select=c('chromosome_name','genomic_coding_start',
+                                  'genomic_coding_end','ensembl_exon_id','external_gene_name'))
+    
     write.table(exon_coordinates.bed,"coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
     
-    ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
+    for (gene in sort(unique(exon_coordinates.bed$external_gene_name)))
+    {
+        print(gene)
+        gene.table = exon_coordinates.bed[exon_coordinates.bed$external_gene_name == gene,]
+        gene.bed = subset(gene.table, 
+                          select=c('chromosome_name','genomic_coding_start',
+                                   'genomic_coding_end','ensembl_exon_id'))
+        gene.bed = gene.bed[order(gene.bed$genomic_coding_start),]
+        
+        #have to sort and merge this with bedtools
+        write.table(gene.bed,paste0(gene,".unsorted.bed"),sep='\t',quote=F,row.names=F,col.names=F)
+    }
+    
+    #ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
 }
 
 # coordinates of the gene start and gene end (all exons)
@@ -148,6 +168,8 @@ get_external_gene_names = function(gene_list_file)
 # PLEC gene has two ensembl identifiers:
 # ENSG00000178209 - we need this one, which is protein_coding
 # ENSG00000261109 
+# this is a slow function, use it for individual genes/gene panels, when every exon is needed
+# for bulk coverage analysis use the function above
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
     #gene_name='HNRNPDL'
