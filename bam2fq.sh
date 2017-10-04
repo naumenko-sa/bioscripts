@@ -10,13 +10,14 @@ then
     bam=$1
 fi
 
-if [ -z $pref ]
+if [ -z $sample ]
 then
-    pref=$2
+    sample=$2
 fi
 
 samtools sort -n -O BAM -o sorted.bam -T temp -@ 10 $bam
-bedtools bamtofastq -i sorted.bam -fq ${pref}_1.fq -fq2 ${pref}_2.fq
+bedtools bamtofastq -i sorted.bam -fq $sample_1.fq -fq2 $sample_2.fq
+rm sorted bam
 
-bgzip ${pref}_1.fq
-bgzip ${pref}_2.fq
+bgzip $sample_1.fq
+bgzip $sample_2.fq
