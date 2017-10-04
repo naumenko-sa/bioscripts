@@ -5,7 +5,7 @@
 # really fast: 2min for a big bam file and 100 genes
 # arguments: bam and bed
 
-# protein coding genes are in ~/Desktop/reference_tables/protein_coding_genes.bed
+# pull exone coordinates with genes.R and do bedtools sort | bedtools merge -c 4 -o first 
 
 #PBS -l walltime=2:00:00,nodes=1:ppn=1
 #PBS -joe .
@@ -16,5 +16,6 @@
 module load java
 
 BAMSTATS_PATH=/hpf/largeprojects/ccmbio/naumenko/tools/jvarkit/dist
+
 java -Xmx10G -jar ${BAMSTATS_PATH}/bamstats05.jar \
     -B=$bed $bam > $bam.coverage;
