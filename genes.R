@@ -119,7 +119,7 @@ get_exon_coordinates = function()
     
     exon_coordinates.bed = subset(exon_coordinates,
                                   select=c('chromosome_name','genomic_coding_start',
-                                  'genomic_coding_end','ensembl_exon_id','external_gene_name'))
+                                  'genomic_coding_end','external_gene_name'))
     
     write.table(exon_coordinates.bed,"coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
     
@@ -196,7 +196,8 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
                                   'external_gene_name','ensembl_gene_id',
                                   'start_position','end_position',
                                   'exon_chrom_start','exon_chrom_end','ensembl_transcript_id'),
-                    filters=c('ensembl_transcript_id'), values=c(canonical_transcript),mart=mart)
+                    filters=c('ensembl_transcript_id'), 
+                    values=c(canonical_transcript),mart=mart)
     
         genes_info = na.omit(genes_info)
     
@@ -228,13 +229,13 @@ get_exon_coordinates2 = function()
 #exon coordinates given ENS ids
 get_omim_orphanet_exon_coordinates = function()
 { 
-  omim_orphanet_ens_ids = read.table("omim.orphanet.v2.ENS")
+    omim_orphanet_ens_ids = read.table("omim.orphanet.v2.ENS")
   
-  omim_exons=getBM(
-      attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
-      'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end'),
-      filters=c('ensembl_gene_id'),
-      values=omim_orphanet_ens_ids,mart=grch37)
+    omim_exons=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
+                                  'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start',
+                                  'genomic_coding_end'),
+                    filters=c('ensembl_gene_id'),
+                    values=omim_orphanet_ens_ids,mart=grch37)
   
   omim_exons=na.omit(omim_exons)
   
