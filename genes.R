@@ -1,8 +1,22 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
+
+installation = function()
+{
+    source("http://bioconductor.org/biocLite.R")
+    biocLite("IRanges")
+    biocLite("GenomicRanges")
+    #lib = "~/R")
+    biocLite("biomaRt")
+    install.packages(bedr)
+}
+
 init_mart = function()
 {
-    library("biomaRt")  
+    library(IRanges)
+    library(GenomicRanges)  
+    library(biomaRt)  
     library(readr)
+    library(bedr)
     
     listMarts()
     
@@ -15,15 +29,15 @@ init_mart = function()
     attributes=listAttributes(mart)
     filters=listFilters(mart)
   
-    chromosomes = getBM(attributes=c('chromosome_name'),mart=mart)
+    chromosomes = getBM(attributes=c("chromosome_name"),mart=mart)
     
     return(mart)
     
-    #grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-    #datasets_grch38 = listDatasets(grch38)
-    #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
-    #attributes_grch38=listAttributes(grch38)
-    #filters_grch38=listFilters(grch38)
+    #mart_grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
+    #datasets_grch38 = listDatasets(mart_grch38)
+    #grch38 = useDataset(mart_grch38,dataset="hsapiens_gene_ensembl")
+    #attributes_grch38=listAttributes(mart_grch38)
+    #filters_grch38=listFilters(mart_grch38)
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
@@ -48,7 +62,7 @@ get_protein_coding_genes = function(mart)
     # attributePages(mart)
 }
 
-get_gene_descriptions = function()
+get_gene_descriptions = function(mart)
 {
     ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
                                                'external_gene_name',
@@ -57,43 +71,48 @@ get_gene_descriptions = function()
                                   mart=mart)
     write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
     
-    #attribute name_1006 is GO_term
-    #GO_term takes a while for all genes, demo with chrX
-    #filters = 'chromosome_name',
-    #values = 'X',
+    # attribute name_1006 is GO_term
+    # GO_term takes a while for all genes, demo with chrX
+    # filters = 'chromosome_name',
+    # values = 'X',
 }
 
-get_refseq_transcript_ids = function()
+get_ensembl_refseq_transcript_ids = function(mart)
 {
-    refseq_transcripts = getBM(attributes=c('ensembl_transcript_id','refseq_mrna'),mart=grch37)
-    refseq_transcripts = getBM(attributes=c('ensembl_transcript_id','external_transcript_name'),mart=grch37)
+    transcripts = getBM(attributes = c('ensembl_transcript_id','refseq_mrna'),
+                               mart=mart,
+                               filters = 'chromosome_name',
+                               values = 'X')
+                               
+    ensembl_refseq = transcripts[transcripts$refseq_mrna!='',]
+    write.table(ensemble_refseq,file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
     
-    write.table(refseq_transcripts[refseq_transcripts$refseq_mrna!='',],file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
+    return(ensembl_refseq)
+    
+    # more info
+    # external_transcript_name
+    # refseq_ncrna
+    # ucsc
+}
+
+# coordinates of the gene start and gene end (all exons)
+get_gene_coordinate = function(gene_list_file)
+{
+  #test: 
+  gene_list_file = "protein_coding_genes.list"
+  genes = read.table(gene_list_file,stringsAsFactors=F)
+  genes=getBM(
+    attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
+    filters=c('external_gene_name'),
+    values=genes,mart=mart)
+  write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
 #use chromosomes because of biomart webservice's timeout
-get_exon_coordinates_chr = function(chromosome)
+get_exon_coordinates_chr = function(chromosome,mart)
 {
-    # sometimes people want ccds genes, then use with_ccds
-    # https://www.ncbi.nlm.nih.gov/projects/CCDS/CcdsBrowse.cgi
-    # some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
-    
-    # ccds_genes = getBM(attributes=c('ensembl_gene_id'),
-    #                 filters=c('with_ens_hs_translation','chromosome_name'),
-    #                 values=list(T,chromosome),
-    #                 mart=grch37)
-    
-    # getBM(
-    #  attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
-    #    'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
-    #    'external_gene_name'),
-    #  filters=c('ensembl_gene_id'),
-    #  values=list(ccds_genes),
-    #  mart=grch37)
-  
-  
     #test:
-    chromosome='X'
+    #chromosome='X'
     genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
                                        'ensembl_exon_id','chromosome_name','exon_chrom_start',
                                        'exon_chrom_end','genomic_coding_start','genomic_coding_end',
@@ -102,84 +121,131 @@ get_exon_coordinates_chr = function(chromosome)
           values = list(chromosome),
           mart=mart)
     
-    #what is exon_chrom_start, or genomic_coding_start?
-    #attributes = listAttributes(mart,what=c('name','description','fullDescription'))
-    #noncoding exons
-    
     return(genes_for_chr)
+    
+    # what is exon_chrom_start, or genomic_coding_start?
+    # attributes = listAttributes(mart,what=c('name','description','fullDescription'))
+    # noncoding exons
 }
 
-#LSP1 has exons on chr11 and chr13 - a bug to report
+# sometimes people want ccds genes, then use with_ccds
+# https://www.ncbi.nlm.nih.gov/projects/CCDS/CcdsBrowse.cgi
+# some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
+get_ccds_genes_chr = function(chromosome,mart)
+{
+    #test
+    #chromosome = 'X'
+    ccds_genes_chr = getBM(attributes=c('ensembl_gene_id'),
+                     filters=c('chromosome_name','with_ens_hs_translation'),
+                     values=list(chromosome,T),
+                     mart=mart)
+    
+    return(ccds_genes_chr)
+    
+    # ccds = ccds id
+}
+
+#LSP1 has exons on chr11 and chr13 - a bug
 #CKS1B: chr1 and chr5
 test_lsp1_gene = function()
 {
-  library("biomaRt")  
-  grch37 = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
-                   path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
-  datasets=listDatasets(grch37)
-  
-  grch37 = useDataset(grch37,dataset="hsapiens_gene_ensembl")
-  
-  attributes=listAttributes(grch37)
-  filters=listFilters(grch37)
-  
-  lsp1_bug=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
-                     'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
-                     'external_gene_name'),
-        filters = c('external_gene_name'),
-        values = list("LSP1"),
-        mart=grch37)
+    lsp1_bug=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id',
+                                'transcript_count','ensembl_exon_id',
+                                'chromosome_name','exon_chrom_start',
+                                'exon_chrom_end','genomic_coding_start',
+                                'genomic_coding_end','external_gene_name'),
+                  filters = c('external_gene_name'),
+                  values = list('LSP1'),
+                  mart=mart)
 }
 
-#print genomic_coding to exclude UTRs
-get_exon_coordinates = function()
+bedtools_sort_and_merge_example = function()
+{
+    # installation:
+    # install bedtools and bedops and put them to your PATH
+    # http://bedtools.readthedocs.io/en/latest/content/installation.html
+    # https://github.com/bedops/bedops/releases
+    # documentation:
+    # https://cran.r-project.org/web/packages/bedr/bedr.pdf
+    
+    index=get.example.regions()
+    a = index[[1]]
+    a.sorted = bedr(engine="bedtools",input = list(i=a), method="sort", params="")
+    a.merged = bedr(engine="bedtools",input = list(i=a.sorted), method="merge", params="")
+    
+}
+
+#print genomic_coding and exclude UTRs
+get_exon_coordinates = function(mart)
 {
     #18710 genes
-    exon_coordinates=get_exon_coordinates_chr(1)
-    #MT is problematic in ccds
-    for (chr in c(seq(2,22),"X","Y"))
+    exon_coordinates=get_exon_coordinates_chr(1,mart)
+    # MT is problematic in ccds
+    # ~5 minutes for all chromosomes
+    for (chr in c(seq(2,22),'X','Y'))
     {
-        buffer = get_exon_coordinates_chr(chr)
+        print(chr)
+        buffer = get_exon_coordinates_chr(chr,mart)
         exon_coordinates=rbind(buffer,exon_coordinates)
     }
     
     #remove noncoding exons
     exon_coordinates=na.omit(exon_coordinates)
     
-    write.table(exon_coordinates,"coding.exons",quote=F,row.names=F,col.names=F)
+    write.table(exon_coordinates,"coding.exons.txt",quote=F,row.names=F,col.names=F)
     write.table(unique(exon_coordinates$ensembl_gene_id),"coding.genes.enseml_ids",quote=F,row.names=F,col.names=F)
     
-    exon_coordinates.bed = subset(exon_coordinates,
-                                  select=c('chromosome_name','genomic_coding_start',
-                                  'genomic_coding_end','external_gene_name'))
+    #it is neither sorted not merged!
+    exon_coordinates.bed.unsorted = subset(exon_coordinates,
+                                  select = c('chromosome_name',
+                                             'genomic_coding_start',
+                                             'genomic_coding_end',
+                                             'external_gene_name'))
+    write.table(exon_coordinates.bed.unsorted,"coding.exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    #in bash:
+    #cat coding.exons.bed | sort -k1,1 -k2,2n > coding.exons.sorted.bed
+    #bedtools merge -i coding.exons.bed.sorted -c 4 -o distinct > coding.exons.merged.bed
     
-    write.table(exon_coordinates.bed,"coding.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    attach(exon_coordinates.bed.unsorted)
+    weird_1bp_exons = exon_coordinates.bed.unsorted[genomic_coding_start == genomic_coding_end,]
     
-    for (gene in sort(unique(exon_coordinates.bed$external_gene_name)))
-    {
-        print(gene)
-        gene.table = exon_coordinates.bed[exon_coordinates.bed$external_gene_name == gene,]
-        gene.bed = subset(gene.table, 
-                          select=c('chromosome_name','genomic_coding_start',
-                                   'genomic_coding_end','ensembl_exon_id'))
-        gene.bed = gene.bed[order(gene.bed$genomic_coding_start),]
+    exon_coordinates.bed.no_weird_exons = exon_coordinates.bed.unsorted[genomic_coding_start != genomic_coding_end,]
+    
+    exon_coordinates.bed.no_weird_exons = transform(exon_coordinates.bed.no_weird_exons,
+                                                    chromosome_name = as.character(chromosome_name))
+    
+    attach(exon_coordinates.bed.no_weird_exons)
+    
+    exon_coordinates.bed.sorted = exon_coordinates.bed.no_weird_exons[order(chromosome_name,genomic_coding_start),]
+    
+    exon_coordinates.bed.merged = bedr(input = list(i=exon_coordinates.bed.sorted),
+                                       method="merge",engine="bedtools",check.chr = F, check.zero.based = F,
+                                       params = "-c 4 -o distinct")
+    
+    write.table(exon_coordinates.bed.merged,"coding.exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    
+    #IRanges: within a chromosome!
+    #exon_coordinates.range = IRanges(start = genomic_coding_start,
+    #                                 end = genomic_coding_end,
+    #                                 names = external_gene_name)
+    
+    #exon_coordinates.range = reduce(exon_coordinates.range)
+    #exon_coordinates.bed = as.data.frame(exon_coordinates.range)
+    
+    #for individual genes
+    #for (gene in sort(unique(exon_coordinates.bed$external_gene_name)))
+    #{
+    #    print(gene)
+    #    gene.table = exon_coordinates.bed[exon_coordinates.bed$external_gene_name == gene,]
+    #    gene.bed = subset(gene.table, 
+    #                      select=c('chromosome_name','genomic_coding_start',
+    #                               'genomic_coding_end','ensembl_exon_id'))
+    #    gene.bed = gene.bed[order(gene.bed$genomic_coding_start),]
         
         #have to sort and merge this with bedtools
-        write.table(gene.bed,paste0(gene,".unsorted.bed"),sep='\t',quote=F,row.names=F,col.names=F)
-    }
+    #    write.table(gene.bed,paste0(gene,".unsorted.bed"),sep='\t',quote=F,row.names=F,col.names=F)
+    #}
     
-    #ccds_genes = getBM(attributes=c('ensembl_gene_id'),mart=grch37)
-}
-
-# coordinates of the gene start and gene end (all exons)
-get_gene_coordinate = function(gene_list_file)
-{
-    genes = read.table(gene_list_file,stringsAsFactors=F)
-    genes=getBM(
-      attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
-      filters=c('external_gene_name'),
-      values=genes,mart=mart)
-    write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
 get_external_gene_names = function(gene_list_file)
@@ -210,9 +276,13 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #gene_name = 'ABBA01057584.1'
     
     print(gene_name)
-    genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id','cds_length','ensembl_gene_id'),
+    genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
+                                  'cds_length','ensembl_gene_id'),
                      filters=c('external_gene_name','transcript_gencode_basic','biotype'), 
-                     values=list(external_gene_name=gene_name,transcript_gencode_basic=T,'protein_coding'),mart=mart)
+                     values=list(external_gene_name=gene_name,
+                                 transcript_gencode_basic=T,
+                                 biotype='protein_coding'),
+                     mart=mart)
     
     #remove transcripts placed on patches
     genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
@@ -234,7 +304,10 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
         genes_info = na.omit(genes_info)
     
         #bedtools does not like colnames
-        write.table(genes_info[c(1:4)],paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+        genes_info = genes_info[c(1:4)]
+        attach(genes_info)
+        genes_info = genes_info[order(chromosome_name,genomic_coding_start),]
+        write.table(genes_info,paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
     
         #print all columns and a header
         #write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
@@ -292,20 +365,10 @@ get_omim_orphanet_exon_coordinates = function()
   
 }
 
-setwd("~/Desktop/tools/MendelianRNA-seq/data/")
-mart=init()
-get_exon_coordinates_for_canonical_isoform("DMD",mart)
 
-get_gene_coordinate("kidney.glomerular.genes")
-
-get_exon_coordinates()
-get_omim_orphanet_exon_coordinates()
-
-setwd("/home/sergey/Desktop/project_RNAseq_diagnostics/gene_panels")
-get_gene_coordinate("muscular_gene_panels.genes")
-
-#better to use ENS ids from OMIM/Orphanet text files
-#ccds_omim_genes = getBM(attributes=c('ensembl_gene_id','mim_gene_accession','mim_morbid_accession'),
-#        filters=c('with_ccds','with_mim_gene','with_mim_morbid'),
-#        values=list(T,T,T),
-#        mart=grch37)
+main=function()
+{
+    setwd("~/Desktop/work")
+    mart=init()
+    get_exon_coordinates_for_canonical_isoform("DMD",mart)
+}
