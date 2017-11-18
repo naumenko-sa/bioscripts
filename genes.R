@@ -1,11 +1,13 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
-init = function()
+init_mart = function()
 {
     library("biomaRt")  
     library(readr)
     
-    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", 
-                   path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
+    listMarts()
+    
+    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL",host="grch37.ensembl.org")
+    
     datasets=listDatasets(mart)
   
     mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
@@ -18,28 +20,47 @@ init = function()
     return(mart)
     
     #grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-    #datasets = listDatasets(grch38)
+    #datasets_grch38 = listDatasets(grch38)
     #grch38 = useDataset(grch38,dataset="hsapiens_gene_ensembl")
+    #attributes_grch38=listAttributes(grch38)
+    #filters_grch38=listFilters(grch38)
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
 get_protein_coding_genes = function(mart)
 {
-    protein_coding_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+    protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
+                                              'external_gene_name',
+                                              'chromosome_name'),
                                  filters = c('biotype'),
-                                 values='protein_coding',
+                                 values = 'protein_coding',
                                  mart=mart)
+    
     colnames(protein_coding_genes)[2] = 'gene_name'
-    #genes might be not unique - polymorphic regions like NCR3 gene
-    write.table(unique(sort(protein_coding_genes[,2])),file="protein_coding_genes.list",quote=F,row.names=F, col.names=F,sep="\t")
+    #genes might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
+    write.table(unique(sort(protein_coding_genes[,2])),
+                file="protein_coding_genes.list",
+                quote=F,row.names=F,col.names=F)
+    
+    #EXAMPLES:
+    #- chromosome_name as an attribute and as a filter - use list for values!
+    # filterOptions('biotype',mart)
+    # attributePages(mart)
 }
 
 get_gene_descriptions = function()
 {
-    #name_1006 is GO_term
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id','external_gene_name','description','name_1006'),
-                                  mart=grch37)
-    write.table(ensembl_w_description,file="ensembl_w_description.txt1",quote=F,row.names=F,sep="\t")
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
+                                               'external_gene_name',
+                                               'description'),
+                                  
+                                  mart=mart)
+    write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
+    
+    #attribute name_1006 is GO_term
+    #GO_term takes a while for all genes, demo with chrX
+    #filters = 'chromosome_name',
+    #values = 'X',
 }
 
 get_refseq_transcript_ids = function()
@@ -50,17 +71,19 @@ get_refseq_transcript_ids = function()
     write.table(refseq_transcripts[refseq_transcripts$refseq_mrna!='',],file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
 }
 
-#use chromosomes because of biomart webservice timeout
-#sometimes people want ccds genes, then use with_ccds
-#some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
+#use chromosomes because of biomart webservice's timeout
 get_exon_coordinates_chr = function(chromosome)
 {
-    #ccds_genes = getBM(attributes=c('ensembl_gene_id'),
+    # sometimes people want ccds genes, then use with_ccds
+    # https://www.ncbi.nlm.nih.gov/projects/CCDS/CcdsBrowse.cgi
+    # some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
+    
+    # ccds_genes = getBM(attributes=c('ensembl_gene_id'),
     #                 filters=c('with_ens_hs_translation','chromosome_name'),
     #                 values=list(T,chromosome),
     #                 mart=grch37)
     
-    #getBM(
+    # getBM(
     #  attributes=c('ensembl_gene_id','ensembl_transcript_id','transcript_count','ensembl_exon_id',
     #    'chromosome_name','exon_chrom_start','exon_chrom_end','genomic_coding_start','genomic_coding_end',
     #    'external_gene_name'),
@@ -68,13 +91,22 @@ get_exon_coordinates_chr = function(chromosome)
     #  values=list(ccds_genes),
     #  mart=grch37)
   
-    getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
-                         'ensembl_exon_id','chromosome_name','exon_chrom_start',
-                         'exon_chrom_end','genomic_coding_start','genomic_coding_end',
-                         'external_gene_name'),
+  
+    #test:
+    chromosome='X'
+    genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
+                                       'ensembl_exon_id','chromosome_name','exon_chrom_start',
+                                       'exon_chrom_end','genomic_coding_start','genomic_coding_end',
+                                       'external_gene_name'),
           filters = c('chromosome_name'),
           values = list(chromosome),
           mart=mart)
+    
+    #what is exon_chrom_start, or genomic_coding_start?
+    #attributes = listAttributes(mart,what=c('name','description','fullDescription'))
+    #noncoding exons
+    
+    return(genes_for_chr)
 }
 
 #LSP1 has exons on chr11 and chr13 - a bug to report
