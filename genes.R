@@ -3,8 +3,6 @@
 installation = function()
 {
     source("http://bioconductor.org/biocLite.R")
-    biocLite("IRanges")
-    biocLite("GenomicRanges")
     #lib = "~/R")
     biocLite("biomaRt")
     install.packages(bedr)
@@ -12,11 +10,11 @@ installation = function()
 
 init_mart = function()
 {
-    library(IRanges)
-    library(GenomicRanges)  
-    library(biomaRt)  
-    library(readr)
-    library(bedr)
+    library(biomaRt)    
+    #library(IRanges)
+    #library(GenomicRanges)  
+    #library(readr)
+    #library(bedr)
     
     listMarts()
     
@@ -98,14 +96,14 @@ get_ensembl_refseq_transcript_ids = function(mart)
 # coordinates of the gene start and gene end (all exons)
 get_gene_coordinate = function(gene_list_file)
 {
-  #test: 
-  gene_list_file = "protein_coding_genes.list"
-  genes = read.table(gene_list_file,stringsAsFactors=F)
-  genes=getBM(
-    attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
-    filters=c('external_gene_name'),
-    values=genes,mart=mart)
-  write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+    #test:  
+    gene_list_file = "protein_coding_genes.list"
+    genes = read.table(gene_list_file,stringsAsFactors=F)
+    genes=getBM(
+        attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
+        filters=c('external_gene_name'),
+        values=genes,mart=mart)
+    write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
 }
 
 #use chromosomes because of biomart webservice's timeout
@@ -159,20 +157,13 @@ test_lsp1_gene = function()
                   mart=mart)
 }
 
-bedtools_sort_and_merge_example = function()
+get_sequence = function()
 {
-    # installation:
-    # install bedtools and bedops and put them to your PATH
-    # http://bedtools.readthedocs.io/en/latest/content/installation.html
-    # https://github.com/bedops/bedops/releases
-    # documentation:
-    # https://cran.r-project.org/web/packages/bedr/bedr.pdf
-    
-    index=get.example.regions()
-    a = index[[1]]
-    a.sorted = bedr(engine="bedtools",input = list(i=a), method="sort", params="")
-    a.merged = bedr(engine="bedtools",input = list(i=a.sorted), method="merge", params="")
-    
+  seq = getSequence(id="ENST00000357033",
+                    type="ensembl_transcript_id",
+                    seqType = "coding", mart=mart)
+  write(">ENST00000357033","RYR1.fasta")
+  write(seq$coding,"RYR1.fasta",append = T)
 }
 
 #print genomic_coding and exclude UTRs
@@ -248,6 +239,26 @@ get_exon_coordinates = function(mart)
     
 }
 
+
+
+
+bedtools_sort_and_merge_example = function()
+{
+  # installation:
+  # install bedtools and bedops and put them to your PATH
+  # http://bedtools.readthedocs.io/en/latest/content/installation.html
+  # https://github.com/bedops/bedops/releases
+  # documentation:
+  # https://cran.r-project.org/web/packages/bedr/bedr.pdf
+  
+  index=get.example.regions()
+  a = index[[1]]
+  a.sorted = bedr(engine="bedtools",input = list(i=a), method="sort", params="")
+  a.merged = bedr(engine="bedtools",input = list(i=a.sorted), method="merge", params="")
+  
+}
+
+
 get_external_gene_names = function(gene_list_file)
 {
     gene_list_file="omim.gene.list"
@@ -293,6 +304,8 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
         genes_info = genes_info[order(-genes_info$cds_length),]  
     
         canonical_transcript = genes_info$ensembl_transcript_id[1]
+        
+        print(canonical_transcript)
     
         genes_info=getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
                                   'external_gene_name','ensembl_gene_id',
@@ -364,7 +377,6 @@ get_omim_orphanet_exon_coordinates = function()
   write.table(omim_exons.bed,"omim.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
   
 }
-
 
 main=function()
 {
