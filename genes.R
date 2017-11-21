@@ -5,7 +5,7 @@ installation = function()
     source("http://bioconductor.org/biocLite.R")
     #lib = "~/R")
     biocLite("biomaRt")
-    install.packages(bedr)
+    #install.packages(bedr)
 }
 
 init_mart = function()
@@ -44,8 +44,8 @@ get_protein_coding_genes = function(mart)
     protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
                                               'external_gene_name',
                                               'chromosome_name'),
-                                 filters = c('biotype'),
-                                 values = 'protein_coding',
+                                 filters = c('biotype','chromosome_name'),
+                                 values = list('protein_coding',22),
                                  mart=mart)
     
     colnames(protein_coding_genes)[2] = 'gene_name'
@@ -56,8 +56,8 @@ get_protein_coding_genes = function(mart)
     
     #EXAMPLES:
     #- chromosome_name as an attribute and as a filter - use list for values!
-    # filterOptions('biotype',mart)
-    # attributePages(mart)
+    #filterOptions('biotype',mart)
+    #attributePages(mart)
 }
 
 get_gene_descriptions = function(mart)
@@ -77,7 +77,7 @@ get_gene_descriptions = function(mart)
 
 get_ensembl_refseq_transcript_ids = function(mart)
 {
-    transcripts = getBM(attributes = c('ensembl_transcript_id','refseq_mrna'),
+    transcripts = getBM(attributes = c('ensembl_transcript_id','refseq_mrna','refseq_ncrna','ucsc'),
                                mart=mart,
                                filters = 'chromosome_name',
                                values = 'X')
@@ -110,7 +110,7 @@ get_gene_coordinate = function(gene_list_file)
 get_exon_coordinates_chr = function(chromosome,mart)
 {
     #test:
-    #chromosome='X'
+    chromosome='X'
     genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
                                        'ensembl_exon_id','chromosome_name','exon_chrom_start',
                                        'exon_chrom_end','genomic_coding_start','genomic_coding_end',
@@ -239,9 +239,6 @@ get_exon_coordinates = function(mart)
     
 }
 
-
-
-
 bedtools_sort_and_merge_example = function()
 {
   # installation:
@@ -282,7 +279,7 @@ get_external_gene_names = function(gene_list_file)
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
     #gene_name='HNRNPDL'
-    #gene_name = 'PLEC'
+    gene_name = 'PLEC'
     #PATCH gene
     #gene_name = 'ABBA01057584.1'
     
