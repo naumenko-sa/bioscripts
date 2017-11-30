@@ -9,6 +9,9 @@
 
 module load sratoolkit
 
-mv $sra $sample.sra
+sample=`basename $sra .sra`
 
 fastq-dump -I --gzip --split-files $sample.sra
+
+mv $sample_1.fastq.gz $sample_1.fq.gz
+mv $sample_2.fastq.gz $sample_2.fq.gz
