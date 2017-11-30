@@ -1,8 +1,14 @@
 #!/bin/bash
 
-#PBS -l walltime=2:00:00,nodes=1:ppn=8
+#PBS -l walltime=2:00:00,nodes=1:ppn=1
 #PBS -d .
 #PBS -joe
-#PBS -l vmem=50g
+#PBS -l vmem=10g
 
-fastq-dump -I --split-files $srr
+#usage sra=file.sra,sample=sample_name
+
+module load sratoolkit
+
+mv $sra $sample.sra
+
+fastq-dump -I --gzip --split-files $srr
