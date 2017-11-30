@@ -11,4 +11,4 @@ module load sratoolkit
 
 mv $sra $sample.sra
 
-fastq-dump -I --gzip --split-files $srr
+fastq-dump -I --gzip --split-files $sample.sra
