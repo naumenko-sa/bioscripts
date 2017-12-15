@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# https://github.com/lindenb/jvarkit/wiki/BamStats05
+# http://lindenb.github.io/jvarkit/BamStats05.html
 # uses bamstats05 - groups coverage by gene
 # really fast: 2min for a big bam file and 100 genes
 # arguments: bam and bed

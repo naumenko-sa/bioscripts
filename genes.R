@@ -13,7 +13,7 @@ init_mart = function()
     library(biomaRt)    
     #library(IRanges)
     #library(GenomicRanges)  
-    #library(readr)
+    library(readr)
     #library(bedr)
     
     listMarts()
@@ -279,7 +279,7 @@ get_external_gene_names = function(gene_list_file)
 get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 {
     #gene_name='HNRNPDL'
-    gene_name = 'PLEC'
+    #gene_name = 'PLEC'
     #PATCH gene
     #gene_name = 'ABBA01057584.1'
     
@@ -329,11 +329,11 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
 #get exon coordinates for canonical isoform for genes in a list
 get_exon_coordinates2 = function()
 {
-    mart=init()
+    mart=init_mart()
     setwd("~/Desktop/work")
     get_protein_coding_genes(mart)
     
-    genes = read_csv("protein_coding_genes.list", col_names = c('Gene'))
+    genes = read_csv("genes.list", col_names = c('Gene'))
     
     for(gene in unique(sort(genes$Gene)))
     {
@@ -378,6 +378,6 @@ get_omim_orphanet_exon_coordinates = function()
 main=function()
 {
     setwd("~/Desktop/work")
-    mart=init()
+    mart=init_mart()
     get_exon_coordinates_for_canonical_isoform("DMD",mart)
 }
