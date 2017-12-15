@@ -282,6 +282,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #gene_name = 'PLEC'
     #PATCH gene
     #gene_name = 'ABBA01057584.1'
+    #gene_name = 'AARS2'
     
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
@@ -295,8 +296,8 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #remove transcripts placed on patches
     genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
     
-    #otherwise we are not printing it
-    if (nrow(genes_info) > 1)
+    # select canonical transcript print out the single trancript
+    if (nrow(genes_info) > 0)
     {
         genes_info = genes_info[order(-genes_info$cds_length),]  
     
@@ -324,6 +325,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     
         print(paste(gene_name,genes_info[1,4]))
     }
+    
 }
 
 #get exon coordinates for canonical isoform for genes in a list
