@@ -5,13 +5,11 @@
 #PBS -joe
 #PBS -l vmem=10g
 
-#usage sra=file.sra,sample=sample_name
+#usage sample=sample_name, sample_name.sra should be in the current directory
 
 module load sratoolkit
 
-sample=`basename $sra .sra`
-
 fastq-dump -I --gzip --split-files $sample.sra
 
-mv $sample_1.fastq.gz $sample_1.fq.gz
-mv $sample_2.fastq.gz $sample_2.fq.gz
+mv ${sample}_1.fastq.gz ${sample}_1.fq.gz
+mv ${sample}_2.fastq.gz ${sample}_2.fq.gz
