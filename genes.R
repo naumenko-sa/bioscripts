@@ -282,19 +282,25 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #gene_name = 'PLEC'
     #PATCH gene
     #gene_name = 'ABBA01057584.1'
-    #gene_name = 'AARS2'
-    
+    #gene_name = 'SEPN1'
+    #a problematic gene, ENSEMBL returns it on HSCHR6_MHC_COX if you set biotype filter = protein_coding, it will return HSCHR6
+    #gene_name='VARS2' 
+  
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
                                   'cds_length','ensembl_gene_id'),
-                     filters=c('external_gene_name','transcript_gencode_basic','biotype'), 
+                     filters=c('external_gene_name','transcript_gencode_basic'), 
                      values=list(external_gene_name=gene_name,
-                                 transcript_gencode_basic=T,
-                                 biotype='protein_coding'),
+                                 transcript_gencode_basic=T),
                      mart=mart)
+                     # use biotype to get a list of protein coding genes, not for a predefined gene set
+                     #             biotype='protein_coding'),
+                     
     
     #remove transcripts placed on patches
     genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
+    #remove HSCHR - alleles
+    genes_info = genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
     
     # select canonical transcript print out the single trancript
     if (nrow(genes_info) > 0)
