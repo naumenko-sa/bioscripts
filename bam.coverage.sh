@@ -6,7 +6,7 @@
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=10g,mem=10g
+#PBS -l vmem=20g,mem=20g
 
 if [ -z $bam ]
 then
@@ -18,4 +18,8 @@ then
     bed=$2
 fi
 
-bedtools coverage -hist -a $bam -b $bed > $bam.coverage
+#histogram
+#bedtools coverage -hist -a $bam -b $bed > $bam.coverage
+
+#coverage of every nucleotide
+bedtools coverage -d -a $bed -b $bam > $bam.dcoverage
