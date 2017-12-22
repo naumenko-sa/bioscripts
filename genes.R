@@ -284,8 +284,10 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #gene_name = 'ABBA01057584.1'
     #gene_name = 'SEPN1'
     #a problematic gene, ENSEMBL returns it on HSCHR6_MHC_COX if you set biotype filter = protein_coding, it will return HSCHR6
-    #gene_name='VARS2' 
-  
+    #gene_name='VARS2'
+    #has NA in CDS_length, does not have genomic coding start and end
+    #gene_name="RMRP" 
+    #gene_name="SDHAF2"
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
                                   'cds_length','ensembl_gene_id'),
@@ -339,7 +341,7 @@ get_exon_coordinates2 = function()
 {
     mart=init_mart()
     setwd("~/Desktop/work")
-    get_protein_coding_genes(mart)
+    #get_protein_coding_genes(mart)
     
     genes = read_csv("genes.list", col_names = c('Gene'))
     
