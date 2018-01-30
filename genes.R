@@ -288,6 +288,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #has NA in CDS_length, does not have genomic coding start and end
     #gene_name="RMRP" 
     #gene_name="SDHAF2"
+    #gene_name="MAX"
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
                                   'cds_length','ensembl_gene_id'),

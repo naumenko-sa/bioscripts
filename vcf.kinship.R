@@ -16,8 +16,15 @@
 
 # Data preparation:
 # 1.remove VEP annotations with vt
-# 2.extract chrom 1-5
+# 2.extract chrom 1-5 in the case of many samples (50)
+# 3.extract SNPs only (problems with decomposed indels in bcftools merge)
 # 3.prepare multisample vcf with bcftools merge  
+
+installation = function()
+{
+    source("https://bioconductor.org/biocLite.R")
+    biocLite("SNPRelate")
+}
 
 init = function()
 {
@@ -99,7 +106,8 @@ tutorial = function()
 plot_relatedness_picture = function(samples.txt)
 {
     #test:
-    samples.txt = "all.samples.txt"
+    #samples.txt = "all.samples.txt"
+    samples.txt = "c4r_24.samples.txt"
     prefix = gsub(".txt","",samples.txt,fixed = T)  
     samples = unlist(read.table(samples.txt, stringsAsFactors=F))
     
@@ -131,9 +139,11 @@ plot_relatedness_picture = function(samples.txt)
     text(tab$EV2,tab$EV1,tab$sample.id)
     dev.off()
     
-    family.id = c(1,1,1,2,2,2,3,3,3,4,5,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,12,
-                  13,14,15,16,17,18,19,19,19,20,20,20,25,25,25,26,26,26,27,27,27,
-                  28,28,28,29,29,29,30,30,30)
+    #family.id = c(1,1,1,2,2,2,3,3,3,4,5,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,12,
+    #              13,14,15,16,17,18,19,19,19,20,20,20,25,25,25,26,26,26,27,27,27,
+    #              28,28,28,29,29,29,30,30,30)
+    family.id = c (1,1,2,2,2,3,3,4,5,6,6,6,7,7,7,8,9,9,9,10,10,11,11,12,13,13,14,14,14,15,16,17,17,17,18,18,19,19,19)
+                   
     ibd.robust = snpgdsIBDKING(genofile, snp.id=snpset.id, num.thread=2,family.id = family.id)
     dat = snpgdsIBDSelection(ibd.robust,kinship.cutoff = 0.2)
     
@@ -143,13 +153,13 @@ plot_relatedness_picture = function(samples.txt)
     snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
 
     #outlier.n=5
-    cutTree = snpgdsCutTree(snpHCluster, z.threshold=5, outlier.n = 0, n.perm = 5000, samp.group=NULL,
+    cutTree = snpgdsCutTree(snpHCluster, z.threshold=5, outlier.n = 2, n.perm = 5000, samp.group=NULL,
                          col.outlier="red",col.list=NULL, pch.outlier =4, pch.list=NULL,label.H=T, 
                          label.Z=T, verbose=TRUE)
     
     snpgdsDrawTree(cutTree,type="z-score")
     
-    png(paste0(prefix,".png"))
+    png(paste0(prefix,".png"),width = 1000)
     snpgdsDrawTree(cutTree, main = prefix,edgePar=list(col="black",t.col="black"),
                y.label.kinship=T,leaflab="perpendicular",outlier.n = 0)
     dev.off()
@@ -158,8 +168,8 @@ plot_relatedness_picture = function(samples.txt)
 }
 
 init()
-setwd("~/Desktop/project_cheo/2017-04-06_NextSeq_kinship/")
-snpgdsVCF2GDS("nextseq.vcf.gz", "dataset.gds")
+setwd("~/Desktop/work")
+snpgdsVCF2GDS("c4r_24.vcf.gz", "dataset.gds")
 
 plot_relatedness_picture("all.samples.txt")
 plot_relatedness_picture("samples.CHEO_0001.txt")
