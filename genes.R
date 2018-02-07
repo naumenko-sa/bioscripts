@@ -38,6 +38,23 @@ init_mart = function()
     #filters_grch38=listFilters(mart_grch38)
 }
 
+get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
+{
+    #test
+    #swissprot_id = 'P62701'
+    gene = getBM(attributes=c('ensembl_gene_id','external_gene_name','uniprotswissprot'),
+                               filters = c('uniprotswissprot'),
+                               values = swissprot_id,
+                               mart=mart)
+    return(gene$external_gene_name)
+}
+
+proteins=c("E9PAV3","O75390","P09211","P05413","O75112","P60660","Q9NZQ9","P02144","P40939")
+
+for (protein in proteins){
+   print(get_gene_name_by_uniprotswissprotid(mart,protein))
+}
+
 # writes a list of external_gene_names to protein_codin_genes.list
 get_protein_coding_genes = function(mart)
 {
