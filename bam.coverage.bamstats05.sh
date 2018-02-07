@@ -18,4 +18,6 @@ module load java
 BAMSTATS_PATH=/hpf/largeprojects/ccmbio/naumenko/tools/jvarkit/dist
 
 java -Xmx10G -jar ${BAMSTATS_PATH}/bamstats05.jar \
-    -B=$bed $bam > $bam.coverage;
+    -B $bed \
+    -f "" \
+    $bam > $bam.coverage
