@@ -1,5 +1,4 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
-
 installation = function()
 {
     source("http://bioconductor.org/biocLite.R")
@@ -47,12 +46,6 @@ get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
                                values = swissprot_id,
                                mart=mart)
     return(gene$external_gene_name)
-}
-
-proteins=c("E9PAV3","O75390","P09211","P05413","O75112","P60660","Q9NZQ9","P02144","P40939")
-
-for (protein in proteins){
-   print(get_gene_name_by_uniprotswissprotid(mart,protein))
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
@@ -272,6 +265,20 @@ bedtools_sort_and_merge_example = function()
   
 }
 
+get_ensemble_gene_ids_by_gene_names = function(gene_list_file)
+{
+    #test
+    gene_list_file="omim.gene.list"
+    genes = read.table(gene_list_file,stringsAsFactors=F)
+    genes=getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+              filters=c('external_gene_name'),
+              values=genes,mart=mart)
+    genes = genes[order(genes$external_gene_name,genes$ensembl_gene_id),]
+    
+    # if there is ENS_ID for a gene name, we keep the smallest ENS_ID
+    genes = genes [!duplicated(genes$external_gene_name),]
+    write.table(genes,paste0(gene_list_file,".ensemble.txt"),sep="\t",quote=F,row.names=F,col.names=F)
+}
 
 get_external_gene_names = function(gene_list_file)
 {
@@ -341,7 +348,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
         genes_info = na.omit(genes_info)
     
         #bedtools does not like colnames
-        genes_info = genes_info[c(1:4)]
+        genes_info = genes_info[c(1:3,5)]
         attach(genes_info)
         genes_info = genes_info[order(chromosome_name,genomic_coding_start),]
         write.table(genes_info,paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
@@ -351,7 +358,6 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     
         print(paste(gene_name,genes_info[1,4]))
     }
-    
 }
 
 #get exon coordinates for canonical isoform for genes in a list
@@ -368,6 +374,11 @@ get_exon_coordinates2 = function()
         get_exon_coordinates_for_canonical_isoform(gene,mart)
     }
 }
+
+#for (gene in c("SETX","PNKP","AP3B2","GUF1"))
+#{
+#    get_exon_coordinates_for_canonical_isoform(gene,mart)
+#}
 
 #exon coordinates given ENS ids
 get_omim_orphanet_exon_coordinates = function()
