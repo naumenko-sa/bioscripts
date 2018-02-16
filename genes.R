@@ -169,11 +169,16 @@ test_lsp1_gene = function()
 
 get_sequence = function()
 {
-  seq = getSequence(id="ENST00000357033",
-                    type="ensembl_transcript_id",
+    #seq = getSequence(id="ENST00000357033",
+    #                  type="ensembl_transcript_id",
+    #                  seqType = "coding", mart=mart)
+    seq = getSequence(id="ENSG00000167676",
+                    type="ensembl_gene_id",
                     seqType = "coding", mart=mart)
-  write(">ENST00000357033","RYR1.fasta")
-  write(seq$coding,"RYR1.fasta",append = T)
+  
+    
+    write(">PLN4","PLN4.fasta")
+    write(seq$coding,"PLN4.fasta",append = T)
 }
 
 #print genomic_coding and exclude UTRs
@@ -313,6 +318,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #gene_name="RMRP" 
     #gene_name="SDHAF2"
     #gene_name="MAX"
+    gene_name = "SLC7A7"
     print(gene_name)
     genes_info=getBM(attributes=c('chromosome_name','external_gene_name','ensembl_transcript_id',
                                   'cds_length','ensembl_gene_id'),

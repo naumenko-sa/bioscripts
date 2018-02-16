@@ -107,14 +107,14 @@ plot_relatedness_picture = function(samples.txt)
 {
     #test:
     #samples.txt = "all.samples.txt"
-    samples.txt = "c4r_24.samples.txt"
+    #samples.txt = "c4r_24.samples.txt"
     prefix = gsub(".txt","",samples.txt,fixed = T)  
     samples = unlist(read.table(samples.txt, stringsAsFactors=F))
     
     #biallelic by default
   
     #snpgdsSummary("dataset.gds")
-    genofile = snpgdsOpen("dataset.gds")
+    genofile = snpgdsOpen("dataset2.gds")
 
     #LD based SNP pruning
     set.seed(1000)
@@ -142,7 +142,8 @@ plot_relatedness_picture = function(samples.txt)
     #family.id = c(1,1,1,2,2,2,3,3,3,4,5,6,7,7,7,8,8,8,9,9,9,10,10,10,11,11,11,12,12,12,
     #              13,14,15,16,17,18,19,19,19,20,20,20,25,25,25,26,26,26,27,27,27,
     #              28,28,28,29,29,29,30,30,30)
-    family.id = c (1,1,2,2,2,3,3,4,5,6,6,6,7,7,7,8,9,9,9,10,10,11,11,12,13,13,14,14,14,15,16,17,17,17,18,18,19,19,19)
+    #family.id = c (1,1,2,2,2,3,3,4,5,6,6,6,7,7,7,8,9,9,9,10,10,11,11,12,13,13,14,14,14,15,16,17,17,17,18,18,19,19,19)
+    family.id = c(1,1,1)
                    
     ibd.robust = snpgdsIBDKING(genofile, snp.id=snpset.id, num.thread=2,family.id = family.id)
     dat = snpgdsIBDSelection(ibd.robust,kinship.cutoff = 0.2)
@@ -153,7 +154,7 @@ plot_relatedness_picture = function(samples.txt)
     snpHCluster =  snpgdsHCluster(dissMatrix, sample.id=NULL, need.mat=TRUE, hang=0.01)
 
     #outlier.n=5
-    cutTree = snpgdsCutTree(snpHCluster, z.threshold=5, outlier.n = 2, n.perm = 5000, samp.group=NULL,
+    cutTree = snpgdsCutTree(snpHCluster, z.threshold=5, outlier.n = 0, n.perm = 5000, samp.group=NULL,
                          col.outlier="red",col.list=NULL, pch.outlier =4, pch.list=NULL,label.H=T, 
                          label.Z=T, verbose=TRUE)
     
@@ -169,12 +170,6 @@ plot_relatedness_picture = function(samples.txt)
 
 init()
 setwd("~/Desktop/work")
-snpgdsVCF2GDS("c4r_24.vcf.gz", "dataset.gds")
+snpgdsVCF2GDS("C1A-106.vcf", "dataset2.gds")
 
-plot_relatedness_picture("all.samples.txt")
-plot_relatedness_picture("samples.CHEO_0001.txt")
-plot_relatedness_picture("samples.CHEO_0002.txt")
-plot_relatedness_picture("samples.run1.txt")
-plot_relatedness_picture("samples.run2.txt")
-plot_relatedness_picture("samples.run2.part1.txt")
-plot_relatedness_picture("samples.run3.txt")
+plot_relatedness_picture("samples.txt")
