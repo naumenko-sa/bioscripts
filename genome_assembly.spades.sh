@@ -5,6 +5,6 @@
 
 date
 #spades.py --pe1-1 short.r1.fq  --pe1-2 short.r2.fq  --pe1-s short.single.fq --mp1-1 mp56.r1.fq --mp1-2 mp56.r2.fq --mp2-1 mp67.r1.fq --mp2-2 mp67.r2.fq --mp3-1 mp810.r1.fq --mp3-2 mp810.r2.fq -o spades_komar -t 36
-/mnt/lustre/tools/SPAdes-3.1.1-Linux/bin/spades.py --pe1-1 1492.r1.trim.fq --pe1-2 1492.r2.trim.fq --pe1-s 1492.single.trim.fq -o spades_1492 -t 20
+spades.py --pe1-1 $1 --pe1-2 $2 -o 3-1-M.PLIN4.spades  -t 1
 date
 

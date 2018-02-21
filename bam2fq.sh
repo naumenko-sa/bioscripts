@@ -15,7 +15,7 @@ then
     sample=$2
 fi
 
-#samtools sort -n -O BAM -o sorted.bam -T temp -@ 10 $bam
+samtools sort -n -O BAM -o sorted.bam -T temp -@ 10 $bam
 bedtools bamtofastq -i sorted.bam -fq ${sample}_1.fq -fq2 ${sample}_2.fq
 rm sorted.bam
 
