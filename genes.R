@@ -110,17 +110,35 @@ get_ensembl_refseq_transcript_ids = function(mart)
     # ucsc
 }
 
-# coordinates of the gene start and gene end (all exons)
-get_gene_coordinate = function(gene_list_file)
+# start and end of the gene, all exons
+# input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt
+# output = bed file with coordinates = disease_panel.list.bed
+# output is not sorted please sort with bedtools or bash sort
+gene.coordinates = function(gene_list_file,mart)
 {
     #test:  
-    gene_list_file = "protein_coding_genes.list"
-    genes = read.table(gene_list_file,stringsAsFactors=F)
-    genes=getBM(
+    #gene_list_file = "protein_coding_genes.list"
+    
+    #guess gene id type
+    gene_ids = read.table(gene_list_file,stringsAsFactors=F)
+    
+    agene = gene_ids[1,1]
+    
+    if (grepl("ENSG",agene,fixed=T)){
+        filter = 'ensembl_gene_id'
+    }else{
+        filter = 'external_gene_name'
+    }
+        
+    genes = getBM(
         attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
-        filters=c('external_gene_name'),
-        values=genes,mart=mart)
-    write.table(genes[c(2:5)],paste0(gene_list_file,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
+        filters=c(filter),
+        values=gene_ids,
+        mart=mart)
+    
+    write.table(genes[c(2:5)],
+                gsub(".txt",".bed",gene_list_file),
+                sep="\t",quote=F,row.names=F,col.names=F)
 }
 
 #use chromosomes because of biomart webservice's timeout
