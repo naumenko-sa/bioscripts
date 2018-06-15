@@ -28,4 +28,4 @@ fi
 #https://github.com/arq5x/bedtools/issues/109
 #bedtools index just chr name and length
 #don't forget to sort bed : bedtools sort -faidx names.txt
-bedtools coverage -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex > $bam.dcoverage
+bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex > $bam.dcoverage
