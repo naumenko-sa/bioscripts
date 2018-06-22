@@ -29,3 +29,5 @@ fi
 #bedtools index just chr name and length
 #don't forget to sort bed : bedtools sort -faidx names.txt
 bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex > $bam.dcoverage
+
+bam.coverage.base_wise.stat.py $bam.bam.dcoverage > $bam.coverage_stats

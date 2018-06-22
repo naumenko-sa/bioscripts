@@ -1,5 +1,7 @@
 #!/bin/env python
 
+# $1 = file.bam.coverage = product of ~/bioscripts/bam.coverage.sh with -d on
+
 import sys
 
 cov={}
