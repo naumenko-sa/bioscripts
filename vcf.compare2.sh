@@ -2,8 +2,6 @@
 
 #compares 2 vcf files
 
-
-module load bcftools/1.3
 mkdir _dir
 bcftools isec -p _dir $1 $2
 
