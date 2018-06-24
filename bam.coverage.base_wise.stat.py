@@ -3,6 +3,7 @@
 # $1 = file.bam.coverage = product of ~/bioscripts/bam.coverage.sh with -d on
 
 import sys
+import numpy
 
 cov={}
 
@@ -26,5 +27,7 @@ with open(sys.argv[1],'rb') as f_coverage:
 f_coverage.close()
 
 print("Coverage,bases at,%")
+
 for i in levels:
     print(str(i)+','+str(cov[i])+','+str(1.0*cov[i]/total_bases))
+
