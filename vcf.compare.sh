@@ -24,7 +24,7 @@ bcftools isec -p _dir $1 $2
 
 cd _dir
 
-for f in *.vcf;do bgzip $f;tabix $f.vcf.gz;done;
+for f in *.vcf;do bgzip $f;tabix $f.gz;done;
 
 cd ..
 
@@ -39,3 +39,6 @@ get_indels _dir/0001.vcf.gz
 echo "Shared"
 get_snps _dir/0002.vcf.gz
 get_indels _dir/0002.vcf.gz
+
+#rm _dir/*
+#rmdir _dir
