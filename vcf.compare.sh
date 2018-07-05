@@ -11,7 +11,7 @@ function get_snps
 function get_indels
 {
     echo $1
-    bcftools stats $arg | egrep "number of indels:" | awk '{print $NF"\tindels"}'
+    bcftools stats $1 | egrep "number of indels:" | awk '{print $NF"\tindels"}'
 }
 
 for arg do
