@@ -41,6 +41,8 @@ then
     params=' -split'
 fi
 
+echo "Start: " `date`
+
 bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
 
 bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats
@@ -48,3 +50,5 @@ bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats
 median_line=`cat $bam.dcoverage | wc -l`
 median_line=$(($median_line/2))
 cat $bam.dcoverage | awk '{print $6}' | sort -n | sed -n ${median_line}p > $bam.median
+
+echo "END: " `date`
