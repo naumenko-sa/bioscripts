@@ -19,6 +19,11 @@ then
     bed=$2
 fi
 
+if [ -z $type ]
+then
+   type=$3
+fi
+
 #histogram
 #bedtools coverage -hist -a $bam -b $bed > $bam.coverage
 
@@ -28,11 +33,18 @@ fi
 #https://github.com/arq5x/bedtools/issues/109
 #bedtools index just chr name and length
 #don't forget to sort bed : bedtools sort -faidx names.txt
-bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex > $bam.dcoverage
+
+params=''
+
+if [ "$type" == "rnaseq" ]
+then
+    params=' -split'
+fi
+
+bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
 
 bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats
 
 median_line=`cat $bam.dcoverage | wc -l`
 median_line=$(($median_line/2))
 cat $bam.dcoverage | awk '{print $6}' | sort -n | sed -n ${median_line}p > $bam.median
-
