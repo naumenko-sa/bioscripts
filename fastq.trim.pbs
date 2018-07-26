@@ -5,4 +5,18 @@
 #PBS -joe
 #PBS -l vmem=50g
 
-fastq.trim.sh $left $right adapters.fasta 13 50 8
+# http://www.usadellab.org/cms/?page=trimmomatic
+
+adapters=/hpf/tools/centos6/trimmomatic/0.36/adapters/TruSeq3-PE-2.fa
+leading=3
+trailing=3
+minlen=50
+
+java -Xmx10g -jar /hpf/tools/centos6/trimmomatic/0.36/trimmomatic-0.36.jar PE -threads 8 -phred33 \
+     $left $right \
+    `echo $left | sed s/fq/trimmed.fq/` forward_unpaired.fq \
+    `echo $right | sed s/fq/trimmed.fq/` reverse_unpaired.fq \
+     ILLUMINACLIP:$adapters:2:40:15 LEADING:$leading TRAILING:$trailing SLIDINGWINDOW:4:15 MINLEN:$minlen
+
+
+rm forward_unpaired.fq reverse_unpaired.fq
