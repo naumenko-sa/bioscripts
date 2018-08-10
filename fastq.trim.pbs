@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#PBS -l walltime=2:00:00,nodes=1:ppn=8
+#PBS -l walltime=5:00:00,nodes=1:ppn=8
 #PBS -d .
 #PBS -joe
 #PBS -l vmem=50g
@@ -14,9 +14,9 @@ minlen=50
 
 java -Xmx10g -jar /hpf/tools/centos6/trimmomatic/0.36/trimmomatic-0.36.jar PE -threads 8 -phred33 \
      $left $right \
-    `echo $left | sed s/fq/trimmed.fq/` forward_unpaired.fq \
-    `echo $right | sed s/fq/trimmed.fq/` reverse_unpaired.fq \
+    `echo $left | sed s/fq/trimmed.fq/` $left.forward_unpaired.fq.gz \
+    `echo $right | sed s/fq/trimmed.fq/` $left.reverse_unpaired.fq.gz \
      ILLUMINACLIP:$adapters:2:40:15 LEADING:$leading TRAILING:$trailing SLIDINGWINDOW:4:15 MINLEN:$minlen
 
 
-rm forward_unpaired.fq reverse_unpaired.fq
+rm $left.forward_unpaired.fq.gz $left.reverse_unpaired.fq.gz
