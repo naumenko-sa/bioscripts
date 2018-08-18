@@ -5,6 +5,7 @@ installation = function()
     #lib = "~/R")
     biocLite("biomaRt")
     #install.packages(bedr)
+    install.packages("dplyr")
 }
 
 init_mart = function()
@@ -52,17 +53,18 @@ get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
 get_protein_coding_genes = function(mart)
 {
     protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
-                                              'external_gene_name',
-                                              'chromosome_name'),
+                                              'ensembl_transcript_id',
+                                              'external_gene_name'),
                                  filters = c('biotype'),
                                  values = list('protein_coding'),
                                  mart=mart)
-    
-    colnames(protein_coding_genes)[2] = 'gene_name'
+    colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')                             
+    write.csv(protein_coding_genes,"genes.transcripts.csv",row.names = F)
+    #colnames(protein_coding_genes)[2] = 'gene_name'
     #genes might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
-    write.table(unique(sort(protein_coding_genes[,1])),
-                file="protein_coding_genes.list",
-                quote=F,row.names=F,col.names=F)
+    #write.table(unique(sort(protein_coding_genes[,1])),
+    #            file="protein_coding_genes.list",
+    #            quote=F,row.names=F,col.names=F)
     
     #EXAMPLES:
     #- chromosome_name may be an attribute and a filter - use list for values!
@@ -197,13 +199,14 @@ get_sequence = function()
     #seq = getSequence(id="ENST00000357033",
     #                  type="ensembl_transcript_id",
     #                  seqType = "coding", mart=mart)
-    seq = getSequence(id="ENSG00000167676",
+    seq = getSequence(id="ENSG00000172062",
                     type="ensembl_gene_id",
-                    seqType = "coding", mart=mart)
+                    seqType = "gene_exon_intron", 
+                    mart=mart)
   
     
-    write(">PLN4","PLN4.fasta")
-    write(seq$coding,"PLN4.fasta",append = T)
+    write(">SMN1","SMN1.fasta")
+    write(seq$gene_exon_intron,"SMN1.fasta",append = T)
 }
 
 #print genomic_coding and exclude UTRs
@@ -295,19 +298,31 @@ bedtools_sort_and_merge_example = function()
   
 }
 
-get_ensemble_gene_ids_by_gene_names = function(gene_list_file)
+get_ensemble_gene_ids_by_gene_names = function(gene_list, keep_duplicates = F)
 {
-    #test
-    gene_list_file="omim.gene.list"
-    genes = read.table(gene_list_file,stringsAsFactors=F)
-    genes=getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+    library(dplyr)
+  
+    # test:
+    # gene_list_file="omim.gene.list"
+    ensembl_genes=getBM(attributes=c('ensembl_gene_id','external_gene_name'),
               filters=c('external_gene_name'),
-              values=genes,mart=mart)
-    genes = genes[order(genes$external_gene_name,genes$ensembl_gene_id),]
+              values=gene_list,
+              mart=mart)
     
-    # if there is ENS_ID for a gene name, we keep the smallest ENS_ID
-    genes = genes [!duplicated(genes$external_gene_name),]
-    write.table(genes,paste0(gene_list_file,".ensemble.txt"),sep="\t",quote=F,row.names=F,col.names=F)
+    ensembl_genes = ensembl_genes[order(ensembl_genes$external_gene_name,ensembl_genes$ensembl_gene_id),]
+    
+    if (keep_duplicates == T)
+    {
+        #keeping all ensembl IDs for manual curation
+        ensembl_genes = ensembl_genes %>% group_by(external_gene_name) %>% summarise (ensembl_gene_id = paste(ensembl_gene_id, collapse =","))
+    }
+    else
+    {
+        # if there are multiple ENS_ID for a gene name, we keep the smallest ENS_ID
+        ensembl_genes = ensembl_genes [!duplicated(ensembl_genes$external_gene_name),]
+    }
+    
+    return(ensembl_genes)
 }
 
 get_external_gene_names = function(gene_list_file)
