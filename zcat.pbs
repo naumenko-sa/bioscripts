@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l walltime=1:00:00,nodes=1:ppn=1
+#PBS -joe .
+#PBS -d .
+#PBS -l vmem=10g,mem=10g
+
+zcat *2502*_R1_*gz > 1470_162502_1.fq
+zcat *2502*_R2_*gz > 1470_162502_2.fq
+
+zcat *0122*_R1_*gz > 1470_180122_1.fq
+zcat *0122*_R2_*gz > 1470_180122_2.fq
+
+
