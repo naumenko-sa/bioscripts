@@ -112,14 +112,49 @@ get_ensembl_refseq_transcript_ids = function(mart)
     # ucsc
 }
 
+# coordinates of protein coding genes (all gene), 
+# no duplicate record!
+protein_coding_genes.bed = function (mart)
+{
+    genes_info=getBM(attributes=c('chromosome_name','start_position','end_position','external_gene_name',
+                                  'ensembl_gene_id'),
+                     filters=c("biotype"), 
+                     values=list("protein_coding"),
+                     mart=mart)
+
+    #remove transcripts placed on patches
+    genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
+    #remove HSCHR - alleles
+    genes_info = genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
+    
+    # after that some genes have several records, i.e. TAP2:
+    #6	32789610	32806557	TAP2	ENSG00000204267
+    #6	32781544	32806599	TAP2	ENSG00000250264
+    
+    # sorting by ensembl ID, and using the first one
+    genes_info = genes_info[order(genes_info$external_gene_name,genes_info$ensembl_gene_id),]
+    
+    genes_info = genes_info[!duplicated(genes_info$external_gene_name),]
+    
+    
+    genes_info = genes_info[order(genes_info$chromosome_name,genes_info$start_position),]
+    
+    write.table(genes_info,
+                "protein_coding_genes.bed",
+                sep="\t",quote=F,row.names=F,col.names=F)
+}
+
 # start and end of the gene, all exons
-# input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt
+# input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
 # output = bed file with coordinates = disease_panel.list.bed
 # output is not sorted please sort with bedtools or bash sort
 gene.coordinates = function(gene_list_file,mart)
 {
     #test:  
     #gene_list_file = "protein_coding_genes.list"
+    
+    print("Input file:")
+    print(gene_list_file)
     
     #guess gene id type
     gene_ids = read.table(gene_list_file,stringsAsFactors=F)
@@ -138,10 +173,15 @@ gene.coordinates = function(gene_list_file,mart)
         values=gene_ids,
         mart=mart)
     
+    output_file_name = gsub(".txt",".bed",gene_list_file)
+    print("Output file:")
+    print(output_file_name)
     write.table(genes[c(2:5)],
-                gsub(".txt",".bed",gene_list_file),
+                output_file_name,
                 sep="\t",quote=F,row.names=F,col.names=F)
 }
+
+
 
 #use chromosomes because of biomart webservice's timeout
 get_exon_coordinates_chr = function(chromosome,mart)
