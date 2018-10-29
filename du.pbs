@@ -5,7 +5,7 @@
 #PBS -d .
 #PBS -l vmem=1g,mem=1g
 
-for f in *
+for f in project*
 do 
     du -sh $f >> `date +%F`.du
 done
