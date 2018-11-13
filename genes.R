@@ -7,13 +7,13 @@ installation = function()
     #install.packages(bedr)
     install.packages("dplyr")
 }
-
-init_mart = function()
+init_mart_human = function()
 {
-    library(biomaRt)    
+    library("biomaRt")    
+    library("readr")
     #library(IRanges)
     #library(GenomicRanges)  
-    library(readr)
+    
     #library(bedr)
     
     listMarts()
@@ -37,6 +37,18 @@ init_mart = function()
     #attributes_grch38=listAttributes(mart_grch38)
     #filters_grch38=listFilters(mart_grch38)
 }
+# for mm10 = grcm38 reference
+init_mart_mouse = function()
+{
+    library("biomaRt")    
+    library("readr")
+    mart = useMart(biomart="ENSEMBL_MART_MOUSE")
+    datasets=listDatasets(mart)
+    mart = useDataset(mart,dataset="mc57bl6nj_gene_ensembl")
+    attributes=listAttributes(mart)
+    filters=listFilters(mart)
+    return(mart)
+}
 
 get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
 {
@@ -47,6 +59,20 @@ get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
                                values = swissprot_id,
                                mart=mart)
     return(gene$external_gene_name)
+}
+
+get_refseq_transcripts = function(mart)
+{    
+    protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
+                                               'refseq_mrna',
+                                               'external_gene_name'),
+                                  filters = c('biotype',"external_gene_name"),
+                                  values = list('protein_coding',"MUC19"),
+                                  mart=mart)
+    colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')         
+    protein_coding_genes = protein_coding_genes[protein_coding_genes$Ensembl_transcript_id!='',]
+    write.csv(protein_coding_genes,"refseq.predicted.genes.transcripts.csv",row.names = F)
+
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
@@ -86,12 +112,32 @@ get_gene_descriptions = function(mart)
                                                'description'),
                                   
                                   mart=mart)
-    write.table(ensembl_w_description,file="ensembl_w_description.txt",quote=F,row.names=F,sep="\t")
+    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
     
     # attribute name_1006 is GO_term
     # GO_term takes a while for all genes, demo with chrX
     # filters = 'chromosome_name',
     # values = 'X',
+}
+
+# ensemble_gene_id is a mouse strain specific ID
+# for protein coding genes
+get_gene_descriptions.mouse = function(mart)
+{
+    ensembl_w_description = getBM(attributes=c("mmusculus_homolog_ensembl_gene",
+                                               "external_gene_name",
+                                               "description"),
+                                  filters=c("biotype"), 
+                                  values=list("protein_coding"),
+                                  
+                                  mart=mart)
+    colnames(ensembl_w_description)[1]="ensembl_gene_id"
+    ensembl_w_description = ensembl_w_description[ensembl_w_description$ensembl_gene_id != "",]
+    
+    #in the result there are some duplicates, i.e. ENSMUSG00000074254
+    #View(ensembl_w_description[duplicated(ensembl_w_description$ensembl_gene_id),])
+    ensembl_w_description = ensembl_w_description[!duplicated(ensembl_w_description$ensembl_gene_id),]
+    write.csv(ensembl_w_description,file="ensembl_w_description.mouse.csv",row.names=F)
 }
 
 get_ensembl_refseq_transcript_ids = function(mart)
@@ -338,15 +384,15 @@ bedtools_sort_and_merge_example = function()
   
 }
 
-get_ensemble_gene_ids_by_gene_names = function(gene_list, keep_duplicates = F)
+get_ensembl_gene_ids_by_gene_names = function(v_gene_names, keep_duplicates = F)
 {
     library(dplyr)
   
     # test:
-    # gene_list_file="omim.gene.list"
-    ensembl_genes=getBM(attributes=c('ensembl_gene_id','external_gene_name'),
+    # v_gene_names_file = "omim.gene.list"
+    ensembl_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
               filters=c('external_gene_name'),
-              values=gene_list,
+              values=v_gene_names,
               mart=mart)
     
     ensembl_genes = ensembl_genes[order(ensembl_genes$external_gene_name,ensembl_genes$ensembl_gene_id),]
@@ -359,6 +405,8 @@ get_ensemble_gene_ids_by_gene_names = function(gene_list, keep_duplicates = F)
     else
     {
         # if there are multiple ENS_ID for a gene name, we keep the smallest ENS_ID
+        # which is not alsways the case:
+        # C4A: ENSG00000244731 not ENSG00000244207
         ensembl_genes = ensembl_genes [!duplicated(ensembl_genes$external_gene_name),]
     }
     
