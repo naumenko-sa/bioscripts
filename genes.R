@@ -49,7 +49,6 @@ init_mart_mouse = function()
     filters=listFilters(mart)
     return(mart)
 }
-
 get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
 {
     #test
@@ -60,7 +59,6 @@ get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
                                mart=mart)
     return(gene$external_gene_name)
 }
-
 get_refseq_transcripts = function(mart)
 {    
     protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
@@ -74,7 +72,6 @@ get_refseq_transcripts = function(mart)
     write.csv(protein_coding_genes,"refseq.predicted.genes.transcripts.csv",row.names = F)
 
 }
-
 # writes a list of external_gene_names to protein_codin_genes.list
 get_protein_coding_genes = function(mart)
 {
@@ -104,7 +101,6 @@ get_protein_coding_genes = function(mart)
     #                             values = list('protein_coding',22),
     #                             mart=mart)
 }
-
 get_gene_descriptions = function(mart)
 {
     ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
@@ -119,7 +115,6 @@ get_gene_descriptions = function(mart)
     # filters = 'chromosome_name',
     # values = 'X',
 }
-
 # ensemble_gene_id is a mouse strain specific ID
 # for protein coding genes
 get_gene_descriptions.mouse = function(mart)
@@ -157,13 +152,12 @@ get_ensembl_refseq_transcript_ids = function(mart)
     # refseq_ncrna
     # ucsc
 }
-
-# coordinates of protein coding genes (all gene), 
+# coordinates of protein coding genes (all genes), 
 # no duplicate record!
-protein_coding_genes.bed = function (mart)
+protein_coding_genes_bed = function(mart)
 {
-    genes_info=getBM(attributes=c('chromosome_name','start_position','end_position','external_gene_name',
-                                  'ensembl_gene_id'),
+    genes_info=getBM(attributes=c("chromosome_name","start_position","end_position","external_gene_name",
+                                  "ensembl_gene_id"),
                      filters=c("biotype"), 
                      values=list("protein_coding"),
                      mart=mart)
@@ -189,7 +183,6 @@ protein_coding_genes.bed = function (mart)
                 "protein_coding_genes.bed",
                 sep="\t",quote=F,row.names=F,col.names=F)
 }
-
 # start and end of the gene, all exons
 # input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
 # output = bed file with coordinates = disease_panel.list.bed
