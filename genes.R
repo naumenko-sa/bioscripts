@@ -9,6 +9,7 @@ installation = function()
     biocLite("biomaRt")
     #install.packages(bedr)
     install.packages("dplyr")
+    install.packages("bedr")
 }
 
 init_mart_human = function()
@@ -103,42 +104,67 @@ tutorial_explore_marts = function()
     filters = listFilters(mart,what=c("name","description","options"))
 }
 
-get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
+gene_descriptions = function(mart)
 {
-    #test
-    #swissprot_id = 'P62701'
+    ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
+                                               'external_gene_name',
+                                               'description'),
+                                  
+                                  mart=mart)
+    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
+}
+
+# attribute name_1006 is GO_term
+# GO_term takes a while for all genes, demo with chrX
+tutorial_gene_descriptions = function(mart)
+{
+    ensembl_w_description = getBM(attributes=c("ensembl_gene_id",
+                                               "external_gene_name",
+                                               "description"),
+                                  filters = c("chromosome_name"),
+                                  values = list("X"),
+                                  mart=mart)
+    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
+}
+
+# test
+# swissprot_id = 'P62701'
+gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
+{
+
     gene = getBM(attributes=c('ensembl_gene_id','external_gene_name','uniprotswissprot'),
                                filters = c('uniprotswissprot'),
                                values = swissprot_id,
                                mart=mart)
     return(gene$external_gene_name)
 }
-get_refseq_transcripts = function(mart)
+
+refseq_transcripts = function(mart)
 {    
-    protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
-                                               'refseq_mrna',
-                                               'external_gene_name'),
-                                  filters = c('biotype',"external_gene_name"),
+    protein_coding_genes = getBM(attributes=c("ensembl_gene_id",
+                                               "refseq_mrna",
+                                               "external_gene_name"),
+                                  filters = c("biotype","external_gene_name"),
                                   values = list('protein_coding',"MUC19"),
                                   mart=mart)
     colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')         
     protein_coding_genes = protein_coding_genes[protein_coding_genes$Ensembl_transcript_id!='',]
     write.csv(protein_coding_genes,"refseq.predicted.genes.transcripts.csv",row.names = F)
-
 }
+
 # writes a list of external_gene_names to protein_codin_genes.list
-get_protein_coding_genes = function(mart)
+protein_coding_genes = function(mart)
 {
-    protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
-                                              'ensembl_transcript_id',
-                                              'external_gene_name'),
-                                 filters = c('biotype'),
-                                 values = list('protein_coding'),
+    protein_coding_genes = getBM(attributes=c("ensembl_gene_id",
+                                              "ensembl_transcript_id",
+                                              "external_gene_name"),
+                                 filters = c("biotype"),
+                                 values = list("protein_coding"),
                                  mart=mart)
     colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')                             
     write.csv(protein_coding_genes,"genes.transcripts.csv",row.names = F)
     #colnames(protein_coding_genes)[2] = 'gene_name'
-    #genes might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
+    #gene names might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
     #write.table(unique(sort(protein_coding_genes[,1])),
     #            file="protein_coding_genes.list",
     #            quote=F,row.names=F,col.names=F)
@@ -155,31 +181,19 @@ get_protein_coding_genes = function(mart)
     #                             values = list('protein_coding',22),
     #                             mart=mart)
 }
-get_gene_descriptions = function(mart)
-{
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
-                                               'external_gene_name',
-                                               'description'),
-                                  
-                                  mart=mart)
-    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
-    
-    # attribute name_1006 is GO_term
-    # GO_term takes a while for all genes, demo with chrX
-    # filters = 'chromosome_name',
-    # values = 'X',
-}
+
 # ensemble_gene_id is a mouse strain specific ID
 # for protein coding genes
 get_gene_descriptions.mouse = function(mart)
 {
+    mart_mouse = init_mart_mouse()
     ensembl_w_description = getBM(attributes=c("mmusculus_homolog_ensembl_gene",
                                                "external_gene_name",
                                                "description"),
                                   filters=c("biotype"), 
                                   values=list("protein_coding"),
                                   
-                                  mart=mart)
+                                  mart=mart_mouse)
     colnames(ensembl_w_description)[1]="ensembl_gene_id"
     ensembl_w_description = ensembl_w_description[ensembl_w_description$ensembl_gene_id != "",]
     
@@ -189,6 +203,7 @@ get_gene_descriptions.mouse = function(mart)
     write.csv(ensembl_w_description,file="ensembl_w_description.mouse.csv",row.names=F)
 }
 
+# get coding and noncoding transcripts with their ensembl, refseq, ucsc IDs
 get_ensembl_refseq_transcript_ids = function(mart)
 {
     transcripts = getBM(attributes = c('ensembl_transcript_id','refseq_mrna','refseq_ncrna','ucsc'),
@@ -203,9 +218,8 @@ get_ensembl_refseq_transcript_ids = function(mart)
     
     # more info
     # external_transcript_name
-    # refseq_ncrna
-    # ucsc
 }
+
 # coordinates of protein coding genes (all genes), 
 # no duplicate record!
 protein_coding_genes_bed = function(mart)
@@ -237,21 +251,21 @@ protein_coding_genes_bed = function(mart)
                 "protein_coding_genes.bed",
                 sep="\t",quote=F,row.names=F,col.names=F)
 }
+
 # start and end of the gene, all exons
 # input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
 # output = bed file with coordinates = disease_panel.list.bed
 # output is not sorted please sort with bedtools or bash sort
-gene.coordinates = function(gene_list_file,mart)
+gene_coordinates = function(gene_list_csv,mart)
 {
-    #test:  
-    #gene_list_file = "protein_coding_genes.list"
-    
-    print("Input file:")
-    print(gene_list_file)
+    # test:  
+    # https://raw.githubusercontent.com/naumenko-sa/cre/master/data/lupus.csv
+    # gene_list_csv = "lupus.csv"
     
     #guess gene id type
-    gene_ids = read.table(gene_list_file,stringsAsFactors=F)
+    gene_ids = read.csv(gene_list_csv,stringsAsFactors=F)
     
+    #assumming that the first column is has ENSEMBL_GENE_IDs
     agene = gene_ids[1,1]
     
     if (grepl("ENSG",agene,fixed=T)){
@@ -263,7 +277,7 @@ gene.coordinates = function(gene_list_file,mart)
     genes = getBM(
         attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
         filters=c(filter),
-        values=gene_ids,
+        values=gene_ids[1],
         mart=mart)
     
     output_file_name = gsub(".txt",".bed",gene_list_file)
@@ -272,28 +286,6 @@ gene.coordinates = function(gene_list_file,mart)
     write.table(genes[c(2:5)],
                 output_file_name,
                 sep="\t",quote=F,row.names=F,col.names=F)
-}
-
-
-
-#use chromosomes because of biomart webservice's timeout
-get_exon_coordinates_chr = function(chromosome,mart)
-{
-    #test:
-    chromosome='X'
-    genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
-                                       'ensembl_exon_id','chromosome_name','exon_chrom_start',
-                                       'exon_chrom_end','genomic_coding_start','genomic_coding_end',
-                                       'external_gene_name'),
-          filters = c('chromosome_name'),
-          values = list(chromosome),
-          mart=mart)
-    
-    return(genes_for_chr)
-    
-    # what is exon_chrom_start, or genomic_coding_start?
-    # attributes = listAttributes(mart,what=c('name','description','fullDescription'))
-    # noncoding exons
 }
 
 # sometimes people want ccds genes, then use with_ccds
@@ -313,9 +305,9 @@ get_ccds_genes_chr = function(chromosome,mart)
     # ccds = ccds id
 }
 
-#LSP1 has exons on chr11 and chr13 - a bug
+#LSP1 corresponds to two genes and has exons on chr11 and chr13 - a bug - fixed in GRCH38
 #CKS1B: chr1 and chr5
-test_lsp1_gene = function()
+tutorial_lsp1_gene = function()
 {
     lsp1_bug=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id',
                                 'transcript_count','ensembl_exon_id',
@@ -327,19 +319,24 @@ test_lsp1_gene = function()
                   mart=mart)
 }
 
-get_sequence = function()
+#use chromosomes because of biomart webservice's timeout
+get_exon_coordinates_chr = function(chromosome,mart)
 {
-    #seq = getSequence(id="ENST00000357033",
-    #                  type="ensembl_transcript_id",
-    #                  seqType = "coding", mart=mart)
-    seq = getSequence(id="ENSG00000172062",
-                    type="ensembl_gene_id",
-                    seqType = "gene_exon_intron", 
-                    mart=mart)
-  
+    #test:
+    #chromosome='X'
+    genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
+                                       'ensembl_exon_id','chromosome_name','exon_chrom_start',
+                                       'exon_chrom_end','genomic_coding_start','genomic_coding_end',
+                                       'external_gene_name'),
+                        filters = c('chromosome_name'),
+                        values = list(chromosome),
+                        mart=mart)
     
-    write(">SMN1","SMN1.fasta")
-    write(seq$gene_exon_intron,"SMN1.fasta",append = T)
+    return(genes_for_chr)
+    
+    # what is exon_chrom_start, or genomic_coding_start?
+    # attributes = listAttributes(mart,what=c('name','description','fullDescription'))
+    # noncoding exons
 }
 
 #print genomic_coding and exclude UTRs
@@ -385,11 +382,12 @@ get_exon_coordinates = function(mart)
     
     exon_coordinates.bed.sorted = exon_coordinates.bed.no_weird_exons[order(chromosome_name,genomic_coding_start),]
     
-    exon_coordinates.bed.merged = bedr(input = list(i=exon_coordinates.bed.sorted),
-                                       method="merge",engine="bedtools",check.chr = F, check.zero.based = F,
-                                       params = "-c 4 -o distinct")
+    #library("bedr")
+    #exon_coordinates.bed.merged = bedr(input = list(i=exon_coordinates.bed.sorted),
+    #                                   method="merge",engine="bedtools",check.chr = F, check.zero.based = F,
+    #                                   params = "-c 4 -o distinct")
     
-    write.table(exon_coordinates.bed.merged,"coding.exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    #write.table(exon_coordinates.bed.merged,"coding.exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
     
     #IRanges: within a chromosome!
     #exon_coordinates.range = IRanges(start = genomic_coding_start,
@@ -413,6 +411,26 @@ get_exon_coordinates = function(mart)
     #    write.table(gene.bed,paste0(gene,".unsorted.bed"),sep='\t',quote=F,row.names=F,col.names=F)
     #}
     
+}
+
+tutorial_get_sequence = function()
+{
+    #seq = getSequence(id="ENST00000357033",
+    #                  type="ensembl_transcript_id",
+    #                  seqType = "coding", mart=mart)
+    seq = getSequence(id="ENSG00000172062",
+                      type="ensembl_gene_id",
+                      seqType = "gene_exon_intron", 
+                      mart=mart)
+    
+    
+    write(">SMN1","SMN1.fasta")
+    write(seq$gene_exon_intron,"SMN1.fasta",append = T)
+    
+    peptide = getSequence(id="ENSG00000172062",
+                          type=c("ensembl_gene_id"),
+                          seqType = "peptide", 
+                          mart=mart)
 }
 
 bedtools_sort_and_merge_example = function()
@@ -487,8 +505,10 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
     #PATCH gene
     #gene_name = 'ABBA01057584.1'
     #gene_name = 'SEPN1'
+    
     #a problematic gene, ENSEMBL returns it on HSCHR6_MHC_COX if you set biotype filter = protein_coding, it will return HSCHR6
     #gene_name='VARS2'
+    
     #has NA in CDS_length, does not have genomic coding start and end
     #gene_name="RMRP" 
     #gene_name="SDHAF2"
@@ -505,7 +525,7 @@ get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
                      #             biotype='protein_coding'),
                      
     
-    #remove transcripts placed on patches
+    #remove transcripts located on patches
     genes_info = genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
     #remove HSCHR - alleles
     genes_info = genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
