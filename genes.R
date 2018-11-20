@@ -1,4 +1,7 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
+# http://bioconductor.org/packages/release/bioc/html/biomaRt.html
+# https://www.bioconductor.org/packages/devel/bioc/vignettes/biomaRt/inst/doc/biomaRt.html
+
 installation = function()
 {
     source("http://bioconductor.org/biocLite.R")
@@ -7,48 +10,99 @@ installation = function()
     #install.packages(bedr)
     install.packages("dplyr")
 }
+
 init_mart_human = function()
 {
     library("biomaRt")    
-    library("readr")
+    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL",host="grch37.ensembl.org")
+    mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
+    return(mart)
+}
+
+tutorial_init_mart_human = function()
+{
+    library("biomaRt")    
+    #library("readr")
     #library(IRanges)
     #library(GenomicRanges)  
-    
     #library(bedr)
     
     listMarts()
     
     mart = useMart(biomart="ENSEMBL_MART_ENSEMBL",host="grch37.ensembl.org")
     
-    datasets=listDatasets(mart)
-  
+    datasets = listDatasets(mart)
+    
     mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
-  
-    attributes=listAttributes(mart)
-    filters=listFilters(mart)
-  
-    chromosomes = getBM(attributes=c("chromosome_name"),mart=mart)
+    
+    
+    attributes = listAttributes(mart)
+    
+    filters = listFilters(mart)
+    
+    chromosomes = getBM(attributes=c("chromosome_name"), mart = mart)
+    
+    genes = getBM(attributes=c("ensembl_gene_id", "external_gene_name", "chromosome_name"),
+                  filters = c("chromosome_name"),
+                  values = list("22"),
+                  mart = mart)
     
     return(mart)
-    
-    #mart_grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-    #datasets_grch38 = listDatasets(mart_grch38)
-    #grch38 = useDataset(mart_grch38,dataset="hsapiens_gene_ensembl")
-    #attributes_grch38=listAttributes(mart_grch38)
-    #filters_grch38=listFilters(mart_grch38)
 }
+
+init_mart_human_grch38 = function()
+{
+    library("biomaRt")    
+    mart_grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
+    datasets_grch38 = listDatasets(mart_grch38)
+    grch38 = useDataset(mart_grch38,dataset="hsapiens_gene_ensembl")
+    attributes_grch38=listAttributes(mart_grch38)
+    filters_grch38=listFilters(mart_grch38)
+    return(grch38)
+}
+
+tutorial_explore_attributes_and_filters = function()
+{
+    mart = init_mart_human()
+    
+    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
+    unique(attributes$page)
+    attributes = listAttributes(mart,"sequences",what = c("name","description","fullDescription","page"))
+    filters = listFilters(mart, c("name","description","fullDescription"))
+}
+
 # for mm10 = grcm38 reference
 init_mart_mouse = function()
 {
     library("biomaRt")    
-    library("readr")
+    listMarts()
     mart = useMart(biomart="ENSEMBL_MART_MOUSE")
     datasets=listDatasets(mart)
     mart = useDataset(mart,dataset="mc57bl6nj_gene_ensembl")
-    attributes=listAttributes(mart)
-    filters=listFilters(mart)
+    attributes=listAttributes(mart,what = c("name","description","fullDescription","page"))
+    unique(attributes$page)
+    filters=listFilters(mart,c("name","description","fullDescription"))
     return(mart)
 }
+
+tutorial_explore_marts = function()
+{
+    library("biomaRt")
+    listMarts()
+ 
+    mart = useMart(biomart="ENSEMBL_MART_SNP")
+    datasets = listDatasets(mart)
+    mart = useDataset(mart,dataset="hsapiens_snp")
+    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
+    listFilters(mart,what=c("name","description","options"))
+    
+    mart = useMart(biomart="ENSEMBL_MART_FUNCGEN")
+    datasets = listDatasets(mart)
+    mart = useDataset(mart,dataset="hsapiens_regulatory_feature")
+    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
+    filters = listFilters(mart,what=c("name","description","options"))
+}
+
 get_gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
 {
     #test
