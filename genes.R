@@ -30,12 +30,11 @@ tutorial_init_mart_human = function()
     
     listMarts()
     
-    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL",host="grch37.ensembl.org")
+    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org")
     
     datasets = listDatasets(mart)
     
     mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
-    
     
     attributes = listAttributes(mart)
     
@@ -120,7 +119,8 @@ tutorial_gene_descriptions = function(mart)
 {
     ensembl_w_description = getBM(attributes=c("ensembl_gene_id",
                                                "external_gene_name",
-                                               "description"),
+                                               "description",
+                                               "name_1006"),
                                   filters = c("chromosome_name"),
                                   values = list("X"),
                                   mart=mart)
@@ -131,7 +131,7 @@ tutorial_gene_descriptions = function(mart)
 # swissprot_id = 'P62701'
 gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
 {
-
+    swissprot_id = 'P62701'
     gene = getBM(attributes=c('ensembl_gene_id','external_gene_name','uniprotswissprot'),
                                filters = c('uniprotswissprot'),
                                values = swissprot_id,
@@ -153,7 +153,7 @@ refseq_transcripts = function(mart)
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
-protein_coding_genes = function(mart)
+get_protein_coding_genes = function(mart)
 {
     protein_coding_genes = getBM(attributes=c("ensembl_gene_id",
                                               "ensembl_transcript_id",
@@ -161,7 +161,7 @@ protein_coding_genes = function(mart)
                                  filters = c("biotype"),
                                  values = list("protein_coding"),
                                  mart=mart)
-    colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')                             
+    colnames(protein_coding_genes) = c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')                             
     write.csv(protein_coding_genes,"genes.transcripts.csv",row.names = F)
     #colnames(protein_coding_genes)[2] = 'gene_name'
     #gene names might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
@@ -316,7 +316,7 @@ tutorial_lsp1_gene = function()
                                 'genomic_coding_end','external_gene_name'),
                   filters = c('external_gene_name'),
                   values = list('LSP1'),
-                  mart=mart)
+                  mart=mart_grch38)
 }
 
 #use chromosomes because of biomart webservice's timeout
@@ -455,8 +455,8 @@ get_ensembl_gene_ids_by_gene_names = function(v_gene_names, keep_duplicates = F)
   
     # test:
     # v_gene_names_file = "omim.gene.list"
-    ensembl_genes = getBM(attributes=c('ensembl_gene_id','external_gene_name'),
-              filters=c('external_gene_name'),
+    ensembl_genes = getBM(attributes=c("ensembl_gene_id","external_gene_name"),
+              filters=c("external_gene_name"),
               values=v_gene_names,
               mart=mart)
     
@@ -617,7 +617,7 @@ get_omim_orphanet_exon_coordinates = function()
 
 main=function()
 {
-    setwd("~/Desktop/work")
-    mart=init_mart()
-    get_exon_coordinates_for_canonical_isoform("DMD",mart)
+    #setwd("~/Desktop/work")
+    #mart=init_mart()
+    #get_exon_coordinates_for_canonical_isoform("DMD",mart)
 }
