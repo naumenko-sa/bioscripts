@@ -12,12 +12,11 @@
 #PBS -d .
 #PBS -l vmem=21g
 
-#wants java1.8
-module load java
+# wants java1.8
 
 BAMSTATS_PATH=/hpf/largeprojects/ccmbio/naumenko/tools/jvarkit/dist
 
-#if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
+# if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
 
 java -Xmx10G -jar ${BAMSTATS_PATH}/bamstats05.jar \
     -B $bed \

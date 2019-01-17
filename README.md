@@ -75,6 +75,10 @@ bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Ru
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
 
+# Coverage
+* bam.coverage.bamstats05.sh - very quick coverage calculation for a bam and a bed file with bamstats05
+* bam.coverage.sh - slow base-wise coverage calculation with bedtools + median coverage statistics
+
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler.
 See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
