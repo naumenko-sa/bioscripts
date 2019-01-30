@@ -19,17 +19,25 @@ overview <- function(){
     
     samples(header(vcf))
     
-    #genomic positions
+    #genomic positions - genomic ranges
     length(rowRanges(vcf))
+    gr <- rowRanges(vcf)
+    # extract first 10 variants
+    gr[1:10,c("QUAL","FILTER")]
+    gr$QUAL
+    df <- as.data.frame(values(gr))
     
+    #access functions
     alt(vcf)
     qual(vcf)
     ref(vcf)
     
     #genotype data
     geno(vcf)
-    genotypes <- geno(vcf)$GT
+    genotypes <- as.data.frame(geno(vcf)$GT)
     nrow(genotypes)
+    
+    HG00096_HOM <- genotypes[genotypes$HG00096 == "1|1",]
     
     #info data = variant wise
     info(header(vcf))
@@ -78,5 +86,14 @@ personal_genome <- function(){
     genotypes <- geno(vcf_subset)$GT
     nrow(genotypes)
     
-    info(vcf_subset)[1:4, 1:9]
+    info(header(vcf_subset))
+    
+    #gr <- head(rowRanges(vcf_subset),100)
+    gr <- rowRanges(vcf_subset)
+    df <- data.frame(chr = seqnames(gr),
+                     pos = start(gr))
+    df <- cbind(df,gr$REF)
+    df <- cbind(df,gr$ALT)
+    df <- cbind(df,gr$QUAL)
+    df <- cbind(df,gr$FILTER)
 }
