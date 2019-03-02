@@ -1,48 +1,43 @@
 # biomart wrappers to get gene,transcript,exons annotations from ENSEMBL
 # http://bioconductor.org/packages/release/bioc/html/biomaRt.html
 # https://www.bioconductor.org/packages/devel/bioc/vignettes/biomaRt/inst/doc/biomaRt.html
-
-installation = function()
-{
-    source("http://bioconductor.org/biocLite.R")
-    #lib = "~/R")
-    biocLite("biomaRt")
+installation <- function(){
+    # source("http://bioconductor.org/biocLite.R")
+    # biocLite("biomaRt")
+    # lib = "~/R")
+    if (!requireNamespace("BiocManager", quietly = TRUE))
+        install.packages("BiocManager")
+    BiocManager::install("biomaRt", version = "3.8")
+    
     #install.packages(bedr)
-    install.packages("dplyr")
-    install.packages("bedr")
+    #install.packages("dplyr")
+    #install.packages("bedr")
 }
 
-init_mart_human = function()
-{
-    library("biomaRt")    
-    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL",host="grch37.ensembl.org")
-    mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
+init_mart_human <- function(){
+    library(biomaRt)    
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = "grch37.ensembl.org")
+    mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     return(mart)
 }
 
-tutorial_init_mart_human = function()
-{
-    library("biomaRt")    
+tutorial_init_mart_human <- function(){
+    library(biomaRt)    
     #library("readr")
     #library(IRanges)
     #library(GenomicRanges)  
     #library(bedr)
     
     listMarts()
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = "grch37.ensembl.org")
+    datasets <- listDatasets(mart)
+    mart <- useDataset(mart, dataset="hsapiens_gene_ensembl")
+    attributes <- listAttributes(mart)
+    filters <- listFilters(mart)
     
-    mart = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org")
+    chromosomes <- getBM(attributes = c("chromosome_name"), mart = mart)
     
-    datasets = listDatasets(mart)
-    
-    mart = useDataset(mart,dataset="hsapiens_gene_ensembl")
-    
-    attributes = listAttributes(mart)
-    
-    filters = listFilters(mart)
-    
-    chromosomes = getBM(attributes=c("chromosome_name"), mart = mart)
-    
-    genes = getBM(attributes=c("ensembl_gene_id", "external_gene_name", "chromosome_name"),
+    genes <- getBM(attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name"),
                   filters = c("chromosome_name"),
                   values = list("22"),
                   mart = mart)
@@ -50,119 +45,113 @@ tutorial_init_mart_human = function()
     return(mart)
 }
 
-init_mart_human_grch38 = function()
-{
-    library("biomaRt")    
-    mart_grch38 = useMart(biomart="ENSEMBL_MART_ENSEMBL", dataset="hsapiens_gene_ensembl")
-    datasets_grch38 = listDatasets(mart_grch38)
-    grch38 = useDataset(mart_grch38,dataset="hsapiens_gene_ensembl")
-    attributes_grch38=listAttributes(mart_grch38)
-    filters_grch38=listFilters(mart_grch38)
+tutorial_init_mart_human_grch38 <- function(){
+    library(biomaRt)    
+    mart_grch38 <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", dataset = "hsapiens_gene_ensembl")
+    datasets_grch38 <- listDatasets(mart_grch38)
+    grch38 <- useDataset(mart_grch38, dataset = "hsapiens_gene_ensembl")
+    attributes_grch38 <- listAttributes(mart_grch38)
+    filters_grch38 <- listFilters(mart_grch38)
     return(grch38)
 }
 
-tutorial_explore_attributes_and_filters = function()
-{
-    mart = init_mart_human()
+tutorial_explore_attributes_and_filters <- function(){
+    mart <- init_mart_human()
     
-    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
+    attributes <- listAttributes(mart, 
+                                 what = c("name", "description", "fullDescription", "page"))
     unique(attributes$page)
-    attributes = listAttributes(mart,"sequences",what = c("name","description","fullDescription","page"))
-    filters = listFilters(mart, c("name","description","fullDescription"))
+    attributes <- listAttributes(mart, "sequences", 
+                                 what = c("name", "description", "fullDescription", "page"))
+    filters <- listFilters(mart, c("name", "description", "fullDescription"))
 }
 
 # for mm10 = grcm38 reference
-init_mart_mouse = function()
-{
-    library("biomaRt")    
+init_mart_mouse <- function(){
+    library(biomaRt)    
     listMarts()
-    mart = useMart(biomart="ENSEMBL_MART_MOUSE")
-    datasets=listDatasets(mart)
-    mart = useDataset(mart,dataset="mc57bl6nj_gene_ensembl")
-    attributes=listAttributes(mart,what = c("name","description","fullDescription","page"))
+    mart <- useMart(biomart = "ENSEMBL_MART_MOUSE")
+    datasets <- listDatasets(mart)
+    mart <- useDataset(mart, dataset = "mc57bl6nj_gene_ensembl")
+    attributes <- listAttributes(mart, what = c("name", "description", "fullDescription", "page"))
     unique(attributes$page)
-    filters=listFilters(mart,c("name","description","fullDescription"))
+    filters <- listFilters(mart, c("name", "description", "fullDescription"))
     return(mart)
 }
 
-tutorial_explore_marts = function()
-{
-    library("biomaRt")
+tutorial_explore_marts <- function(){
+    library(biomaRt)
     listMarts()
  
-    mart = useMart(biomart="ENSEMBL_MART_SNP")
-    datasets = listDatasets(mart)
-    mart = useDataset(mart,dataset="hsapiens_snp")
-    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
-    listFilters(mart,what=c("name","description","options"))
+    mart <- useMart(biomart = "ENSEMBL_MART_SNP")
+    datasets <- listDatasets(mart)
+    mart <- useDataset(mart, dataset = "hsapiens_snp")
+    attributes <- listAttributes(mart, what = c("name", "description", "fullDescription", "page"))
+    listFilters(mart, what = c("name", "description", "options"))
     
-    mart = useMart(biomart="ENSEMBL_MART_FUNCGEN")
-    datasets = listDatasets(mart)
-    mart = useDataset(mart,dataset="hsapiens_regulatory_feature")
-    attributes = listAttributes(mart,what = c("name","description","fullDescription","page"))
-    filters = listFilters(mart,what=c("name","description","options"))
+    mart <- useMart(biomart = "ENSEMBL_MART_FUNCGEN")
+    datasets <- listDatasets(mart)
+    mart <- useDataset(mart, dataset = "hsapiens_regulatory_feature")
+    attributes <- listAttributes(mart, what = c("name", "description", "fullDescription", "page"))
+    filters <- listFilters(mart, what = c("name", "description", "options"))
 }
 
-gene_descriptions = function(mart)
-{
-    ensembl_w_description = getBM(attributes=c('ensembl_gene_id',
-                                               'external_gene_name',
-                                               'description'),
-                                  
-                                  mart=mart)
-    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
+gene_descriptions <- function(mart){
+    #mart <- init_mart_human()
+    ensembl_w_description <- getBM(attributes = c("ensembl_gene_id",
+                                                  "external_gene_name",
+                                                  "description"),
+                                   mart = mart)
+    write.csv(ensembl_w_description, file="ensembl_w_description.csv", row.names = F)
 }
 
 # attribute name_1006 is GO_term
 # GO_term takes a while for all genes, demo with chrX
-tutorial_gene_descriptions = function(mart)
-{
-    ensembl_w_description = getBM(attributes=c("ensembl_gene_id",
+tutorial_gene_descriptions_w_go_term <- function(mart){
+    ensembl_w_description <- getBM(attributes=c("ensembl_gene_id",
                                                "external_gene_name",
                                                "description",
                                                "name_1006"),
                                   filters = c("chromosome_name"),
                                   values = list("X"),
-                                  mart=mart)
-    write.csv(ensembl_w_description,file="ensembl_w_description.csv",row.names=F)
+                                  mart = mart)
+    write.csv(ensembl_w_description, file="ensembl_w_description.csv", row.names=F)
 }
 
 # test
 # swissprot_id = 'P62701'
-gene_name_by_uniprotswissprotid = function(mart,swissprot_id)
-{
-    swissprot_id = 'P62701'
-    gene = getBM(attributes=c('ensembl_gene_id','external_gene_name','uniprotswissprot'),
-                               filters = c('uniprotswissprot'),
+gene_name_by_uniprotswissprotid <- function(mart, swissprot_id){
+    swissprot_id <- "P62701"
+    gene <- getBM(attributes = c("ensembl_gene_id", "external_gene_name", "uniprotswissprot"),
+                               filters = c("uniprotswissprot"),
                                values = swissprot_id,
-                               mart=mart)
+                               mart = mart)
     return(gene$external_gene_name)
 }
 
-refseq_transcripts = function(mart)
-{    
-    protein_coding_genes = getBM(attributes=c("ensembl_gene_id",
-                                               "refseq_mrna",
-                                               "external_gene_name"),
-                                  filters = c("biotype","external_gene_name"),
-                                  values = list('protein_coding',"MUC19"),
-                                  mart=mart)
-    colnames(protein_coding_genes)=c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')         
-    protein_coding_genes = protein_coding_genes[protein_coding_genes$Ensembl_transcript_id!='',]
-    write.csv(protein_coding_genes,"refseq.predicted.genes.transcripts.csv",row.names = F)
+refseq_transcripts <- function(mart){    
+    protein_coding_genes <- getBM(attributes = c("ensembl_gene_id",
+                                                 "refseq_mrna",
+                                                 "external_gene_name"),
+                                  filters = c("biotype"),
+                                  values = list("protein_coding"),
+                                  mart = mart)
+    colnames(protein_coding_genes) <- c("Ensembl_gene_id", "Refseq_transcript_id", "external_gene_name")
+    protein_coding_genes <- protein_coding_genes[protein_coding_genes$Refseq_transcript_id!='',]
+    write.csv(protein_coding_genes, "refseq_transcripts.csv", row.names = F)
 }
 
 # writes a list of external_gene_names to protein_codin_genes.list
-get_protein_coding_genes = function(mart)
-{
-    protein_coding_genes = getBM(attributes=c("ensembl_gene_id",
+get_protein_coding_genes <- function(mart){
+    protein_coding_genes <- getBM(attributes = c("ensembl_gene_id",
                                               "ensembl_transcript_id",
                                               "external_gene_name"),
                                  filters = c("biotype"),
                                  values = list("protein_coding"),
-                                 mart=mart)
-    colnames(protein_coding_genes) = c('Ensembl_gene_id','Ensembl_transcript_id','external_gene_name')                             
-    write.csv(protein_coding_genes,"genes.transcripts.csv",row.names = F)
+                                 mart = mart)
+    colnames(protein_coding_genes) = c("Ensembl_gene_id", "Ensembl_transcript_id",
+                                       "external_gene_name")                             
+    write.csv(protein_coding_genes, "genes.transcripts.csv", row.names = F)
     #colnames(protein_coding_genes)[2] = 'gene_name'
     #gene names might be not unique - polymorphic regions like NCR3 gene, or bugs like CLN3
     #write.table(unique(sort(protein_coding_genes[,1])),
@@ -174,24 +163,23 @@ get_protein_coding_genes = function(mart)
     #filterOptions('biotype',mart)
     #attributePages(mart)
     
-    #protein_coding_genes = getBM(attributes=c('ensembl_gene_id',
-    #                                          'external_gene_name',
-    #                                          'chromosome_name'),
-    #                             filters = c('biotype','chromosome_name'),
-    #                             values = list('protein_coding',22),
-    #                             mart=mart)
+    #protein_coding_genes <- getBM(attributes = c("ensembl_gene_id",
+    #                                             "external_gene_name",
+    #                                             "chromosome_name"),
+    #                             filters = c("biotype", "chromosome_name"),
+    #                             values = list("protein_coding",22),
+    #                             mart = mart)
 }
 
 # ensemble_gene_id is a mouse strain specific ID
 # for protein coding genes
-get_gene_descriptions.mouse = function(mart)
-{
-    mart_mouse = init_mart_mouse()
-    ensembl_w_description = getBM(attributes=c("mmusculus_homolog_ensembl_gene",
+get_gene_descriptions.mouse <- function(mart){
+    mart_mouse <- init_mart_mouse()
+    ensembl_w_description <- getBM(attributes = c("mmusculus_homolog_ensembl_gene",
                                                "external_gene_name",
                                                "description"),
-                                  filters=c("biotype"), 
-                                  values=list("protein_coding"),
+                                  filters = c("biotype"), 
+                                  values = list("protein_coding"),
                                   
                                   mart=mart_mouse)
     colnames(ensembl_w_description)[1]="ensembl_gene_id"
@@ -204,15 +192,15 @@ get_gene_descriptions.mouse = function(mart)
 }
 
 # get coding and noncoding transcripts with their ensembl, refseq, ucsc IDs
-get_ensembl_refseq_transcript_ids = function(mart)
-{
-    transcripts = getBM(attributes = c('ensembl_transcript_id','refseq_mrna','refseq_ncrna','ucsc'),
-                               mart=mart,
-                               filters = 'chromosome_name',
-                               values = 'X')
+get_ensembl_refseq_transcript_ids <- function(mart){
+    transcripts <- getBM(attributes = c("ensembl_transcript_id", "refseq_mrna", "refseq_ncrna",
+                                        "ucsc", "external_gene_name", "external_transcript_name"),
+                               mart = mart,
+                               filters = "chromosome_name",
+                               values = "X")
                                
-    ensembl_refseq = transcripts[transcripts$refseq_mrna!='',]
-    write.table(ensemble_refseq,file="ensembl_refseq.txt",quote=F,row.names=F,sep="\t")
+    ensembl_refseq <- transcripts[transcripts$refseq_mrna!='',]
+    write.csv(ensembl_refseq,file="ensembl_refseq.csv", quote=F, row.names=F)
     
     return(ensembl_refseq)
     
@@ -222,8 +210,7 @@ get_ensembl_refseq_transcript_ids = function(mart)
 
 # coordinates of protein coding genes (all genes), 
 # no duplicate record!
-protein_coding_genes_bed = function(mart)
-{
+protein_coding_genes_bed = function(mart){
     genes_info=getBM(attributes=c("chromosome_name","start_position","end_position","external_gene_name",
                                   "ensembl_gene_id"),
                      filters=c("biotype"), 
@@ -256,49 +243,56 @@ protein_coding_genes_bed = function(mart)
 # input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
 # output = bed file with coordinates = disease_panel.list.bed
 # output is not sorted please sort with bedtools or bash sort
-gene_coordinates = function(gene_list_csv,mart)
-{
+gene_coordinates <- function(gene_list_csv, mart){
     # test:  
     # https://raw.githubusercontent.com/naumenko-sa/cre/master/data/lupus.csv
-    # gene_list_csv = "lupus.csv"
+    # gene_list_csv <- "lupus.csv"
+    gene_list_csv <- "immunodeficiency.csv"
     
     #guess gene id type
-    gene_ids = read.csv(gene_list_csv,stringsAsFactors=F)
+    gene_ids <- read.csv(gene_list_csv, stringsAsFactors = F)
     
     #assumming that the first column is has ENSEMBL_GENE_IDs
-    agene = gene_ids[1,1]
+    agene <- gene_ids[1,1]
     
-    if (grepl("ENSG",agene,fixed=T)){
-        filter = 'ensembl_gene_id'
+    if (grepl("ENSG", agene, fixed=T)){
+        filter = "ensembl_gene_id"
     }else{
-        filter = 'external_gene_name'
+        filter = "external_gene_name"
     }
         
-    genes = getBM(
-        attributes=c('ensembl_gene_id','chromosome_name','start_position','end_position','external_gene_name'),
-        filters=c(filter),
-        values=gene_ids[1],
-        mart=mart)
+    genes <- getBM(
+        attributes = c("ensembl_gene_id", "chromosome_name", "start_position", "end_position",
+                       "external_gene_name"),
+        filters = c(filter),
+        values = gene_ids[1],
+        mart = mart)
     
-    output_file_name = gsub(".txt",".bed",gene_list_file)
+    output_file_name <- gsub(".csv",".bed", gene_list_csv)
+    
     print("Output file:")
     print(output_file_name)
-    write.table(genes[c(2:5)],
+    genes_bed <- genes[c(2:5)]
+    genes_bed <- genes_bed[order(genes_bed$chromosome_name,genes_bed$start_position),]
+
+    # for the assignment!!! = reference hg19 not grch37
+    # genes_bed$chromosome_name <- paste0("chr",genes_bed$chromosome_name)
+    
+    write.table(genes_bed,
                 output_file_name,
-                sep="\t",quote=F,row.names=F,col.names=F)
+                sep="\t", quote=F, row.names=F, col.names=F)
 }
 
 # sometimes people want ccds genes, then use with_ccds
 # https://www.ncbi.nlm.nih.gov/projects/CCDS/CcdsBrowse.cgi
 # some genes don't have CCDS while they are coding, i.e. B4GALT1, ISPD, LARGE
-get_ccds_genes_chr = function(chromosome,mart)
-{
+get_ccds_genes_chr <- function(chromosome, mart){
     #test
-    #chromosome = 'X'
-    ccds_genes_chr = getBM(attributes=c('ensembl_gene_id'),
-                     filters=c('chromosome_name','with_ens_hs_translation'),
-                     values=list(chromosome,T),
-                     mart=mart)
+    chromosome <- "X"
+    ccds_genes_chr <- getBM(attributes = c("ensembl_gene_id"),
+                     filters = c("chromosome_name","with_ens_hs_translation"),
+                     values = list(chromosome, T),
+                     mart = mart)
     
     return(ccds_genes_chr)
     
@@ -307,24 +301,25 @@ get_ccds_genes_chr = function(chromosome,mart)
 
 #LSP1 corresponds to two genes and has exons on chr11 and chr13 - a bug - fixed in GRCH38
 #CKS1B: chr1 and chr5
-tutorial_lsp1_gene = function()
-{
-    lsp1_bug=getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id',
+tutorial_lsp1_gene <- function(){
+    mart <- init_mart_human()
+    mart_grch38 <- tutorial_init_mart_human_grch38()
+    lsp1_bug <- getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id',
                                 'transcript_count','ensembl_exon_id',
                                 'chromosome_name','exon_chrom_start',
                                 'exon_chrom_end','genomic_coding_start',
                                 'genomic_coding_end','external_gene_name'),
                   filters = c('external_gene_name'),
                   values = list('LSP1'),
-                  mart=mart_grch38)
+                  mart=mart)
+                  #mart=mart_grch38)
 }
 
 #use chromosomes because of biomart webservice's timeout
-get_exon_coordinates_chr = function(chromosome,mart)
-{
-    #test:
-    #chromosome='X'
-    genes_for_chr=getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
+get_exon_coordinates_chr <- function(chromosome, mart){
+    # test:
+    # chromosome='X'
+    genes_for_chr <- getBM(attributes = c('ensembl_gene_id','ensembl_transcript_id','transcript_count',
                                        'ensembl_exon_id','chromosome_name','exon_chrom_start',
                                        'exon_chrom_end','genomic_coding_start','genomic_coding_end',
                                        'external_gene_name'),
@@ -340,47 +335,45 @@ get_exon_coordinates_chr = function(chromosome,mart)
 }
 
 #print genomic_coding and exclude UTRs
-get_exon_coordinates = function(mart)
-{
+get_exon_coordinates <- function(mart){
     #18710 genes
-    exon_coordinates=get_exon_coordinates_chr(1,mart)
+    exon_coordinates <- get_exon_coordinates_chr(1, mart)
     # MT is problematic in ccds
     # ~5 minutes for all chromosomes
-    for (chr in c(seq(2,22),'X','Y'))
-    {
+    for (chr in c(seq(2,22),'X','Y')){
         print(chr)
         buffer = get_exon_coordinates_chr(chr,mart)
         exon_coordinates=rbind(buffer,exon_coordinates)
     }
     
     #remove noncoding exons
-    exon_coordinates=na.omit(exon_coordinates)
+    exon_coordinates <- na.omit(exon_coordinates)
     
-    write.table(exon_coordinates,"coding.exons.txt",quote=F,row.names=F,col.names=F)
-    write.table(unique(exon_coordinates$ensembl_gene_id),"coding.genes.enseml_ids",quote=F,row.names=F,col.names=F)
+    write.table(exon_coordinates, "coding.exons.txt", quote=F, row.names=F, col.names=F)
+    write.table(unique(exon_coordinates$ensembl_gene_id), "coding.genes.enseml_ids", quote=F,row.names=F, col.names=F)
     
     #it is neither sorted not merged!
-    exon_coordinates.bed.unsorted = subset(exon_coordinates,
-                                  select = c('chromosome_name',
-                                             'genomic_coding_start',
-                                             'genomic_coding_end',
-                                             'external_gene_name'))
-    write.table(exon_coordinates.bed.unsorted,"coding.exons.bed",sep="\t",quote=F,row.names=F,col.names=F)
+    exon_coordinates.bed.unsorted <- subset(exon_coordinates,
+                                  select = c("chromosome_name",
+                                             "genomic_coding_start",
+                                             "genomic_coding_end",
+                                             "external_gene_name"))
+    write.table(exon_coordinates.bed.unsorted, "coding.exons.bed", 
+                sep="\t", quote=F, row.names=F, col.names=F)
     #in bash:
     #cat coding.exons.bed | sort -k1,1 -k2,2n > coding.exons.sorted.bed
     #bedtools merge -i coding.exons.bed.sorted -c 4 -o distinct > coding.exons.merged.bed
     
     attach(exon_coordinates.bed.unsorted)
-    weird_1bp_exons = exon_coordinates.bed.unsorted[genomic_coding_start == genomic_coding_end,]
+    weird_1bp_exons <- exon_coordinates.bed.unsorted[genomic_coding_start == genomic_coding_end,]
     
-    exon_coordinates.bed.no_weird_exons = exon_coordinates.bed.unsorted[genomic_coding_start != genomic_coding_end,]
+    exon_coordinates.bed.no_weird_exons <- exon_coordinates.bed.unsorted[genomic_coding_start != genomic_coding_end,]
     
-    exon_coordinates.bed.no_weird_exons = transform(exon_coordinates.bed.no_weird_exons,
+    exon_coordinates.bed.no_weird_exons <- transform(exon_coordinates.bed.no_weird_exons,
                                                     chromosome_name = as.character(chromosome_name))
     
     attach(exon_coordinates.bed.no_weird_exons)
-    
-    exon_coordinates.bed.sorted = exon_coordinates.bed.no_weird_exons[order(chromosome_name,genomic_coding_start),]
+    exon_coordinates.bed.sorted <- exon_coordinates.bed.no_weird_exons[order(chromosome_name,genomic_coding_start),]
     
     #library("bedr")
     #exon_coordinates.bed.merged = bedr(input = list(i=exon_coordinates.bed.sorted),
@@ -433,8 +426,7 @@ tutorial_get_sequence = function()
                           mart=mart)
 }
 
-bedtools_sort_and_merge_example = function()
-{
+bedtools_sort_and_merge_example <- function(){
   # installation:
   # install bedtools and bedops and put them to your PATH
   # http://bedtools.readthedocs.io/en/latest/content/installation.html
@@ -442,7 +434,7 @@ bedtools_sort_and_merge_example = function()
   # documentation:
   # https://cran.r-project.org/web/packages/bedr/bedr.pdf
   
-  index=get.example.regions()
+  index <- get.example.regions()
   a = index[[1]]
   a.sorted = bedr(engine="bedtools",input = list(i=a), method="sort", params="")
   a.merged = bedr(engine="bedtools",input = list(i=a.sorted), method="merge", params="")
@@ -498,8 +490,7 @@ get_external_gene_names = function(gene_list_file)
 # ENSG00000261109 
 # this is a slow function, use it for individual genes/gene panels, when every exon is needed
 # for bulk coverage analysis use the function above
-get_exon_coordinates_for_canonical_isoform = function(gene_name,mart)
-{
+get_exon_coordinates_for_canonical_isoform <- function(gene_name, mart){
     #gene_name='HNRNPDL'
     #gene_name = 'PLEC'
     #PATCH gene
@@ -615,8 +606,7 @@ get_omim_orphanet_exon_coordinates = function()
   
 }
 
-main=function()
-{
+main <- function(){
     #setwd("~/Desktop/work")
     #mart=init_mart()
     #get_exon_coordinates_for_canonical_isoform("DMD",mart)
