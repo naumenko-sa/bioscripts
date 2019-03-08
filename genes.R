@@ -271,7 +271,7 @@ get_gene_coordinates_by_ensembl_gene_id <- function(v_ensembl_gene_ids, mart){
         values = v_ensembl_gene_ids,
         mart = mart)
     
-    genes_bed <- genes[c(2:4)]
+    genes_bed <- as_tibble(genes[c(2:4)])
     
     genes_bed <- genes_bed %>% 
                     filter(str_detect(chromosome_name, "PATCH", negate = T)) %>% 
@@ -294,8 +294,12 @@ phenotips_hpo2gene_coordinates <- function(args){
     hpo_genes.missing_ensg <- filter(hpo_genes, str_detect(`Gene ID`, "ENSG", negate = T))
     
     cat("Genes:\n")
-    print(hpo_genes.missing_ensg$`Gene ID`)
+    print(sort(hpo_genes.missing_ensg$`Gene ID`))
     cat("are missing ensembl_gene_id, please add corresponding intervals manually to the bed file\n")
+    cat("Some genes are listed in ~/cre/data/missing_genes_grch37.bed\n")
+    missing_genes <- read_tsv("~/cre/data/missing_genes_grch37.bed")
+    options(tibble.print_max = Inf)
+    print(arrange(missing_genes, gene))
     
     hpo_genes <- hpo_genes %>% filter(str_detect(`Gene ID`, "ENSG")) 
     v_ensembl_gene_ids <- hpo_genes$`Gene ID`
@@ -308,7 +312,7 @@ phenotips_hpo2gene_coordinates <- function(args){
     cat(paste0("Writing gene intervals including UTRs to", output_file_name,"\n"))
     cat("Please sort and merge bed file with bedtools before using in HPC pipelines\n")
     #bedtools does not like bed headers
-    write_tsv(tail(hpo_genes_bed,-1), output_file_name, col_names = F)
+    write_tsv(hpo_genes_bed, output_file_name, col_names = F)
 }
     
 
