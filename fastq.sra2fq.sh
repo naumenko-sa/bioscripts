@@ -9,8 +9,9 @@
 [ -z $sample ] && sample=$2
 
 module load sratoolkit
-#download and convert in one go
-fastq-dump -I --gzip --split-files $srr
+# download and convert in one go
+# don't use -I - it causes bwa mem to failure as it required identical read names
+fastq-dump --gzip --split-files $srr
 #$sample.sra
 
 mv ${srr}_1.fastq.gz ${sample}_1.fq.gz
