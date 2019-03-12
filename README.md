@@ -1,22 +1,18 @@
-# Outline
-
-|By subject |By project|
+|By subject |[By project](https://github.com/naumenko-sa/bioscripts#by-project)|
 |---|---|
-|* [Alignment](https://github.com/naumenko-sa/bioscripts#alignment)||
-|* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)||
-|* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
-|* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
-|* [MISC](https://github.com/naumenko-sa/bioscripts#misc)||
-|* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
-|* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)||
-|* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
-|* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
-
-
-[By project](https://github.com/naumenko-sa/bioscripts#by-project)
+|[Alignment](https://github.com/naumenko-sa/bioscripts#alignment)||
+|[Articles and resources](https://github.com/naumenko-sa/bioscripts#articles-and-resources)||
+|[Annotation](https://github.com/naumenko-sa/bioscripts#annotation)||
+|[bam, cram, bed, fastq](https://github.com/naumenko-sa/bioscripts#bam-cram-bed-fastq)||
+|[Coverage](https://github.com/naumenko-sa/bioscripts#coverage)||
+|[Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
+|[Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
+|[MISC](https://github.com/naumenko-sa/bioscripts#misc)||
+|[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
+|[Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
+|[Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
 
 # Alignment
-
 * [Jim Kent's utils UCSC](http://hgdownload.soe.ucsc.edu/admin/exe/)
 * [Synteny maps](http://www.agcol.arizona.edu/software/symap/)
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
@@ -50,11 +46,9 @@
 * [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of D.melanogaster and D.simulans.
 
 # Annotation
-
 * [genes.R](../master/genes.R) - various ENSEMBL annotations from biomaRt
 
-# Fastq, bam, cram, bed
-
+# bam, cram, bed, fastq
 * [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
 * [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
 * [fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
@@ -192,7 +186,6 @@ variant calling pipeline outputs variants in gemini format.
 * [List of journals for the journal/article club](../master/journals.md)
 
 # By project
-
 ## 6. RNA-seq in Mendelian muscle diseases [2016-2018]
 * Developed into [crt](https://github.com/naumenko-sa/crt)
 * Published in [AJHG](https://www.sciencedirect.com/science/article/pii/S0002929719300126)
