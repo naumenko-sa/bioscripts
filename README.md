@@ -2,16 +2,15 @@
 
 |By subject |By project|
 |---|---|
-|* [Alignment](https://github.com/naumenko-sa/bioscripts#alignment)
-* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)
-* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)
-* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)
-* [MISC](https://github.com/naumenko-sa/bioscripts#misc)
-* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)
-* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)
-* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)
-* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)  
-|  |
+|* [Alignment](https://github.com/naumenko-sa/bioscripts#alignment)||
+* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)||
+* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
+* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
+* [MISC](https://github.com/naumenko-sa/bioscripts#misc)||
+* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
+* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)||
+* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
+* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
 
 
 [By project](https://github.com/naumenko-sa/bioscripts#by-project)
@@ -194,11 +193,9 @@ variant calling pipeline outputs variants in gemini format.
 
 # By project
 
-## 6. RNA-seq in Mendelian Muscler diseases [2016-2018]
+## 6. RNA-seq in Mendelian muscle diseases [2016-2018]
 * Developed into [crt](https://github.com/naumenko-sa/crt)
 * Published in [AJHG](https://www.sciencedirect.com/science/article/pii/S0002929719300126)
-
----
 
 ## 5. [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia) [2016]
 * Continued by [Alper Celik](https://github.com/celalp)
@@ -219,14 +216,12 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 8. gemini.gemini2report.R again, to add information about C4R frequencies.
 9. [cheo.filtered_vcf.sh](../master/cheo.filtered_vcf.sh) prepares filtered vcf file corresponding to excel report.
 
----
-## 3. Gammaruses [2012-]
+## 3. Gammarus [2012-2016]
 * [gam.filter.sh](../master/gam.filter.sh) - filters reads
 * gam.blastp.pbs, gam.blastp.sh - blastp for othomcl
 * [gam.ortho.sh](../master/gam.ortho.sh) - orthologization of transcript with orthomcl
 * [gam.orthomcl.make_alignments.pl](../master/gam.orthomcl.make_alignments.pl) - writes fasta alignments for N species (1:1 orthologs) after orthomcl
----
 
 ## 2. Spectrum [2010-2012]
----
+
 ## 1. Reversals [2009-2012]
