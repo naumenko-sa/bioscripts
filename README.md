@@ -64,15 +64,15 @@
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
 * [bam.sort.sh](../master/bam.sort.sh) - sorts a bam file before calculating coverage.
-* [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data into the basespace cloud.
-bs utility allows to access this data from HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
-* [bcl2fastq.sh](../master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
+* [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data to basespace cloud.
+bs utility copies data from cloud to HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
+* [bcl2fastq.sh](https://github.com/naumenko-sa/cre/blob/master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
 * [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
 
 # Coverage
-* bam.coverage.bamstats05.sh - very quick coverage calculation for a bam and a bed file with bamstats05
-* bam.coverage.sh - slow base-wise coverage calculation with bedtools + median coverage statistics
+* [bam.coverage.bamstats05.sh](https://github.com/naumenko-sa/bioscripts/blob/master/scripts/bam.coverage.bamstats05.sh) - very fast coverage calculation for a bam and a bed file with bamstats05 (2 min for WES bam).
+* [bam.coverage.sh](https://github.com/naumenko-sa/bioscripts/blob/master/scripts/bam.coverage.sh) - slow base-wise coverage calculation with bedtools + median coverage statistics.
 
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler.
@@ -95,8 +95,7 @@ and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendrosc
 * [tree.raxml_boot.pbs](../master/tree.raxml_boot.pbs) infers a phylogenetic tree for cdna alignment with 100 bootstrap replicates.
 
 # MISC
-
-* [hla.athlates.sh](../master/hla.athlates.sh) runs Athlates program for HLA allele typing.
+* [hla.athlates.sh](../master/hla.athlates.sh) HLA typing with Athlates.
 
 # RNA-seq
 * [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq) does STAR alignment, variant calling,
