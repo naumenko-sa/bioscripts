@@ -1,4 +1,4 @@
-# bioscripts - scripts I am using on a daily basis
+# a bucket of bioinformatics scripts
 
 Outline
 
@@ -14,12 +14,10 @@ By subject
 * [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)
 
 [By project](https://github.com/naumenko-sa/bioscripts#by-project)
-* [6.Muscle](https://github.com/naumenko-sa/bioscripts#6-muscle-2016--is-a-study-of-genetic-causes-of-muscular-diseases)
-* [5.MH](https://github.com/naumenko-sa/bioscripts#5-mh-2016--studies-malignant-hyperthermia)
 
 # Alignment
 
-* [Utilites from Jim Kent of UCSC](http://hgdownload.soe.ucsc.edu/admin/exe/)
+* [Jim Kent's utils UCSC](http://hgdownload.soe.ucsc.edu/admin/exe/)
 * [Synteny maps](http://www.agcol.arizona.edu/software/symap/)
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
 * alignment.check_3x.sh [alignment.fasta] prints how many sequences in an alignment are not 3x in length
@@ -194,18 +192,18 @@ variant calling pipeline outputs variants in gemini format.
 
 # By project
 
-## 6. Muscle [2016-] is a study of genetic causes of muscular diseases
-Developed into crt and Mendelian-RNAseq-DB
-1. [rnaseq.muscular_gene_panels.R](../master/rnaseq.muscular_gene_panels.R) - key genes relevant to diseases.
+## 6. RNA-seq in Mendelian Muscler diseases [2016-2018]
+* Developed into [crt](https://github.com/naumenko-sa/crt)
+* Published in [AJHG](https://www.sciencedirect.com/science/article/pii/S0002929719300126)
 
 ---
 
-## 5. MH [2016-] studies [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia)
-1. [project_mh.R](../master/project_mh.R)
-2. [rnaseq.qorts.get_novel_exons.sh](../master/rnaseq.qorts.get_novel_exons.sh)
-3. [project_mh.RYR1.isoforms.txt](../master/project_mh.RYR1.isoforms.txt)
+## 5. [Malignant hyperthermia](https://en.wikipedia.org/wiki/Malignant_hyperthermia) [2016]
+* Continued by [Alper Celik](https://github.com/celalp)
+* [crt.malignant_hyperthermia.R](https://github.com/naumenko-sa/crt/blob/master/malignant_hyperthermia.R)
+* [crt.qorts.get_novel_exons.sh](https://github.com/naumenko-sa/crt/blob/master/rnaseq.qorts.get_novel_exons.sh)
 
-## 4. CHEO [2016-]
+## 4. CHEO [2016-2019]
 Developed into cre
 1. [bcbio.prepare_families.sh](../master/bcbio.prepare_families.sh) creates symlinks, folders, config files to run variant calling for multiple families,
 or use bcbio.prepare_samples.sh if some samples need to re-generate bam files.
