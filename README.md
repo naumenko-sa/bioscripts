@@ -53,10 +53,13 @@ By subject
 
 * [genes.R](../master/genes.R) - various ENSEMBL annotations from biomaRt
 
-# Fastq,bam,cram,bed
+# Fastq, bam, cram, bed
 
 * [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
 * [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
+* [fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+* [trimmomatic](http://www.usadellab.org/cms/index.php?page=trimmomatic)
+* [PRINSEQ](http://prinseq.sourceforge.net/)
 * [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
 * For coverage first try cre.coverage.sh in cre.
     * [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
@@ -146,12 +149,6 @@ discovers novel exons using qorts files as input. A novel exon is reported when 
 * rnaseq.splicing.junction_seq.R runs junction seq analysis in R
 * rnaseq.splicing.junction_seq.sh runs R script in the queue
 
-# Useful resources
-* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
-* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
-* [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
-* [Gene set enrichment analysis](http://software.broadinstitute.org/gsea/index.jsp)
-
 # Variant analysis, vcf files
 For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readthedocs.io/en/latest/contents/configuration.html#ensemble-variant-calling)
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
@@ -186,9 +183,13 @@ variant calling pipeline outputs variants in gemini format.
 * [gemini.vep.refseq.sh](../master/gemini.vep.refseq.sh) annotates variants with RefSeq transcripts (NMs) using VEP.
 * [gemini.variant_impacts.sh](../master/gemini.variant_impacts.sh) extracts variant impacts for all transcripts.
 
-
-# Visualization
+# Articles and resources
+* [https://precision.fda.gov](https://precision.fda.gov/) is an effort to standardize computational pipelines.
+* [https://www.clinicalgenome.org/](https://www.clinicalgenome.org/) is created by authors of ACMG guidelines.
+* [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
+* [Gene set enrichment analysis](http://software.broadinstitute.org/gsea/index.jsp)
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
+* [List of journals for the journal/article club](../master/journbals.md)
 
 # By project
 
