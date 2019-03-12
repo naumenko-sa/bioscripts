@@ -3,14 +3,14 @@
 |By subject |By project|
 |---|---|
 |* [Alignment](https://github.com/naumenko-sa/bioscripts#alignment)||
-* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)||
-* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
-* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
-* [MISC](https://github.com/naumenko-sa/bioscripts#misc)||
-* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
-* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)||
-* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
-* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
+|* [Fastq,Bam,Cram](https://github.com/naumenko-sa/bioscripts#fastqbamcram)||
+|* [Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
+|* [Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
+|* [MISC](https://github.com/naumenko-sa/bioscripts#misc)||
+|* [RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
+|* [Useful resources](https://github.com/naumenko-sa/bioscripts#useful-resources)||
+|* [Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
+|* [Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
 
 
 [By project](https://github.com/naumenko-sa/bioscripts#by-project)
