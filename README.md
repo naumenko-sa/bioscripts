@@ -189,7 +189,7 @@ variant calling pipeline outputs variants in gemini format.
 * [Viral Genomics & Bioinformatics - Glasgow](http://bioinformatics.cvr.ac.uk/)
 * [Gene set enrichment analysis](http://software.broadinstitute.org/gsea/index.jsp)
 * [Pedigree chart designer](http://www.cegat.de/en/for-physicians/pedigree-chart-designer/) draws pedigree diagrams.
-* [List of journals for the journal/article club](../master/journbals.md)
+* [List of journals for the journal/article club](../master/journals.md)
 
 # By project
 
