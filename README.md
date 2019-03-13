@@ -43,59 +43,58 @@
 * alignment.sort_by_id.pl
 * alignment.substitution_profile.pl
 * alignment.tr_trv.pl
-* [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of D.melanogaster and D.simulans.
+* [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of *D.melanogaster* and *D.simulans*.
 
 # Annotation
 * [genes.R](../master/genes.R) - various ENSEMBL annotations from biomaRt
 
 # bam, cram, bed, fastq
-* [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04,bamstats05.
+* [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04, bamstats05.
 * [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
 * [fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 * [trimmomatic](http://www.usadellab.org/cms/index.php?page=trimmomatic)
 * [PRINSEQ](http://prinseq.sourceforge.net/)
-* [bam2fq.sh](../master/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
-* For coverage first try cre.coverage.sh in cre.
-    * [bam.coverage.sh](../master/bam.coverage.sh) outputs reads mapped to the interval specified by a bed file.
-    * [bam.coverage.bamstats](../master/bam.coverage.bamstats.sh) prints average coverage for a gene, uses bamstats05.
-    * [bam.gene_coverage.sh](../master/bam.gene_coverage.sh) prints mean coverage per region (exon,gene).
+* [bam2fq.sh](../master/scripts/bam2fq.sh) converts bam to fastq, uses samtools and bedtools
 * [bam.reads_number.sh](../master/bam.reads_number.sh) reports the number of paired reads in a bam file, uses samtools
 * [bam.remove_region.sh](../master/bam.remove_region.sh) removes reads from a bam file located at regions specified by a bed file.
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
-* [bam.sort.sh](../master/bam.sort.sh) - sorts a bam file before calculating coverage.
+* [bam.sort.sh](../master/scripts/bam.sort.sh) - sorts a bam file before calculating coverage.
 * [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data to basespace cloud.
 bs utility copies data from cloud to HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
 * [bcl2fastq.sh](https://github.com/naumenko-sa/cre/blob/master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
-* [cram2fq.sh](../master/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
+* [cram2fq.sh](../master/scripts/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
 
 # Coverage
-* [bam.coverage.bamstats05.sh](https://github.com/naumenko-sa/bioscripts/blob/master/scripts/bam.coverage.bamstats05.sh) - very fast coverage calculation for a bam and a bed file with bamstats05 (2 min for WES bam).
-* [bam.coverage.sh](https://github.com/naumenko-sa/bioscripts/blob/master/scripts/bam.coverage.sh) - slow base-wise coverage calculation with bedtools + median coverage statistics.
+* [bam.coverage.bamstats05.sh](../master/scripts/bam.coverage.bamstats05.sh) - very fast coverage calculation for a bam and a bed file with bamstats05 (2 min for WES bam).
+* [bam.coverage.sh](../master/scripts/bam.coverage.sh) - slow base-wise coverage calculation with bedtools + median coverage statistics.
 
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler.
 See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
-For large genomes it is better to have multiple libraries, with the substantial amount of mate pairs with 5k,10k,20k insert size. 
+Better to have multiple libraries for large genomes, with the good amount of mate pairs with 5k,10k,20k insert size. 
 For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
-a cheap 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into server. Avoid vendors and sales persons.
+a cheap big 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into the server. Avoid vendors and sales persons.
 Look for engineers to cooperate. For smaller genomes I prefer spades, for larger ones velvet + platanus. Remember to clean up reads
 (check for contamination, quality trimming).
-
-* [genome_assembly.spades.pbs](../master/genome_assembly.spades.pbs) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
+* [genome_assembly.spades.sh](../master/scripts/spades.sh) runs [spades](http://bioinf.spbau.ru/spades) assembler. Spades is the best assembler
 for genomes up to 100G.
-* [genome_assembly.n50.sh](../master/genome_assembly.n50.sh) [contigs.fasta] calculates N50 metrics.
+* [genome_assembly.n50.sh](../master/scripts.n50.sh) [contigs.fasta] calculates N50 metrics.
 
 # Phylogenetics
-Nothing is comparable to the feeling when you just have plotted a phylogenetic tree. It is very rewarding however the tree might be misleading.
-Read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
-In brief, it is necessary to build a good alignment(!), concatenate many genes, fit the model with modeltest (GTR+Г+I is usuallly the winner),
-and run RAXML and MrBayes to compare two trees. I visualize trees with [Dendroscope](http://dendroscope.org/). It becomes better as years pass.
-* [tree.raxml_boot.pbs](../master/tree.raxml_boot.pbs) infers a phylogenetic tree for cdna alignment with 100 bootstrap replicates.
+Calculating and plotting phylogenetic trees is very rewarding. However, the tree may be misleading.
+Briefly, steps are:
+* build a good(!) alignment
+* concatenate many genes
+* fit the model with modeltest (GTR+Г+I is usually the winner for protein coding genes)
+* run RAXML and MrBayes and compare two trees
+* visualize with [Dendroscope](http://dendroscope.org/).
+* [tree.raxml_boot.pbs](../master/scripts/tree.raxml_boot.pbs) infers a phylogenetic tree for cdna alignment with 100 bootstrap replicates.
+For details, read [The Phylogenetic handbook](https://books.google.ca/books/about/The_Phylogenetic_Handbook.html?id=DeD_lQ-kBPQC&redir_esc=y).
 
 # MISC
-* [hla.athlates.sh](../master/hla.athlates.sh) HLA typing with Athlates.
+* [hla.athlates.sh](../master/scripts/hla.athlates.sh) HLA typing with Athlates.
 
 # RNA-seq
 * [bcbio rna-seq pipeline](https://bcbio-nextgen.readthedocs.io/en/latest/contents/pipelines.html#rna-seq) does STAR alignment, variant calling,
@@ -217,3 +216,4 @@ quite successfully, but finally with enigmatic faults,maybe because of the clust
 ## 2. Spectrum [2010-2012]
 
 ## 1. Reversals [2009-2012]
+* PAML

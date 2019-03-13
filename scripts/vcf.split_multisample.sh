@@ -1,9 +1,8 @@
 #!/bin/bash
-
-# splits multisample vcfs in the current directory
+# split multisample vcfs in the current directory
 # https://www.biostars.org/p/138694/
 
-for file in *.vcf*; 
+for file in *.vcf.gz
 do
     for sample in `bcftools query -l $file`; 
     do
