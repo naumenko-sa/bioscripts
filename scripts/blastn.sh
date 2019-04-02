@@ -2,11 +2,12 @@
 date
 hostname
 
-if [ $# -lt 4 ];then
-    echo "Usage : goblastn.sh qry.fasta base.fasta num_hits evalue";
-    echo "Base should be ready";
-    exit 0;
-fi;
+if [ $# -lt 4 ]
+then
+    echo "Usage : blastn.sh qry.fasta base.fasta num_hits evalue"
+    echo "Base should be ready"
+    exit 0
+fi
 
 qry=$1
 base=$2
