@@ -46,7 +46,7 @@
 * [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of *D.melanogaster* and *D.simulans*.
 
 # Annotation
-* [genes.R](../master/genes.R) - various ENSEMBL annotations from biomaRt
+* [genes.R](../master/genes.R) - retrieves ENSEMBL annotations from biomaRt, run `Rscript genes.R --help`
 
 # bam, cram, bed, fastq
 * [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04, bamstats05.
