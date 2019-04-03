@@ -247,7 +247,7 @@ gene_vector2bed <- function(genes.csv, mart){
     genes.bed <- str_replace(genes.csv, "csv", "bed")
     genes <- read_csv(genes.csv)
     gene_coordinates <- get_gene_coordinates(genes$ensembl_gene_id, mart)
-    write_tsv(gene_coordinates, genes.bed)
+    write_tsv(gene_coordinates, genes.bed, col_names = F)
 }
 
 # start and end of the gene, all exons
