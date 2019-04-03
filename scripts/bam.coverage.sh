@@ -1,13 +1,13 @@
 #!/bin/bash
 # $bam - input.bam
-# $bed - filter.bed
+# $bed - panel.bed
 # output - input.bam.coverage
 # http://bedtools.readthedocs.io/en/latest/content/tools/coverage.html
 
 #PBS -l walltime=10:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=20g,mem=20g
+#PBS -l vmem=2g,mem=2g
 
 if [ -z $bam ]
 then
@@ -43,7 +43,9 @@ fi
 
 echo "Start: " `date`
 
-bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
+bedtools sort -faidx /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex -i $bed > $bed.faidxsorted.bed
+
+bedtools coverage -d -sorted -a $bed.faidxsorted.bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
 
 bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats
 
