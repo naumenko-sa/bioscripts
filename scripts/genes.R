@@ -243,7 +243,8 @@ protein_coding_genes_bed <- function(mart){
 
 # input: genes.csv - one column csv file, ensembl_gene_id column
 # output: genes.bed, has to be sorted with bedtools
-gene_vector2bed <- function(genes.csv, mart){
+gene_vector2bed <- function(genes.csv){
+    mart <- init_mart_human()
     genes.bed <- str_replace(genes.csv, "csv", "bed")
     genes <- read_csv(genes.csv)
     gene_coordinates <- get_gene_coordinates(genes$ensembl_gene_id, mart)
@@ -296,8 +297,7 @@ get_gene_coordinates <- function(v_ensembl_gene_ids, mart){
 }
 
 # reads HPO.tsv file pulled from Phenotips and generates a file with gene coordinates
-phenotips_hpo2gene_coordinates <- function(args){
-    phenotips_hpo.tsv <- args[2]
+phenotips_hpo2gene_coordinates <- function(phenotips_hpo.tsv){
     #phenotips_hpo.tsv <- "1153_CH0769_HPO.tsv"
     hpo_genes <- read_tsv(phenotips_hpo.tsv)
     hpo_genes.missing_ensg <- filter(hpo_genes, str_detect(`Gene ID`, "ENSG", negate = T))
@@ -528,78 +528,74 @@ get_external_gene_names <- function(gene_list_file){
 # ENSG00000261109 
 # this is a slow function, use it for individual genes/gene panels, when every exon is needed
 # for bulk coverage analysis use the function above
-get_exon_coordinates_for_canonical_isoform <- function(gene_name, mart){
-    #gene_name='HNRNPDL'
-    #gene_name = 'PLEC'
-    #PATCH gene
-    #gene_name = 'ABBA01057584.1'
-    #gene_name = 'SEPN1'
+get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
+    # gene_name='HNRNPDL'
+    # gene_name = 'PLEC'
+    # PATCH gene
+    # gene_name = 'ABBA01057584.1'
+    # gene_name = 'SEPN1'
     
-    #a problematic gene, ENSEMBL returns it on HSCHR6_MHC_COX if you set biotype filter = protein_coding, it will return HSCHR6
-    #gene_name='VARS2'
+    # a problematic gene, ENSEMBL returns it on HSCHR6_MHC_COX if you set biotype filter = protein_coding, it will return HSCHR6
+    # gene_name='VARS2'
     
     # has NA in CDS_length, does not have genomic coding start and end
     # gene_name="RMRP" 
     # gene_name="SDHAF2"
     # gene_name="MAX"
-    gene_name = "SLC7A7"
-    print(gene_name)
-    genes_info <- getBM(attributes = c('chromosome_name','external_gene_name','ensembl_transcript_id',
-                                       'cds_length','ensembl_gene_id'),
-                        filters = c('external_gene_name','transcript_gencode_basic'), 
-                        values = list(external_gene_name = gene_name,
-                                 transcript_gencode_basic = T),
-                        mart=mart)
-                     # use biotype to get a list of protein coding genes, not for a predefined gene set
-                     #             biotype='protein_coding'),
-                     
+    # gene_name = "SLC7A7"
     
-    #remove transcripts located on patches
-    genes_info <- genes_info[grep('PATCH', genes_info$chromosome_name, invert = T),]
-    #remove HSCHR - alleles
-    genes_info <- genes_info[grep('HSCHR', genes_info$chromosome_name, invert = T),]
+    # test
+    # ensembl_gene_id <- "ENSG00000000419"
+    cat("Processing gene: ", ensembl_gene_id, "\n")
+    genes_info <- as_tibble(getBM(attributes = c("chromosome_name", "external_gene_name", "ensembl_transcript_id",
+                                       "cds_length", "ensembl_gene_id"),
+                        filters = c("ensembl_gene_id", "transcript_gencode_basic"), 
+                        values = list(ensembl_gene_id = ensembl_gene_id,
+                                      transcript_gencode_basic = T),
+                        mart = mart))
+                     
+    #remove transcripts located on patches and alleles (HSCHR)
+    genes_info <- genes_info %>% 
+                    filter(!grepl("PATCH", chromosome_name)) %>% 
+                    filter(!grepl("HSCHR", chromosome_name))
     
     # select canonical transcript print out the single trancript
-    if (nrow(genes_info) > 0){
-        genes_info <- genes_info[order(-genes_info$cds_length),]  
-    
-        canonical_transcript <- genes_info$ensembl_transcript_id[1]
+    genes_info <- arrange(genes_info, desc(cds_length)) 
+    canonical_transcript <- genes_info$ensembl_transcript_id[1]
         
-        print(canonical_transcript)
+    cat("Canonical transcript:", canonical_transcript, "\n")
     
-        genes_info <- getBM(attributes=c('chromosome_name','genomic_coding_start','genomic_coding_end','ensembl_exon_id',
-                                  'external_gene_name','ensembl_gene_id',
-                                  'start_position','end_position',
-                                  'exon_chrom_start','exon_chrom_end','ensembl_transcript_id'),
-                    filters=c('ensembl_transcript_id'), 
-                    values=c(canonical_transcript),mart=mart)
+    if (is.na(canonical_transcript)){ cat("No transcript for ", ensembl_gene_id, "\n")}
     
-        genes_info <- na.omit(genes_info)
-    
-        #bedtools does not like colnames
-        genes_info <- genes_info[c(1:3,5)]
-        attach(genes_info)
-        genes_info <- genes_info[order(chromosome_name,genomic_coding_start),]
-        write.table(genes_info, paste0(gene_name,".bed"),sep="\t",quote=F,row.names=F,col.names=F)
-    
-        #print all columns and a header
-        #write.table(genes_info,paste0(gene_name,".extended.bed"),sep="\t",quote=F,row.names=F,col.names=T)
-    
-        print(paste(gene_name,genes_info[1,4]))
-    }
+    genes_info <- as_tibble(getBM(attributes = c("chromosome_name", 
+                                       "genomic_coding_start", "genomic_coding_end",
+                                       "ensembl_exon_id", "external_gene_name", "ensembl_gene_id",
+                                       "start_position", "end_position",
+                                       "exon_chrom_start", "exon_chrom_end", 
+                                       "ensembl_transcript_id"),
+                filters = c("ensembl_transcript_id"),
+                values = c(canonical_transcript), mart = mart)) %>% 
+        mutate(chromosome_name = as.character(chromosome_name)) %>%
+        filter(!is.na(genomic_coding_start) & !is.na(genomic_coding_end)) %>%
+        select(chromosome_name, genomic_coding_start, genomic_coding_end, external_gene_name)
+    return(genes_info)
 }
 
-#get exon coordinates for canonical isoform for genes in a list
-get_exon_coordinates2 = function(){
-    mart <- init_mart()
-    setwd("~/Desktop/work")
-    #ge9t_protein_coding_genes(mart)
+# get exon coordinates for canonical isoform for genes in a list
+# input: genes.csv - 1 column csv with ensembl_gene_id
+get_exon_coordinates2 <- function(genes_csv){
+    mart <- init_mart_human()
+    genes <- read_csv(genes_csv)
     
-    genes <- read_csv("genes.list", col_names = c("Gene"))
+    exons <- get_exon_coordinates_for_canonical_isoform(genes$ensembl_gene_id[1], mart)
     
-    for(gene in unique(sort(genes$Gene))){
-        get_exon_coordinates_for_canonical_isoform(gene, mart)
+    for(gene in tail(genes$ensembl_gene_id, -1)){
+        exons_buf <- get_exon_coordinates_for_canonical_isoform(gene, mart)
+        exons <- bind_rows(exons, exons_buf)
     }
+    
+    genes_bed <- str_replace(genes_csv, "csv", "bed")
+    write_tsv(exons, genes_bed, col_names = F)
 }
 
 #for (gene in c("SETX","PNKP","AP3B2","GUF1"))
@@ -645,10 +641,12 @@ if (length(args) == 0 || args[1] == "--help"){
     cat("Usage: Rscript function_name function_args\n")
     cat("Available functions:\n")
     cat("phenotips_hpo2gene_coordinates phenotips_hpo.tsv\n")
+    cat("gene_vector2bed genes.csv\n")
+    cat("get_exon_coordinates2 genes.csv\n")
 }else{
     cat(paste0("Running function: ", args[1],"\n"))
     init()
     fcn <- get(args[1])
-    fcn(args)
+    fcn(tail(args,-1))
 }
 ###############################################################################
