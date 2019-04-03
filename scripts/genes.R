@@ -241,11 +241,20 @@ protein_coding_genes_bed <- function(mart){
                 sep = "\t", quote = F, row.names = F, col.names = F)
 }
 
+# input: genes.csv - one column csv file, ensembl_gene_id column
+# output: genes.bed, has to be sorted with bedtools
+gene_vector2bed <- function(genes.csv, mart){
+    genes.bed <- str_replace("genes.csv", "csv", "bed")
+    genes <- read_csv(genes.csv)
+    gene_coordinates <- get_gene_coordinates(genes$ensembl_gene_id, mart)
+    write_tsv(gene_coordinates, genes.bed)
+}
+
 # start and end of the gene, all exons
-# input = list of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
+# input = vector of genes, either ENSEMBL_IDS or external names = disease_panel.list.txt, no header
 # output = bed file with coordinates = disease_panel.list.bed
 # output is not sorted please sort with bedtools or bash sort
-get_gene_coordinates_by_ensembl_gene_id <- function(v_ensembl_gene_ids, mart){
+get_gene_coordinates <- function(v_ensembl_gene_ids, mart){
     # test:  
     # https://raw.githubusercontent.com/naumenko-sa/cre/master/data/lupus.csv
     # gene_list_csv <- "lupus.csv"
