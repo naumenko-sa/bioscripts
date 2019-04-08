@@ -11,7 +11,7 @@
 #PBS -l walltime=2:00:00,nodes=1:ppn=1
 #PBS -joe .
 #PBS -d .
-#PBS -l vmem=21g
+#PBS -l vmem=11g
 
 # wants java1.8
 
