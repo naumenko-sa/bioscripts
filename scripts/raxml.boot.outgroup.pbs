@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=240:00:00,nodes=1:ppn=30,mem=10G,vmem=10G
+
+#run with -o and without -o to get bootstrap support for all branches
+#with outgroup to check bootstrap
+
+date
+raxml=/hpf/largeprojects/ccmbio/naumenko/tools/standard-RAxML/raxmlHPC-PTHREADS-SSE3
+$raxml -T 40 -s $align -n $align.tree -m GTRGAMMA --HKY85 -p 8593771075132634533 -o $outgroup -# 1000
+$raxml -T 40 -s $align -n $align.boot -m GTRGAMMA --HKY85 -p 8593771075132634533 -b 1234567 -o $outgroup -# 1000
+$raxml -T 40 -m GTRGAMMA --HKY85 -p 8593771075132634533 -f b -t RAxML_bestTree.$align.tree -z RAxML_bootstrap.$align.boot -n $align.final -o $outgroup
+rm *tree.RUN*
+
+# -m GTRGAMMAI
+#-f a - rapid bootstrap with the tree
+#rapid bootstrapping
+#-x 1234 
+date
+#-m PROTGAMMAWAG

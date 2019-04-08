@@ -1,6 +1,0 @@
-#!/bin/bash
-#PBS -d .
-#PBS -l walltime=10000:00:00,nodes=1:ppn=24
-#go.modeltest.sh file.fasta num_threads
-
-go.modeltest.sh $align $threads
