@@ -35,6 +35,11 @@ fi
 #bedtools index just chr name and length
 #don't forget to sort bed : bedtools sort -faidx names.txt
 
+# in the -d example:
+# https://bedtools.readthedocs.io/en/latest/content/tools/coverage.html
+# read coordinates: (0,5], (3,8], (4,8], (5,9], coverage calculated for bases 1..10 (excluding 0)
+# it is necessary to -1 for start of exons to get bp coverage values in the first bp of exon
+
 params=''
 
 if [ "$type" == "rnaseq" ]
