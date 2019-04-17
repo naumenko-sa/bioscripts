@@ -61,7 +61,7 @@ bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumen
 bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats.csv
 
 echo $bam.dcoverage `cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' | wc -l` > $bam.less20x.stats.csv
-cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' > $bam.less20x_coverage.csv
+bam.coverage.less20.sh $bam.dcoverage > $bam.less20x_coverage.csv
 
 
 median_line=`cat $bam.dcoverage | wc -l`
