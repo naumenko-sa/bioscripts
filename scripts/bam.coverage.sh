@@ -40,6 +40,10 @@ fi
 # read coordinates: (0,5], (3,8], (4,8], (5,9], coverage calculated for bases 1..10 (excluding 0)
 # it is necessary to -1 for start of exons to get bp coverage values in the first bp of exon
 
+# report bases <20X
+# for f in *.dcoverage;do echo $f `cat $f | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' | wc -l`;done;
+# for f in *.dcoverage;do cat $f | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' > `echo $f | sed s/dcoverage/less20x_coverage/`;done;
+
 params=''
 
 if [ "$type" == "rnaseq" ]
@@ -54,7 +58,11 @@ echo "Start: " `date`
 
 bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
 
-bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats
+bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats.csv
+
+echo $bam.dcoverage `cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' | wc -l` > $bam.less20x.stats.csv
+cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' > $bam.less20x_coverage.csv
+
 
 median_line=`cat $bam.dcoverage | wc -l`
 median_line=$(($median_line/2))
