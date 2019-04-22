@@ -58,11 +58,15 @@ echo "Start: " `date`
 
 bedtools coverage -d -sorted -a $bed -b $bam -g /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa.bedtoolsindex $params > $bam.dcoverage
 
-bam.coverage.base_wise.stat.py $bam.dcoverage > $bam.coverage_stats.csv
+bam.coverage.base_wise.stat.py $bam.dcoverage 5 $'\t' > $bam.coverage_stats.csv
 
-echo $bam.dcoverage `cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' | wc -l` > $bam.less20x.stats.csv
+echo $bam.dcoverage","`cat $bam.dcoverage | awk -F '\t' '{if ($6<20) {print $4","$1":"$2+$5","$6}}' | wc -l` > $bam.less20x.stats.csv
 bam.coverage.less20.sh $bam.dcoverage > $bam.less20x_coverage.csv
 
+bam.coverage.per_exon.sh $bam.dcoverage > $bam.per_exon.csv
+cat $bam.per_exon.csv | sed 1d  > $bam.per_exon.csv.tmp
+bam.coverage.base_wise.stat.py $bam.per_exon.csv.tmp 2 ',' > $bam.per_exon.distribution.csv
+rm $bam.per_exon.csv.tmp
 
 median_line=`cat $bam.dcoverage | wc -l`
 median_line=$(($median_line/2))

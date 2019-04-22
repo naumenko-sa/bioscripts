@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# reports holes in coverage: how many PB are below 20X per exon
+
 echo "target,gene,pos,min_coverage,bases_below20" 
 
 cat $1 | awk -F "\t" '{print $1"-"$2"-"$3","$4","$2+$5","$6}' | \
