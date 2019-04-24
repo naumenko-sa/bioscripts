@@ -671,7 +671,7 @@ filter_protein_coding_genes <- function(counts.csv){
     counts <- read_csv(counts.csv)
     protein_coding_genes <- read_csv("~/cre/data/protein_coding_genes.csv")
     counts <- inner_join(counts, protein_coding_genes, by = c("Ensembl_gene_id" = "ENS_GENE_ID"))
-    output.csv <- str_replace(all_genes.csv, "csv", "coding.csv")
+    output.csv <- str_replace(counts.csv, "csv", "coding.csv")
     write_excel_csv(counts, output.csv)
 }
 
