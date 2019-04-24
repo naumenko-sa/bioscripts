@@ -666,6 +666,15 @@ get_omim_orphanet_exon_coordinates <- function(){
     write.table(omim_exons.bed,"omim.exons.notsorted.bed",sep="\t",quote=F,row.names=F,col.names=F)
 }
 
+# read counts for all genes, filter protein coding genes only
+filter_protein_coding_genes <- function(counts.csv){
+    counts <- read_csv(counts.csv)
+    protein_coding_genes <- read_csv("~/cre/data/protein_coding_genes.csv")
+    counts <- inner_join(counts, protein_coding_genes, by = c("Ensembl_gene_id" = "ENS_GENE_ID"))
+    output.csv <- str_replace(all_genes.csv, "csv", "coding.csv")
+    write_excel_csv(counts, output.csv)
+}
+
 ###############################################################################
 args <- commandArgs(trailingOnly = T)
 if (length(args) == 0 || args[1] == "--help"){
@@ -675,6 +684,7 @@ if (length(args) == 0 || args[1] == "--help"){
     cat("gene_vector2bed genes.csv\n")
     cat("get_exon_coordinates2 genes.csv\n")
     cat("get_ensembl_gene_ids panel.genes.csv\n")
+    cat("filter_protein_coding_genes counts.csv\n")
 }else{
     cat(paste0("Running function: ", args[1],"\n"))
     init()
