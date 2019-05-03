@@ -11,5 +11,5 @@ then
 fi
 
 raxml=/hpf/largeprojects/ccmbio/naumenko/tools/standard-RAxML/raxmlHPC-PTHREADS-SSE3
-$raxml -T 5 -s $align -n $align.tree -m GTRGAMMA --HKY85 -p 8593771075132634533
+$raxml -T 5 -s $align -n $align.tree -m GTRGAMMAI -p 8593771075132634533
 #-m PROTGAMMAWAG

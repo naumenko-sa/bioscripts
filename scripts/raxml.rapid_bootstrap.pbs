@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#PBS -d .
+#PBS -l walltime=240:00:00,nodes=1:ppn=30,mem=10G,vmem=10G
+#PBS -joe .
+
+#run with -o and without -o to get bootstrap support for all branches
+#with outgroup to check bootstrap
+
+date
+hostname
+raxml=/hpf/largeprojects/ccmbio/naumenko/tools/standard-RAxML/raxmlHPC-PTHREADS-SSE3
+
+$raxml -T 30 -f a -s $align -n $align.tree -m GTRGAMMAI -x 12345 -p 12345 -# 1000
+
+
+#--HKY85
