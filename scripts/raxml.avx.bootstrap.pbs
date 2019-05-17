@@ -19,7 +19,7 @@ then
     ogroup="-o "$outgroup
 fi
 
-$raxml -T 30 -f a -s $align -n $align.tree -m GTRGAMMAI $ogroup -x 12345 -p 12345 -# 100
+$raxml -T 30 -f a -s $align -n $align.tree -m GTRGAMMAI $ogroup -x 12345 -p 12345 -# 1000
 
 # -m GTRCAT -V
 
