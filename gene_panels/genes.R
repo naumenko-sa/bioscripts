@@ -17,9 +17,9 @@ init <- function(){
     library(tidyverse)
 }
 
-# grch37 by default
-# use www.ensembl.org for grch38
-init_mart_human <- function(host = "grch37.ensembl.org"){
+# grch38 by default
+# use grch37.ensembl.org for grch37 reference
+init_mart_human <- function(host = "ensembl.org"){
     mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     return(mart)
@@ -67,10 +67,25 @@ init_mart_mouse <- function(){
     mart <- useMart(biomart = "ENSEMBL_MART_MOUSE")
     datasets <- listDatasets(mart)
     mart <- useDataset(mart, dataset = "mc57bl6nj_gene_ensembl")
+    
     attributes <- listAttributes(mart, what = c("name", "description", "fullDescription", "page"))
     unique(attributes$page)
     filters <- listFilters(mart, c("name", "description", "fullDescription"))
     return(mart)
+}
+
+mouse_get_protein_coding_genes <- function(){
+    genes_info <- getBM(attributes=c("chromosome_name", "start_position", "end_position", 
+                                     "ensembl_exon_id",
+                                     "external_gene_name", "mmusculus_homolog_ensembl_gene"),
+                        filters = c("biotype", "external_gene_name"),
+                        values = list("protein_coding", "DMD"),
+                        mart = mart)
+    
+    #remove transcripts placed on patches
+    genes_info <- genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
+    #remove HSCHR - alleles
+    genes_info <- genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
 }
 
 tutorial_explore_marts <- function(){
@@ -96,7 +111,7 @@ gene_descriptions <- function(mart){
                                                   "external_gene_name",
                                                   "description"),
                                    mart = mart)
-    write.csv(ensembl_w_description, file="ensembl_w_description.csv", row.names = F)
+    write_excel_csv(ensembl_w_description, "ensembl_w_description.csv")
 }
 
 # attribute name_1006 is GO_term
