@@ -25,6 +25,12 @@ init_mart_human <- function(host = "ensembl.org"){
     return(mart)
 }
 
+init_mart_human_grch37 <- function(host = "grch37.ensembl.org"){
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
+    mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
+    return(mart)
+}
+
 tutorial_init_mart_human <- function(){
     library(biomaRt)    
     #library("readr")
@@ -320,8 +326,8 @@ phenotips_hpo2gene_coordinates <- function(phenotips_hpo.tsv){
     hpo_genes <- hpo_genes %>% filter(str_detect(`Gene ID`, "ENSG")) 
     v_ensembl_gene_ids <- hpo_genes$`Gene ID`
     
-    mart <- init_mart_human()
-    hpo_genes_bed <- get_gene_coordinates_by_ensembl_gene_id(v_ensembl_gene_ids, mart)
+    mart <- init_mart_human_grch37()
+    hpo_genes_bed <- get_gene_coordinates(v_ensembl_gene_ids, mart)
       
     output_file_name <- gsub(".tsv",".unsorted.bed", phenotips_hpo.tsv)
     
