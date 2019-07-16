@@ -18,14 +18,8 @@ init <- function(){
 }
 
 # grch38 by default
-# use grch37.ensembl.org for grch37 reference
-init_mart_human <- function(host = "ensembl.org"){
-    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
-    mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
-    return(mart)
-}
-
-init_mart_human_grch37 <- function(host = "grch37.ensembl.org"){
+# use host=grch37.ensembl.org for grch37 reference
+init_mart_human <- function(host = "useast.ensembl.org"){
     mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     return(mart)
@@ -369,65 +363,52 @@ tutorial_lsp1_gene <- function(){
                   mart=mart_grch38)
 }
 
-#use chromosomes because of biomart webservice's timeout
+# use chromosomes because of biomart webservice's timeout
+# tutorial: 
+# - what is exon_chrom_start, or genomic_coding_start?
+# - attributes = listAttributes(mart, what = c("name", "description", "fullDescription"))
+# - noncoding exons
 get_exon_coordinates_chr <- function(chromosome, mart){
     # test:
-    # chromosome='X'
+    # chromosome = 21
     genes_for_chr <- getBM(attributes = c("ensembl_gene_id", "ensembl_transcript_id", "transcript_count",
                                           "ensembl_exon_id", "chromosome_name", "exon_chrom_start",
                                           "exon_chrom_end", "genomic_coding_start", "genomic_coding_end",
                                           "external_gene_name"),
                         filters = c("chromosome_name"),
                         values = list(chromosome),
-                        mart = mart)
+                        mart = mart) %>% 
+                     as_tibble() %>% 
+                     mutate_at(vars(chromosome_name), as.character)
     
     return(genes_for_chr)
-    
-    # what is exon_chrom_start, or genomic_coding_start?
-    # attributes = listAttributes(mart,what=c('name','description','fullDescription'))
-    # noncoding exons
 }
 
-#print genomic_coding and exclude UTRs
+# print genomic_coding coordinates and exclude UTRs
+# 18710 genes
+# result it is neither sorted not merged!
+# in bash:
+# cat coding.exons.bed | sort -k1,1 -k2,2n > coding.exons.sorted.bed
+# bedtools merge -i coding.exons.bed.sorted -c 4 -o distinct > coding.exons.merged.bed
 get_exon_coordinates <- function(mart){
-    #18710 genes
-    exon_coordinates <- get_exon_coordinates_chr(1, mart)
+    
+    exon_coordinates <- NULL
     # MT is problematic in ccds
     # ~5 minutes for all chromosomes
-    for (chr in c(seq(2,22),'X','Y')){
+    for (chr in c(seq(1, 22), "X", "Y")){
         print(chr)
         buffer <- get_exon_coordinates_chr(chr, mart)
-        exon_coordinates <- rbind(buffer, exon_coordinates)
+        exon_coordinates <- bind_rows(exon_coordinates, buffer)
     }
     
-    #remove noncoding exons
-    exon_coordinates <- na.omit(exon_coordinates)
-    
-    write.table(exon_coordinates, "coding.exons.txt", quote=F, row.names=F, col.names=F)
-    write.table(unique(exon_coordinates$ensembl_gene_id), "coding.genes.enseml_ids", quote=F,row.names=F, col.names=F)
-    
-    #it is neither sorted not merged!
-    exon_coordinates.bed.unsorted <- subset(exon_coordinates,
-                                  select = c("chromosome_name",
-                                             "genomic_coding_start",
-                                             "genomic_coding_end",
-                                             "external_gene_name"))
-    write.table(exon_coordinates.bed.unsorted, "coding.exons.bed", 
-                sep="\t", quote=F, row.names=F, col.names=F)
-    #in bash:
-    #cat coding.exons.bed | sort -k1,1 -k2,2n > coding.exons.sorted.bed
-    #bedtools merge -i coding.exons.bed.sorted -c 4 -o distinct > coding.exons.merged.bed
-    
-    attach(exon_coordinates.bed.unsorted)
-    weird_1bp_exons <- exon_coordinates.bed.unsorted[genomic_coding_start == genomic_coding_end,]
-    
-    exon_coordinates.bed.no_weird_exons <- exon_coordinates.bed.unsorted[genomic_coding_start != genomic_coding_end,]
-    
-    exon_coordinates.bed.no_weird_exons <- transform(exon_coordinates.bed.no_weird_exons,
-                                                    chromosome_name = as.character(chromosome_name))
-    
-    attach(exon_coordinates.bed.no_weird_exons)
-    exon_coordinates.bed.sorted <- exon_coordinates.bed.no_weird_exons[order(chromosome_name,genomic_coding_start),]
+    # remove noncoding exons
+    # select is masked by biomart
+    # remove 1bp exons
+    exon_coordinates <- exon_coordinates %>%
+        drop_na(genomic_coding_start, genomic_coding_end) %>% 
+        dplyr::select(chromosome_name, genomic_coding_start, genomic_coding_end, external_gene_name) %>% 
+        filter(genomic_coding_start != genomic_coding_end) %>% 
+        write_delim("coding_exons.unsorted.bed", col_names = F)
     
     #library("bedr")
     #exon_coordinates.bed.merged = bedr(input = list(i=exon_coordinates.bed.sorted),
@@ -457,7 +438,6 @@ get_exon_coordinates <- function(mart){
         #have to sort and merge this with bedtools
     #    write.table(gene.bed,paste0(gene,".unsorted.bed"),sep='\t',quote=F,row.names=F,col.names=F)
     #}
-    
 }
 
 tutorial_get_sequence <- function(){
