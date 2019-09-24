@@ -14,5 +14,4 @@
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
-fastp -i $1 -I $2 -o $3.trimmed_1.fq.gz -O $3.trimmed_2.fq.gz -h $3.fastp_html -g -x -5 -3 -w 10
-
+fastp -i $1 -I $2 -o ${3}_1.fq.gz -O ${3}_2.fq.gz -h $3.fastp.html --umi --umi_loc --umi_len 8 --umi_prefix CELL --umi_skip
