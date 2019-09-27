@@ -1,0 +1,42 @@
+---
+title: "Quality Control"
+author: "Sergey Naumenko"
+date: "`r Sys.Date()`"
+output:
+   html_document:
+      code_folding: hide
+      df_print: paged
+      highlights: pygments
+      number_sections: true
+      self_contained: true
+      theme: default
+      toc: true
+      toc_float:
+         collapsed: true
+         smooth_scroll: true
+---
+
+# Overview
+
+- Principal Investigator:
+- Researcher:
+- Experiment:
+
+```{r, cache = FALSE, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(DESeq2)
+library(DEGreport)
+
+ggplot2::theme_set(theme_light(base_size = 14))
+
+opts_chunk[["set"]](
+    cache = FALSE,
+    dev = c("png", "pdf"),
+    error = TRUE,
+    highlight = TRUE,
+    message = FALSE,
+    prompt = FALSE,
+    tidy = FALSE,
+    warning = FALSE)
+```
