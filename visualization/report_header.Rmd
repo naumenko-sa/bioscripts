@@ -24,6 +24,8 @@ output:
 
 ```{r, cache = FALSE, message = FALSE}
 library(tidyverse)
+library(readxl)
+library(writexl)
 library(knitr)
 library(DESeq2)
 library(DEGreport)
