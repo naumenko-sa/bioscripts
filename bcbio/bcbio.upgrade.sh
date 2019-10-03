@@ -1,8 +1,13 @@
 #!/bin/bash
-#PBS -l walltime=23:00:00,nodes=1:ppn=10
-#PBS -joe .
-#PBS -d .
-#PBS -l vmem=10g,mem=10g
+
+#SBATCH --partition=priority        # Partition (queue)
+#SBATCH --time=2-00:00              # Runtime in D-HH:MM format
+#SBATCH --job-name=bcbio       # Job name
+#SBATCH -c 1			    # cores
+#SBATCH --mem-per-cpu=10G           # Memory needed per CPU or --mem
+#SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
+#SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
+#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
 # nohups are dying on qlogin nodes, data nodes are better for long data installation runs
@@ -23,9 +28,9 @@ date
 # create a .test_profile:
 # export PATH=$HOME/cre:$HOME/crt:$HOME/crg:/hpf/largeprojects/ccmbio/naumenko/tools/bcbio_1.1.5/anaconda/bin:$HOME/tools/mc-4.8.16/bin:$HOME/jkent_tools:$HOME/bioscripts:.:/usr/local/bin:/opt/moab/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
 # export PYTHONPATH=/hpf/largeprojects/ccmbio/naumenko/tools/bcbio_1.1.5/anaconda/lib/python3.6
-. /hpf/largeprojects/ccmbio/naumenko/tools/bcbio_1.1.5/.profile115
-which python
-echo $PYTHONPATH
+#. /hpf/largeprojects/ccmbio/naumenko/tools/bcbio_1.1.5/.profile115
+#which python
+#echo $PYTHONPATH
 ######################################################################
 # 3. Upgrade tools. If tooldir was set before, no need to specify it again
 which bcbio_nextgen.py
@@ -53,7 +58,8 @@ which bcbio_nextgen.py
 # bcbio_nextgen.py upgrade --data --genomes GRCh37
 
 # VEP is upgraded quite often ~2-3 months - when upgrading tools it looks for new VEP cache
-# bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --datatarget vep
+which vep
+bcbio_nextgen.py upgrade -u skip --genomes hg38 --datatarget vep
 
 # gemini ~3h for GRCh37
 # bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --datatarget gemini
@@ -71,7 +77,7 @@ which bcbio_nextgen.py
 # bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --datatarget dbnsfp
 
 # rnaseq
-bcbio_nextgen.py upgrade -u skip --genomes hg38 --datatarget rnaseq
+#bcbio_nextgen.py upgrade -u skip --genomes hg38 --datatarget rnaseq
 
 ######################################################################
 # fresh installation for Sam with human and mouse genome
