@@ -11,8 +11,11 @@
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
+date
 
 echo "file:" $1
 echo "expand to": $2
 
-gunzip -c $1 | awk -v full_length=$2 -f ~/code/bioscripts/single_cell/fix_novaseq_indrops3.awk | bgzip > $1.expanded.gz
+gunzip -c $1 | awk -v full_length=$2 -f ~/code/bioscripts/barcodes/fix_novaseq_indrops3.awk | bgzip > $1.expanded.gz
+
+date
