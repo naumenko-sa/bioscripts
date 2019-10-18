@@ -1,0 +1,25 @@
+details:
+- algorithm:
+    aligner: bwa
+    trim_ends: [2,0,2,0]
+    min_allele_fraction: 0.01
+    correct_umis: whitelist.txt
+    tools_off:
+    - gemini
+    umi_type: fastq_name
+    variantcaller:
+    - vardict
+    - mutect2
+    coverage: target.bed
+    variant_regions: target.bed
+  analysis: variant2
+  description: duplex_umi
+  files:
+  - /path/input/with_umis/s1_1.fq.gz
+  - /path/input/with_umis/s1_2.fq.gz
+  genome_build: hg38
+  metadata:
+    phenotype: tumor
+resources:
+  fgbio:
+    options: [--min-reads, 3]
