@@ -12,8 +12,12 @@
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
+date
+
 # render markdown
 # conda activate r is not working on O2 nodes
 # source activate r
 # Rscript --vanilla -e 'rmarkdown::render("03.clustering_new.Rmd")'
 # source deactivate
+
+date
