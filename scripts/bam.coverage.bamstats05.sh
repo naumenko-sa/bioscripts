@@ -15,7 +15,7 @@
 
 # wants java1.8
 
-BAMSTATS_PATH=/hpf/largeprojects/ccmbio/naumenko/tools/jvarkit/dist
+BAMSTATS_PATH=~/work/tools/jvarkit/dist
 
 # if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
 
