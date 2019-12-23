@@ -8,16 +8,26 @@
 
 # pull exone coordinates with genes.R and do bedtools sort | bedtools merge -c 4 -o first 
 
-#PBS -l walltime=2:00:00,nodes=1:ppn=1
-#PBS -joe .
-#PBS -d .
-#PBS -l vmem=11g
+# https://slurm.schedmd.com/sbatch.html
+# https://wiki.rc.hms.harvard.edu/display/O2
+
+#SBATCH --partition=short        # Partition (queue) priority
+#SBATCH --time=1:00:00              # Runtime in D-HH:MM format, 10:00:00 for hours
+#SBATCH --job-name=project          # Job name
+#SBATCH -c 5			    # cores
+#SBATCH --mem=15G           # Memory needed per CPU or --mem-per-cpu
+#SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
+#SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
+#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 # wants java1.8
 
 BAMSTATS_PATH=~/work/tools/jvarkit/dist
 
 # if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
+
+bed=$1
+bam=$2
 
 if [ -z $bed ]
 then
