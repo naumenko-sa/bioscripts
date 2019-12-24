@@ -12,4 +12,6 @@
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=FAIL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
+date
 gzip $1
+date
