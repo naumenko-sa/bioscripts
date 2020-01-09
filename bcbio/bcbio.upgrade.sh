@@ -26,10 +26,10 @@ date
 # mv ~/.conda/environments.txt ~/.conda/environments.default.txt - move back
 # export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/bin
 # export PYTHONPATH=
-# wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
+ wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
 # echo "Installing to " $1
 
-# python bcbio_nextgen_install.py $1 --tooldir $2 --genomes hg38 --isolate --nodata
+python3 bcbio_nextgen_install.py $1 --tooldir $2 --genomes hg38 --isolate --nodata
 
 ######################################################################
 # 2. Use the new environment:
@@ -37,7 +37,7 @@ date
 # export PATH=/path/bcbio/anaconda/bin:/path/bcbio/tools/bin:$PATH
 # . /path/.test_profile
 # which python
-which bcbio_nextgen.py
+# which bcbio_nextgen.py
 
 ######################################################################
 # 3. Upgrade tools. If tooldir was set before, no need to specify it again
@@ -45,12 +45,11 @@ which bcbio_nextgen.py
 # --tooldir $1
 
 ######################################################################
-# 4. Install indices
-# genomes = {GRCh37, hg38}
-# bcbio_nextgen.py upgrade -u skip --genomes hg38 --aligners bwa --cores 40
-# bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --aligners star --cores 10
-bcbio_nextgen.py upgrade -u skip --genomes hg38 --aligners hisat2 --cores 40
-# bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --aligners rtg --cores 10
+# 4. Install aligner indices
+# genomes = [GRCh37, hg38, mm10]
+# aligners = [bwa, star, hisat2, rtg]
+# bcbio_nextgen.py upgrade -u skip --genomes hg38 --aligners star --cores 40
+#--aligners hisat2
 
 #########################################################################
 # 5. upgrade bcbio code 
