@@ -26,8 +26,8 @@ BAMSTATS_PATH=~/work/tools/jvarkit/dist
 
 # if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
 
-bed=$1
-bam=$2
+bed=$2
+bam=$1
 
 if [ -z $bed ]
 then
