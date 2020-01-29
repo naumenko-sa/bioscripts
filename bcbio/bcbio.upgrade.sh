@@ -26,10 +26,10 @@ date
 # mv ~/.conda/environments.txt ~/.conda/environments.default.txt - move back
 # export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/bin
 # export PYTHONPATH=
- wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
+wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
 # echo "Installing to " $1
 
-python3 bcbio_nextgen_install.py $1 --tooldir $2 --genomes hg38 --isolate --nodata
+python3 bcbio_nextgen_install.py $1 --tooldir $2 --isolate --nodata
 
 ######################################################################
 # 2. Use the new environment:
@@ -41,7 +41,7 @@ python3 bcbio_nextgen_install.py $1 --tooldir $2 --genomes hg38 --isolate --noda
 
 ######################################################################
 # 3. Upgrade tools. If tooldir was set before, no need to specify it again
-# bcbio_nextgen.py upgrade -u skip --tools
+#bcbio_nextgen.py upgrade -u skip --tools
 # --tooldir $1
 
 ######################################################################
