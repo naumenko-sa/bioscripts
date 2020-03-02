@@ -2,8 +2,8 @@
 
 # https://slurm.schedmd.com/sbatch.html
 
-#SBATCH --partition=priority        # Partition (queue)
-#SBATCH --time=0-02:00              # Runtime in D-HH:MM format
+#SBATCH --partition=short        # Partition (queue)
+#SBATCH --time=02:00:00              # Runtime in D-HH:MM format
 #SBATCH --job-name=fastqc            # Job name
 #SBATCH -c 10
 #SBATCH --mem-per-cpu=1G            # Memory needed per CPU
