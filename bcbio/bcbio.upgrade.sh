@@ -80,6 +80,11 @@ date
 # rnaseq
 #bcbio_nextgen.py upgrade -u skip --genomes hg38 --datatarget rnaseq
 
+# conda install --force-reinstall -c bioconda delly=0.8.1=h43566fd_3
+# conda remove --force delly
+# conda install -c bioconda delly=0.8.1=h43566fd_3
+# conda install -c bioconda delly=0.8.1=h43566fd_3 > bcbio.upgrade.sh_2020-02-11 &
+
 ######################################################################
 # fresh installation for Sam with human and mouse genome
 
