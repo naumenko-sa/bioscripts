@@ -3,9 +3,11 @@
 # $1 = input.fasta
 # output = input.internal.fasta
 
-prefix=~/project_reversals/scripts/paml
+# codeml should be in PATH
+
+prefix=~/somewhere/scripts/paml
 filename=`echo $1 | sed s/fasta/phy/`
-perl ~/bin/fasta2phylip.pl $1 $filename
+perl $prefix/fasta2phylip.pl $1 $filename
 cat $prefix/codeml.template | sed s/sequence.phy/$filename/ > codeml.ctl
 codeml
 pamlresult=`echo $1 | sed s/fasta/paml/`
