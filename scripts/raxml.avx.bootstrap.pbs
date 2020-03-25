@@ -1,17 +1,27 @@
 #!/bin/bash
 
-#PBS -d .
-#PBS -l walltime=10:00:00,nodes=1:ppn=30,mem=10G,vmem=10G
-#PBS -joe .
+# https://slurm.schedmd.com/sbatch.html
+# https://wiki.rc.hms.harvard.edu/display/O2
+
+#SBATCH --partition=priority        # Partition (queue) priority
+#SBATCH --time=2-00:00              # Runtime in D-HH:MM format, 10:00:00 for hours
+#SBATCH --job-name=project          # Job name
+#SBATCH -c 30			    # cores
+#SBATCH --mem=50G           # Memory needed per CPU or --mem-per-cpu
+#SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
+#SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
+#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 # run with -o and without -o to get bootstrap support for all branches
 # with outgroup to check bootstrap
 
 # avx should be faster than sse
 
+# $1 = align fasta
+
 date
-hostname
-raxml=/hpf/largeprojects/ccmbio/naumenko/tools/standard-RAxML/raxmlHPC-PTHREADS-AVX
+raxml=raxmlHPC-PTHREADS-SSE3
+align=$1
 
 ogroup=""
 if [ -n "$outgroup" ]
