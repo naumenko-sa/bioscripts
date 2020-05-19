@@ -1,0 +1,724 @@
+Wed Apr 22 01:32:08 UTC 2020
+--2020-04-22 01:32:11--  https://raw.githubusercontent.com/bcbio/bcbio-nextgen/master/requirements-conda.txt
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 151.101.248.133
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|151.101.248.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 20 [text/plain]
+Saving to: ‘bcbio-update-requirements.txt’
+
+     0K                                                       100% 5.83M=0s
+
+2020-04-22 01:32:11 (5.83 MB/s) - ‘bcbio-update-requirements.txt’ saved [20/20]
+
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda
+
+  added / updated specs:
+    - bcbio-nextgen==1.2.3
+
+
+The following NEW packages will be INSTALLED:
+
+  bcbio-nextgen      bioconda/noarch::bcbio-nextgen-1.2.3-py_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+--2020-04-22 01:33:09--  https://github.com/chapmanb/cloudbiolinux/archive/master.tar.gz
+Resolving github.com (github.com)... 140.82.112.3
+Connecting to github.com (github.com)|140.82.112.3|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://codeload.github.com/chapmanb/cloudbiolinux/tar.gz/master [following]
+--2020-04-22 01:33:09--  https://codeload.github.com/chapmanb/cloudbiolinux/tar.gz/master
+Resolving codeload.github.com (codeload.github.com)... 140.82.113.9
+Connecting to codeload.github.com (codeload.github.com)|140.82.113.9|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [application/x-gzip]
+Saving to: ‘STDOUT’
+
+     0K ........ ........ ........ ........ ........ ........ 5.65M
+  3072K ........ ........ ........ .......                    74.0M=0.6s
+
+2020-04-22 01:33:10 (8.87 MB/s) - written to stdout [5189718]
+
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda
+
+  added / updated specs:
+    - age-metasv
+    - anaconda-client
+    - arriba
+    - ataqv
+    - awscli
+    - bamtools=2.4.0
+    - bamutil
+    - bbmap
+    - bcbio-prioritize
+    - bcbio-variation
+    - bcbio-variation-recall
+    - bcftools
+    - bedtools=2.27.1
+    - bio-vcf
+    - biobambam
+    - bioconductor-annotate
+    - bioconductor-apeglm
+    - bioconductor-biocgenerics
+    - bioconductor-biocinstaller
+    - bioconductor-biocstyle
+    - bioconductor-biostrings
+    - bioconductor-biovizbase
+    - bioconductor-bsgenome.hsapiens.ucsc.hg19
+    - bioconductor-bsgenome.hsapiens.ucsc.hg38
+    - bioconductor-bubbletree
+    - bioconductor-cn.mops
+    - bioconductor-copynumber
+    - bioconductor-degreport
+    - bioconductor-deseq2
+    - bioconductor-dexseq
+    - bioconductor-dnacopy
+    - bioconductor-genomeinfodbdata
+    - bioconductor-genomicranges
+    - bioconductor-iranges
+    - bioconductor-limma
+    - bioconductor-rtracklayer
+    - bioconductor-snpchip
+    - bioconductor-titancna
+    - bioconductor-vsn[version='>=3.50.0']
+    - bowtie
+    - bowtie2
+    - break-point-inspector
+    - bwa
+    - bwakit
+    - bzip2
+    - cage
+    - cancerit-allelecount
+    - chipseq-greylist
+    - cnvkit
+    - coincbc
+    - cramtools
+    - cufflinks
+    - cyvcf2
+    - deeptools
+    - delly
+    - duphold
+    - ensembl-vep=99
+    - express
+    - extract-sv-reads
+    - fastp
+    - fastqc[version='>=0.11.8',build=1]
+    - fgbio
+    - freebayes=1.1.0.46
+    - gatk
+    - gatk4
+    - geneimpacts
+    - genesplicer
+    - gffcompare
+    - goleft
+    - grabix
+    - gridss
+    - gsort
+    - gvcfgenotyper
+    - h5py
+    - hmftools-amber
+    - hmftools-cobalt
+    - hmftools-purple
+    - hmmlearn
+    - hts-nim-tools
+    - htslib
+    - impute2
+    - kallisto[version='>=0.43.1']
+    - kraken
+    - ldc[version='>=1.13.0']
+    - lofreq
+    - macs2
+    - maxentscan
+    - mbuffer
+    - minimap2
+    - mintmap
+    - mirdeep2=2.0.0.7
+    - mirtop
+    - moreutils
+    - multiqc
+    - multiqc-bcbio
+    - ncurses
+    - ngs-disambiguate
+    - nodejs
+    - novoalign
+    - octopus[version='>=0.5.1b']
+    - oncofuse
+    - optitype[version='>=1.3.4']
+    - p7zip
+    - parallel
+    - pbgzip
+    - perl-app-cpanminus
+    - perl-archive-extract
+    - perl-archive-zip
+    - perl-bio-db-sam
+    - perl-cgi
+    - perl-dbi
+    - perl-encode-locale
+    - perl-file-fetch
+    - perl-file-sharedir
+    - perl-file-sharedir-install
+    - perl-ipc-system-simple
+    - perl-lwp-protocol-https
+    - perl-lwp-simple
+    - perl-sanger-cgp-battenberg
+    - perl-statistics-descriptive
+    - perl-time-hires
+    - perl-vcftools-vcf
+    - picard
+    - pindel
+    - pizzly
+    - pyloh
+    - pysam[version='>=0.14.0']
+    - python=3.6
+    - pythonpy
+    - qsignature
+    - qualimap
+    - r-base
+    - r-basejump=0.7.2
+    - r-bcbiornaseq[version='>=0.2.7']
+    - r-cghflasso
+    - r-chbutils
+    - r-devtools
+    - r-dplyr
+    - r-dt
+    - r-ggdendro
+    - r-ggplot2
+    - r-ggrepel[version='>=0.7']
+    - r-gplots
+    - r-gsalib
+    - r-knitr
+    - r-pheatmap
+    - r-plyr
+    - r-pscbs
+    - r-reshape
+    - r-rmarkdown
+    - r-rsqlite
+    - r-sleuth
+    - r-snow
+    - r-stringi
+    - r-viridis[version='>=0.5']
+    - r-wasabi
+    - r=3.5.1
+    - rapmap
+    - razers3=3.5.0
+    - readline
+    - rtg-tools
+    - s3gof3r
+    - sailfish
+    - salmon
+    - sambamba
+    - samblaster
+    - samtools
+    - scalpel
+    - seq2c[version='<2016']
+    - seqbuster
+    - seqcluster
+    - seqtk
+    - sickle-trim
+    - simple_sv_annotation
+    - singlecell-barcodes
+    - snap-aligner=1.0dev.97
+    - snpeff=4.3.1t
+    - solvebio
+    - spades
+    - staden_io_lib
+    - star=2.6.1d
+    - stringtie
+    - subread
+    - survivor
+    - tdrmapper
+    - tophat-recondition
+    - trim-galore=0.6.2
+    - ucsc-bedgraphtobigwig
+    - ucsc-bedtobigbed
+    - ucsc-bigbedinfo
+    - ucsc-bigbedsummary
+    - ucsc-bigbedtobed
+    - ucsc-bigwiginfo
+    - ucsc-bigwigsummary
+    - ucsc-bigwigtobedgraph
+    - ucsc-bigwigtowig
+    - ucsc-fatotwobit
+    - ucsc-gtftogenepred
+    - ucsc-liftover
+    - ucsc-wigtobigwig
+    - umis
+    - vardict
+    - vardict-java
+    - variantbam
+    - varscan
+    - vcfanno
+    - vcflib
+    - verifybamid2
+    - viennarna
+    - vqsr_cnn
+    - vt
+    - wham
+    - xorg-libxt
+    - xz
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    blosc-1.18.1               |       he1b5a44_0         893 KB  conda-forge
+    numexpr-2.7.1              |   py36h830a2c2_1         197 KB  conda-forge
+    optitype-1.3.4             |                0         4.6 MB  bioconda
+    pyomo-5.6.9                |   py36h9f0ad1d_1         3.6 MB  conda-forge
+    pytables-3.6.1             |   py36h9f153d1_1         1.5 MB  conda-forge
+    pyutilib-5.8.0             |     pyh9f0ad1d_1         168 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:        10.8 MB
+
+The following NEW packages will be INSTALLED:
+
+  appdirs            conda-forge/noarch::appdirs-1.4.3-py_1
+  blosc              conda-forge/linux-64::blosc-1.18.1-he1b5a44_0
+  glpk               conda-forge/linux-64::glpk-4.65-he80fd80_1002
+  lzo                conda-forge/linux-64::lzo-2.10-h14c3975_1000
+  nose               conda-forge/linux-64::nose-1.3.7-py36h9f0ad1d_1004
+  numexpr            conda-forge/linux-64::numexpr-2.7.1-py36h830a2c2_1
+  optitype           bioconda/noarch::optitype-1.3.4-0
+  ply                conda-forge/noarch::ply-3.11-py_1
+  pyomo              conda-forge/linux-64::pyomo-5.6.9-py36h9f0ad1d_1
+  pytables           conda-forge/linux-64::pytables-3.6.1-py36h9f153d1_1
+  pyutilib           conda-forge/noarch::pyutilib-5.8.0-pyh9f0ad1d_1
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda
+
+  added / updated specs:
+    - age-metasv
+    - anaconda-client
+    - arriba
+    - ataqv
+    - awscli
+    - bamtools=2.4.0
+    - bamutil
+    - bbmap
+    - bcbio-prioritize
+    - bcbio-variation
+    - bcbio-variation-recall
+    - bcftools
+    - bedtools=2.27.1
+    - bio-vcf
+    - biobambam
+    - bioconductor-annotate
+    - bioconductor-apeglm
+    - bioconductor-biocgenerics
+    - bioconductor-biocinstaller
+    - bioconductor-biocstyle
+    - bioconductor-biostrings
+    - bioconductor-biovizbase
+    - bioconductor-bsgenome.hsapiens.ucsc.hg19
+    - bioconductor-bsgenome.hsapiens.ucsc.hg38
+    - bioconductor-bubbletree
+    - bioconductor-cn.mops
+    - bioconductor-copynumber
+    - bioconductor-degreport
+    - bioconductor-deseq2
+    - bioconductor-dexseq
+    - bioconductor-dnacopy
+    - bioconductor-genomeinfodbdata
+    - bioconductor-genomicranges
+    - bioconductor-iranges
+    - bioconductor-limma
+    - bioconductor-rtracklayer
+    - bioconductor-snpchip
+    - bioconductor-titancna
+    - bioconductor-vsn[version='>=3.50.0']
+    - bowtie
+    - bowtie2
+    - break-point-inspector
+    - bwa
+    - bwakit
+    - bzip2
+    - cage
+    - cancerit-allelecount
+    - chipseq-greylist
+    - cnvkit
+    - coincbc
+    - cramtools
+    - cufflinks
+    - cyvcf2
+    - deeptools
+    - delly
+    - duphold
+    - ensembl-vep=99
+    - express
+    - extract-sv-reads
+    - fastp
+    - fastqc[version='>=0.11.8',build=1]
+    - fgbio
+    - freebayes=1.1.0.46
+    - gatk
+    - gatk4
+    - geneimpacts
+    - genesplicer
+    - gffcompare
+    - goleft
+    - grabix
+    - gridss
+    - gsort
+    - gvcfgenotyper
+    - h5py
+    - hmftools-amber
+    - hmftools-cobalt
+    - hmftools-purple
+    - hmmlearn
+    - hts-nim-tools
+    - htslib
+    - impute2
+    - kallisto[version='>=0.43.1']
+    - kraken
+    - ldc[version='>=1.13.0']
+    - lofreq
+    - macs2
+    - maxentscan
+    - mbuffer
+    - minimap2
+    - mintmap
+    - mirdeep2=2.0.0.7
+    - mirtop
+    - moreutils
+    - multiqc
+    - multiqc-bcbio
+    - ncurses
+    - ngs-disambiguate
+    - nodejs
+    - novoalign
+    - octopus[version='>=0.5.1b']
+    - oncofuse
+    - optitype[version='>=1.3.4']
+    - p7zip
+    - parallel
+    - pbgzip
+    - perl-app-cpanminus
+    - perl-archive-extract
+    - perl-archive-zip
+    - perl-bio-db-sam
+    - perl-cgi
+    - perl-dbi
+    - perl-encode-locale
+    - perl-file-fetch
+    - perl-file-sharedir
+    - perl-file-sharedir-install
+    - perl-ipc-system-simple
+    - perl-lwp-protocol-https
+    - perl-lwp-simple
+    - perl-sanger-cgp-battenberg
+    - perl-statistics-descriptive
+    - perl-time-hires
+    - perl-vcftools-vcf
+    - picard
+    - pindel
+    - pizzly
+    - pyloh
+    - pysam[version='>=0.14.0']
+    - python=3.6
+    - pythonpy
+    - qsignature
+    - qualimap
+    - r-base
+    - r-basejump=0.7.2
+    - r-bcbiornaseq[version='>=0.2.7']
+    - r-cghflasso
+    - r-chbutils
+    - r-devtools
+    - r-dplyr
+    - r-dt
+    - r-ggdendro
+    - r-ggplot2
+    - r-ggrepel[version='>=0.7']
+    - r-gplots
+    - r-gsalib
+    - r-knitr
+    - r-pheatmap
+    - r-plyr
+    - r-pscbs
+    - r-reshape
+    - r-rmarkdown
+    - r-rsqlite
+    - r-sleuth
+    - r-snow
+    - r-stringi
+    - r-viridis[version='>=0.5']
+    - r-wasabi
+    - r=3.5.1
+    - rapmap
+    - razers3=3.5.0
+    - readline
+    - rtg-tools
+    - s3gof3r
+    - sailfish
+    - salmon
+    - sambamba
+    - samblaster
+    - samtools
+    - scalpel
+    - seq2c[version='<2016']
+    - seqbuster
+    - seqcluster
+    - seqtk
+    - sickle-trim
+    - simple_sv_annotation
+    - singlecell-barcodes
+    - snap-aligner=1.0dev.97
+    - snpeff=4.3.1t
+    - solvebio
+    - spades
+    - staden_io_lib
+    - star=2.6.1d
+    - stringtie
+    - subread
+    - survivor
+    - tdrmapper
+    - tophat-recondition
+    - trim-galore=0.6.2
+    - ucsc-bedgraphtobigwig
+    - ucsc-bedtobigbed
+    - ucsc-bigbedinfo
+    - ucsc-bigbedsummary
+    - ucsc-bigbedtobed
+    - ucsc-bigwiginfo
+    - ucsc-bigwigsummary
+    - ucsc-bigwigtobedgraph
+    - ucsc-bigwigtowig
+    - ucsc-fatotwobit
+    - ucsc-gtftogenepred
+    - ucsc-liftover
+    - ucsc-wigtobigwig
+    - umis
+    - vardict
+    - vardict-java
+    - variantbam
+    - varscan
+    - vcfanno
+    - vcflib
+    - verifybamid2
+    - viennarna
+    - vqsr_cnn
+    - vt
+    - wham
+    - xorg-libxt
+    - xz
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    deeptools-3.4.3            |             py_0         142 KB  bioconda
+    openssl-1.1.1g             |       h516909a_0         2.1 MB  conda-forge
+    ------------------------------------------------------------
+                                           Total:         2.3 MB
+
+The following packages will be UPDATED:
+
+  deeptools                                      3.4.2-py_0 --> 3.4.3-py_0
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/dv
+
+  added / updated specs:
+    - deepvariant
+    - python=3.6
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/htslib1.10
+
+  added / updated specs:
+    - mosdepth
+    - python=3
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/python2
+
+  added / updated specs:
+    - bismark=0.22.1
+    - cpat
+    - cutadapt=1.16
+    - dkfz-bias-filter
+    - gemini
+    - gvcf-regions
+    - hap.py
+    - hisat2
+    - htseq=0.9.1
+    - lumpy-sv
+    - manta
+    - metasv
+    - mirge
+    - peddy
+    - phylowgs
+    - platypus-variant
+    - python=2
+    - sentieon
+    - smcounter2
+    - smoove
+    - strelka
+    - svtools
+    - svtyper
+    - theta2
+    - tophat
+    - vawk
+    - vcf2db
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/python3
+
+  added / updated specs:
+    - atropos
+    - crossmap
+    - python=3.6
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/r36
+
+  added / updated specs:
+    - bioconductor-purecn[version='>=1.16.0']
+    - python=3
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+
+# All requested packages already installed.
+
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /data/bcbio/anaconda/envs/samtools0
+
+  added / updated specs:
+    - ericscript
+    - python=2
+
+
+The following packages will be UPDATED:
+
+  openssl                                 1.1.1f-h516909a_0 --> 1.1.1g-h516909a_0
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+Upgrading bcbio
+Upgrade of bcbio-nextgen code complete.
+Upgrading third party tools to latest versions
+Reading packages from /home/ubuntu/code/bioscripts/bcbio/tmpbcbio-install/cloudbiolinux/contrib/flavor/ngs_pipeline_minimal/packages-conda.yaml
+Checking for problematic or migrated packages in default environment
+# Installing into conda environment default: age-metasv, arriba, ataqv, bamtools=2.4.0, bamutil, bbmap, bcbio-prioritize, bcbio-variation, bcbio-variation-recall, bcftools, bedtools=2.27.1, bio-vcf, biobambam, bowtie, bowtie2, break-point-inspector, bwa, bwakit, cage, cancerit-allelecount, chipseq-greylist, cnvkit, coincbc, cramtools, cufflinks, cyvcf2, deeptools, delly, duphold, ensembl-vep=99.*, express, extract-sv-reads, fastp, fastqc>=0.11.8=1, fgbio, freebayes=1.1.0.46, gatk, gatk4, geneimpacts, genesplicer, gffcompare, goleft, grabix, gridss, gsort, gvcfgenotyper, h5py, hmftools-amber, hmftools-cobalt, hmftools-purple, hmmlearn, hts-nim-tools, htslib, impute2, kallisto>=0.43.1, kraken, ldc>=1.13.0, lofreq, macs2, maxentscan, mbuffer, minimap2, mintmap, mirdeep2=2.0.0.7, mirtop, moreutils, multiqc, multiqc-bcbio, ngs-disambiguate, novoalign, octopus>=0.5.1b, oncofuse, optitype>=1.3.4, parallel, pbgzip, perl-sanger-cgp-battenberg, picard, pindel, pizzly, pyloh, pysam>=0.14.0, pythonpy, qsignature, qualimap, rapmap, razers3=3.5.0, rtg-tools, sailfish, salmon, sambamba, samblaster, samtools, scalpel, seq2c<2016, seqbuster, seqcluster, seqtk, sickle-trim, simple_sv_annotation, singlecell-barcodes, snap-aligner=1.0dev.97, snpeff=4.3.1t, solvebio, spades, staden_io_lib, star=2.6.1d, stringtie, subread, survivor, tdrmapper, tophat-recondition, trim-galore=0.6.2, ucsc-bedgraphtobigwig, ucsc-bedtobigbed, ucsc-bigbedinfo, ucsc-bigbedsummary, ucsc-bigbedtobed, ucsc-bigwiginfo, ucsc-bigwigsummary, ucsc-bigwigtobedgraph, ucsc-bigwigtowig, ucsc-fatotwobit, ucsc-gtftogenepred, ucsc-liftover, ucsc-wigtobigwig, umis, vardict, vardict-java, variantbam, varscan, vcfanno, vcflib, verifybamid2, viennarna, vqsr_cnn, vt, wham, anaconda-client, awscli, bzip2, ncurses, nodejs, p7zip, readline, s3gof3r, xz, perl-app-cpanminus, perl-archive-extract, perl-archive-zip, perl-bio-db-sam, perl-cgi, perl-dbi, perl-encode-locale, perl-file-fetch, perl-file-sharedir, perl-file-sharedir-install, perl-ipc-system-simple, perl-lwp-protocol-https, perl-lwp-simple, perl-statistics-descriptive, perl-time-hires, perl-vcftools-vcf, bioconductor-annotate, bioconductor-apeglm, bioconductor-biocgenerics, bioconductor-biocinstaller, bioconductor-biocstyle, bioconductor-biostrings, bioconductor-biovizbase, bioconductor-bsgenome.hsapiens.ucsc.hg19, bioconductor-bsgenome.hsapiens.ucsc.hg38, bioconductor-bubbletree, bioconductor-cn.mops, bioconductor-copynumber, bioconductor-degreport, bioconductor-deseq2, bioconductor-dexseq, bioconductor-dnacopy, bioconductor-genomeinfodbdata, bioconductor-genomicranges, bioconductor-iranges, bioconductor-limma, bioconductor-rtracklayer, bioconductor-snpchip, bioconductor-titancna, bioconductor-vsn>=3.50.0, r-base, r-basejump=0.7.2, r-bcbiornaseq>=0.2.7, r-cghflasso, r-chbutils, r-devtools, r-dplyr, r-dt, r-ggdendro, r-ggplot2, r-ggrepel>=0.7, r-gplots, r-gsalib, r-knitr, r-pheatmap, r-plyr, r-pscbs, r-reshape, r-rmarkdown, r-rsqlite, r-sleuth, r-snow, r-stringi, r-viridis>=0.5, r-wasabi, r=3.5.1, xorg-libxt
+# Installing into conda environment dv: deepvariant
+# Installing into conda environment htslib1.10: mosdepth
+# Installing into conda environment python2: bismark=0.22.1, cpat, cutadapt=1.16, dkfz-bias-filter, gemini, gvcf-regions, hap.py, hisat2, htseq=0.9.1, lumpy-sv, manta, metasv, mirge, peddy, phylowgs, platypus-variant, sentieon, smcounter2, smoove, strelka, svtools, svtyper, theta2, tophat, vawk, vcf2db
+# Installing into conda environment python3: atropos, crossmap
+# Installing into conda environment r36: bioconductor-purecn>=1.16.0
+# Installing into conda environment samtools0: ericscript
+Creating manifest of installed packages in /data/bcbio/manifest
+Third party tools upgrade complete.
+Isolated tool installation not automatically added to environmental variables
+ Add:
+  /data/bcbio/tools/bin to PATH
+Upgrade completed successfully.
+Wed Apr 22 01:39:31 UTC 2020

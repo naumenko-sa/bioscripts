@@ -33,7 +33,7 @@ date
 ######################################################################
 # 3. Upgrade tools. If tooldir was set before, no need to specify it again
 # which bcbio_nextgen.py
-#bcbio_nextgen.py upgrade -u development --tools
+bcbio_nextgen.py upgrade -u stable --tools
 # bcbio_nextgen.py upgrade -u skip --tools
 #--tooldir $1
 ######################################################################
