@@ -4,7 +4,6 @@
 
 bname=`basename $1 .hdf5`
 
-export LD_PRELOAD=/bcbio/anaconda/lib/libopenblas.so && \
 unset JAVA_HOME && \
 export PATH=/bcbio/anaconda/bin:"$PATH" && \
 gatk --java-options '-Xms500m -Xmx131859m -XX:+UseSerialGC -Djava.io.tmpdir=.' \
