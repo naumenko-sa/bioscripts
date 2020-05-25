@@ -10,6 +10,6 @@ CollectReadCounts \
 -I $1 \
 -L $2 \
 --interval-merging-rule OVERLAPPING_ONLY \
--O $bname.hdf5 \
---format HDF5
+-O $bname.counts.tsv \
+--format TSV
 

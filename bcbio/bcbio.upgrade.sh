@@ -2,8 +2,8 @@
 #SBATCH --partition=priority        # Partition (queue)
 #SBATCH --time=5-00:00              # Runtime in D-HH:MM format
 #SBATCH --job-name=bcbio       # Job name
-#SBATCH -c 1			    # cores
-#SBATCH --mem-per-cpu=10G           # Memory needed per CPU or --mem
+#SBATCH -c 10			    # cores
+#SBATCH --mem-per-cpu=5G           # Memory needed per CPU or --mem
 #SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
@@ -33,14 +33,14 @@ date
 ######################################################################
 # 3. Upgrade tools. If tooldir was set before, no need to specify it again
 # which bcbio_nextgen.py
-bcbio_nextgen.py upgrade -u stable --tools
+# bcbio_nextgen.py upgrade -u stable --tools
 # bcbio_nextgen.py upgrade -u skip --tools
 #--tooldir $1
 ######################################################################
 # 4. Install indices
 # genomes = {GRCh37, hg38}
 # bcbio_nextgen.py upgrade -u skip --genomes hg38 --aligners bwa --cores 10
-# bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --aligners star --cores 10
+# bcbio_nextgen.py upgrade -u skip --genomes hg19 --aligners star --cores 10
 # bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --aligners hisat2 --cores 10
 # bcbio_nextgen.py upgrade -u skip --genomes GRCh37 --aligners rtg --cores 10
 #########################################################################
