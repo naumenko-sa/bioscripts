@@ -3,7 +3,9 @@
 # $1 = sort.bam
 # $2 = interval.list
 
-bname=`basename $1 .bam`
+# output TSV to plot graphs, or do hdf5
+
+bname=`basename $1 -ready.bam`
 
 gatk --java-options '-Xms500m -Xmx131859m -XX:+UseSerialGC -Djava.io.tmpdir=.' \
 CollectReadCounts \
@@ -12,4 +14,3 @@ CollectReadCounts \
 --interval-merging-rule OVERLAPPING_ONLY \
 -O $bname.counts.tsv \
 --format TSV
-

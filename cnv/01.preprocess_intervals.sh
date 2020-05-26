@@ -7,6 +7,8 @@
 # recommended padding is 250 both sides - too much for exomes 100bp/exon? - 
 # was optimal for TCGA exome data
 
+# some samples fail downstream when using 250 padding
+
 bname=`basename $1 .bed`
 
 gatk PreprocessIntervals \
