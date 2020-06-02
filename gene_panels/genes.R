@@ -88,6 +88,17 @@ mouse_get_protein_coding_genes <- function(){
     genes_info <- genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
 }
 
+get_promoters <- function(){
+  mart <- init_mart_human()
+  
+  attributes <- listAttributes(mart, 
+                               what = c("name", "description", "fullDescription", "page"))
+  unique(attributes$page)
+  attributes <- listAttributes(mart, "sequences", 
+                               what = c("name", "description", "fullDescription", "page"))
+  filters <- listFilters(mart, c("name", "description", "fullDescription"))
+}
+
 tutorial_explore_marts <- function(){
     library(biomaRt)
     listMarts()
