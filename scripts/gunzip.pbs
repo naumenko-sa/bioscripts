@@ -5,4 +5,4 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-gunzip $file
+bunzip2 $file

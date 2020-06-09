@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 import sys
 
 InputFileName = sys.argv[1]
