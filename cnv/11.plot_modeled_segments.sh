@@ -10,7 +10,7 @@ gatk PlotModeledSegments \
 --allelic-counts $bname.hets.tsv \
 --segments $bname.modelFinal.seg \
 --sequence-dictionary $2 \
---minimum-contig-length 46709983 \
+--minimum-contig-length 10 \
 --output segment_plots \
 --output-prefix $bname
 

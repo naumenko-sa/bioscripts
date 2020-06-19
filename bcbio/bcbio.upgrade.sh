@@ -104,4 +104,6 @@ date
 # bcbio_nextgen.py upgrade -u skip --tools --tooldir /hpf/largeprojects/lauryl/bcbio110
 # bcbio_nextgen.py upgrade -u skip --data --genomes mm10 --datatarget variation --datatarget vep
 
+bcbio_nextgen.py upgrade -u skip --genomes hg38 --datatarget kraken
+
 date
