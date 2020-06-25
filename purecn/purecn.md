@@ -42,21 +42,25 @@ tabix S1_N.vcf.gz
 ?--genotype-germline-sites
 ?- output germline variants - PureCN needs them
 
-### 1.4 Create snv_pon.vcf.gz
-prepare sample_list.txt:
+### 1.4 Create genomicsdb
 ```
-S1_N.for_pon.vcf.gz
-S2_N.for_pon.vcf.gz
-S3_N.for_pon.vcf.gz
+ls -1 *.for_pon.vcf.gz | awk -F "." '{print $1"\t"$0}' > sample_list.tsv
+
+gatk GenomicsDBImport \
+-R /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
+--intervals $1 \
+--sample-name-map sample_list.tsv \
+--genomicsdb-workspace-path pon_db
 ```
 
+### 1.5 Create snv_pon.vcf.gz
 ```
 gatk CreateSomaticPanelOfNormals \
--vcfs sample_list.txt \
+-R /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
+--germline-resource af-only-gnomad.vcf.gz \
+-V gendb://pon_db \
 -O snv_pon.vcf.gz
 ```
-
-result: snv_pon.vcf.gz
 
 ## 2 Do segmentation with gatkcnv
 

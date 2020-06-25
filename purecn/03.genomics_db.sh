@@ -1,8 +1,9 @@
 #!/bin/bash
 
+# in createsomaticpanelofnormals
 # -V does not work for multiple samples
 # -vcfs --vcfs do not work
-# only through genomicsdbi works
+# only works through genomicsdb
 
 ls -1 *.for_pon.vcf.gz | awk -F "." '{print $1"\t"$0}' > sample_list.tsv
 
