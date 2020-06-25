@@ -2,8 +2,12 @@
 
 ## 1. Create SNV PON with Mutect2
 
-- This step could be done once for a sequencing with > 40 normal samples.
-- see [gatk manual](https://gatk.broadinstitute.org/hc/en-us/articles/360035531132--How-to-Call-somatic-mutations-using-GATK4-Mutect2)
+- This step could be done once for a sequencing panel with > 40 normal samples.
+- see [gatk documentation]
+- https://gatk.broadinstitute.org/hc/en-us/articles/360037058172-CreateSomaticPanelOfNormals-BETA-
+- https://gatk.broadinstitute.org/hc/en-us/articles/360035531132--How-to-Call-somatic-mutations-using-GATK4-Mutect2)
+- https://gatkforums.broadinstitute.org/gatk/discussion/11136/how-to-call-somatic-mutations-using-gatk4-mutect2#2
+
 - Use *normal* samples only, call variants in *tumor-only* mode with mutect2
 - bcbio does not support yet running mutect2 in tumor-only mode without a PON, use commands from GATK site.
 
@@ -15,49 +19,44 @@ gatk BedToIntervalList \
 -SD /bcbio/genomes/Hsapiens/hg38/seq/hg38.dict
 ```
 
-### 1.2 Call variants for each normal bam
-- using interval padding
-- output germline variants - PureCN needs them
+### 1.2 Download gnomad-af only vcf:
+```
+wget -c https://storage.googleapis.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz
+wget -c https://storage.googleapis.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz.tbi
+```
+
+### 1.3 Call variants for each normal bam in tumor-only mode
 ```
 gatk Mutect2 \
 -R /bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
 -I S1_N.bam \
--O S1_N.vcf.gz \
+-O S1_N_for_pon.vcf.gz \
+-tumor S1_N \
 --max-mnp-distance 0 \
+--intervals panel.interval_list \
+--interval-padding 50 \
+--germline-resoure af-only-gnomad.hg38.vcf.gz
+tabix S1_N.vcf.gz
 ```
 
-?use --intervals panel.interval_list \
-?    --intterval-padding 50 \
---genotype-germline-sites
+?--genotype-germline-sites
+?- output germline variants - PureCN needs them
 
-### 1.3 Create genomics.db
+### 1.4 Create snv_pon.vcf.gz
+prepare sample_list.txt:
 ```
-gatk GenomicsDBImport\
--R /bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
--L intervals.interval_list \
-        --genomicsdb-workspace-path pon_db \
-        -V normal1.vcf.gz \
-        -V normal2.vcf.gz \
-        -V normal3.vcf.gz
+S1_N.for_pon.vcf.gz
+S2_N.for_pon.vcf.gz
+S3_N.for_pon.vcf.gz
 ```
 
-### 1.4 Download gnomad-af only vcf:
 ```
-wget https://storage.googleapis.com/gatk-best-practices/somatic-hg38/af-only-gnomad.hg38.vcf.gz
+gatk CreateSomaticPanelOfNormals \
+-vcfs sample_list.txt \
+-O snv_pon.vcf.gz
 ```
-
-### 1.5. combine calls into PON.vcf
-```
-gatk CreateSomaticPanelOfNormals -R reference.fasta \
-      --germline-resource af-only-gnomad.vcf.gz \
-      -V gendb://pon_db \
-      -O pon.vcf.gz
-      ```
-
-
 
 result: snv_pon.vcf.gz
-
 
 ## 2 Do segmentation with gatkcnv
 
