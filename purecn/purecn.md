@@ -4,9 +4,12 @@
 
 - This step could be done once for a sequencing panel with > 40 normal samples.
 - see [gatk documentation]
+- https://github.com/lima1/PureCN/issues/117
 - https://gatk.broadinstitute.org/hc/en-us/articles/360037058172-CreateSomaticPanelOfNormals-BETA-
 - https://gatk.broadinstitute.org/hc/en-us/articles/360035531132--How-to-Call-somatic-mutations-using-GATK4-Mutect2)
 - https://gatkforums.broadinstitute.org/gatk/discussion/11136/how-to-call-somatic-mutations-using-gatk4-mutect2#2
+- progress with gatk4 in purecn: https://github.com/lima1/PureCN/issues/6
+- https://github.com/lima1/PureCN/issues/117
 
 - Use *normal* samples only, call variants in *tumor-only* mode with mutect2
 - bcbio does not support yet running mutect2 in tumor-only mode without a PON, use commands from GATK site.
@@ -35,14 +38,35 @@ gatk Mutect2 \
 --max-mnp-distance 0 \
 --intervals panel.interval_list \
 --interval-padding 50 \
---germline-resoure af-only-gnomad.hg38.vcf.gz
+--germline-resoure af-only-gnomad.hg38.vcf.gz \
+--genotype-germline-sites
+
 tabix S1_N.vcf.gz
 ```
 
-?--genotype-germline-sites
-?- output germline variants - PureCN needs them
+### 1.4 Merge files with gatk3
+Alternative steps 1.4.1-1.4.2 are not working for PureCN,
+because CreateSomaticPanelOfNormals does not produce AD field in the vcf.
 
-### 1.4 Create genomicsdb
+```
+vcf_files=""
+for f in *.for_pon.vcf.gz
+do
+    vcf_files="$vcf_files -V $f"
+done
+
+gatk3 -Xmx12g \
+-T CombineVariants \
+--minimumN 3 \
+-R /data/genomes/Hsapiens/hg38/seq/hg38.fa \
+-o snv_pon.vcf \
+$vcf_files
+
+bgzip snv_pon.vcf
+tabix snv_pon.vcf.gz
+```
+
+### [future] 1.4.1 Create genomicsdb
 ```
 ls -1 *.for_pon.vcf.gz | awk -F "." '{print $1"\t"$0}' > sample_list.tsv
 
@@ -53,7 +77,7 @@ gatk GenomicsDBImport \
 --genomicsdb-workspace-path pon_db
 ```
 
-### 1.5 Create snv_pon.vcf.gz
+### [future] 1.4.2 Create snv_pon.vcf.gz
 ```
 gatk CreateSomaticPanelOfNormals \
 -R /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
@@ -75,7 +99,5 @@ gatk Mutect2 \
 --genotype-germline-sites
 
 ## 3. Run pureCN with snv_pon and segments from gatkcnv.
-
-
 
 3.1 Prepare intervals

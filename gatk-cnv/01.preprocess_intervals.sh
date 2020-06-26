@@ -4,7 +4,7 @@
 # $2 = hg38.fa
 
 # https://gatk.broadinstitute.org/hc/en-us/articles/360042914391-PreprocessIntervals
-# recommended padding is 250 both sides - too much for exomes 100bp/exon? - 
+# recommended padding is 250 both sides - too much for exomes 100bp/exon? -
 # was optimal for TCGA exome data
 
 # some samples fail downstream when using 250 padding
