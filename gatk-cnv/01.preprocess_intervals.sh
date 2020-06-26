@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $1 = coverage.bed or could be interval_list file
+# $1 = panel.bed or could be interval_list file
 # $2 = hg38.fa
 
 # https://gatk.broadinstitute.org/hc/en-us/articles/360042914391-PreprocessIntervals
@@ -17,4 +17,4 @@ gatk PreprocessIntervals \
 -O $bname.interval_list \
 -L $1 \
 --bin-length 0 \
---padding 0
+--padding 250

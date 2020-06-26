@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# $1 = baits.bed
+# $1 = panel.bed
 # $2 = GCA_000001405.15_GRCh38_no_alt_analysis_set_100.bw
 
 PURECN=/data/bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
