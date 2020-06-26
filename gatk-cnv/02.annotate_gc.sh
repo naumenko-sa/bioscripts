@@ -2,6 +2,8 @@
 
 # $1 = target.interval_list
 # $2 = hg38.fa
+# output = panel.gcannotated.tsv
+
 
 bname=`basename $1 .interval_list`
 
