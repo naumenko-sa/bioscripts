@@ -120,7 +120,7 @@ gene_descriptions <- function(mart){
     #mart <- init_mart_human()
     ensembl_w_description <- getBM(attributes = c("ensembl_gene_id",
                                                   "external_gene_name",
-                                                  "description"),
+                                                  "description", "chromosome_name"),
                                    mart = mart)
     write_excel_csv(ensembl_w_description, "ensembl_w_description.csv")
 }
