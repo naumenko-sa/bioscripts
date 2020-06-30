@@ -2,7 +2,7 @@
 # $1 = couts.standardizedCR.tsv
 # $2 = hg38.dict
 
-bname=`basename $1 ..standardizedCR.tsv`
+bname=`basename $1 .standardizedCR.tsv`
 
 gatk PlotDenoisedCopyRatios \
 --standardized-copy-ratios $1 \

@@ -12,7 +12,7 @@
 bname=`basename $1 .bed`
 
 gatk PreprocessIntervals \
--R $2 \
+-R /data/genomes/Hsapiens/hg38/seq/hg38.fa \
 --interval-merging-rule OVERLAPPING_ONLY \
 -O $bname.interval_list \
 -L $1 \
