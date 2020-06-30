@@ -11,8 +11,8 @@ export PATH=/data/bcbio/anaconda/envs/r36/bin:$PATH
 Rscript $PURECN/PureCN.R \
 --sampleid $1 \
 --out $1.out \
---tumor ${1}-target-coverage.hdf5 \
---logratiofile ${1}-crdenoised.tsv \
+--tumor ${1}.counts.hdf5 \
+--logratiofile $1.denoisedCR.tsv \
 --segfile $1.modelFinal.seg \
 --mappingbiasfile $2 \
 --vcf $1.vcf.gz \

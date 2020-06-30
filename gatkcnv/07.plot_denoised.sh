@@ -6,8 +6,8 @@ bname=`basename $1 .standardizedCR.tsv`
 
 gatk PlotDenoisedCopyRatios \
 --standardized-copy-ratios $1 \
---denoised-copy-ratios $bname.counts.denoisedCR.tsv \
---sequence-dictionary $2 \
+--denoised-copy-ratios $bname.denoisedCR.tsv \
+--sequence-dictionary /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.dict \
 --minimum-contig-length 46709983 \
 --output plots \
 --output-prefix $bname \
