@@ -1,6 +1,11 @@
 #!/bin/bash
 
+# $1 = panel.bed
+# out = panel.interval_list
+
+bname=`basename $1 .bed`
+
 gatk BedToIntervalList \
--I panel.bed \
--O panel.interval_list \
+-I $1 \
+-O $bname.interval_list \
 -SD /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.dict

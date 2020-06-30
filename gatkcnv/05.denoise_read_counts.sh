@@ -1,9 +1,9 @@
 #!/bin/bash
-# $1 = input bam.counts.tsv
+# $1 = input bam.counts.hdf5
 # $2 = pon.hdf5
 # $3 = panel.gcannotated.tsv - necessary for PureCN
 
-bname=`basename $1 .tsv`
+bname=`basename $1 .counts.hdf5`
 
 gatk --java-options "-Xmx12g" \
 DenoiseReadCounts \

@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# $1 = target.interval_list
+# $1 = panel.interval_list
 # $2 = hg38.fa
 # output = panel.gcannotated.tsv
-
 
 bname=`basename $1 .interval_list`
 
