@@ -331,7 +331,7 @@ phenotips_hpo2gene_coordinates <- function(phenotips_hpo.tsv){
     hpo_genes <- hpo_genes %>% filter(str_detect(`Gene ID`, "ENSG")) 
     v_ensembl_gene_ids <- hpo_genes$`Gene ID`
     
-    mart <- init_mart_human_grch37()
+    mart <- init_mart_human(host = "grch37.ensembl.org")
     hpo_genes_bed <- get_gene_coordinates(v_ensembl_gene_ids, mart)
       
     output_file_name <- gsub(".tsv",".unsorted.bed", phenotips_hpo.tsv)
