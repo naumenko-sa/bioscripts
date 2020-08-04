@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#SBATCH --job-name=bcbio
+#SBATCH --mem=10G
+#SBATCH --export=ALL
+#SBATCH -t 7-50:00
+#SBATCH -p core -n 1
+
 # $1 = T.denoisedCR.tsv
 
 bname=`echo $1 | awk -F "." '{print $1}'`

@@ -9,4 +9,5 @@ bname=`basename $1 .bed`
 gatk BedToIntervalList \
 -I $1 \
 -O $bname.interval_list \
--SD /data/bcbio/genomes/Hsapiens/hg38/seq/hg38.dict
+-SD /projects/ngs/reference/UpdateGenomesBcbio/Hsapiens/hg38/seq/hg38.fa
+#/data/bcbio/genomes/Hsapiens/hg38/seq/hg38.dict

@@ -1,4 +1,11 @@
 #!/bin/bash
+
+#SBATCH --job-name=bcbio
+#SBATCH --mem=10G
+#SBATCH --export=ALL
+#SBATCH -t 7-50:00
+#SBATCH -p core -n 1
+
 # $1 = input bam.counts.hdf5
 # $2 = pon.hdf5
 # $3 = panel.gcannotated.tsv - necessary for PureCN

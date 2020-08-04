@@ -1,5 +1,6 @@
 # PureCN step by step
 
+test
 ## 0. Clean up a bed file - remove intervals on ALT chromosomes
 ```
 cat coverage.bed | grep -v alt > panel.bed
