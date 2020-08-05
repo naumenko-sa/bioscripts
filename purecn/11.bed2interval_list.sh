@@ -5,9 +5,10 @@
 # out = panel.interval_list
 
 bname=`basename $1 .bed`
+bcbio=/projects/ngs/reference/UpdateGenomesBcbio
 
 gatk BedToIntervalList \
 -I $1 \
 -O $bname.interval_list \
--SD /projects/ngs/reference/UpdateGenomesBcbio/Hsapiens/hg38/seq/hg38.fa
+-SD $bcbio/Hsapiens/hg38/seq/hg38.fa
 #/data/bcbio/genomes/Hsapiens/hg38/seq/hg38.dict

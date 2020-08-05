@@ -1,6 +1,5 @@
 # PureCN step by step
 
-test
 ## 0. Clean up a bed file - remove intervals on ALT chromosomes
 ```
 cat coverage.bed | grep -v alt > panel.bed
@@ -51,7 +50,7 @@ gatk Mutect2 \
 tabix S1_N.vcf.gz
 ```
 
-### 1.4 Merge files with gatk3
+### 1.4 Combine variants with gatk3
 Alternative steps 1.4.1-1.4.2 are not working for PureCN,
 because CreateSomaticPanelOfNormals does not produce AD field in the vcf.
 substitute with bcftools?
@@ -167,7 +166,7 @@ $hdf5_files \
 
 ## 3. Call SNV a in a tumor-only sample
 ```
-# $1 = sample_N.bam
+# $1 = sample_T.bam
 # $2 = panel.interval_list
 
 bname=`basename $1 .bam`
