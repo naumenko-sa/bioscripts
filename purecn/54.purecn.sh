@@ -26,7 +26,7 @@ $PURECN/PureCN.R \
 --normaldb normalDB_hg38.rds \
 --mappingbiasfile mapping_bias_hg38.rds \
 --intervals panel.txt \
---snpblacklist hg19_simpleRepeats.bed \
+--snpblacklist hg38_simpleRepeats.bed \
 --genome hg38 \
 --force --postoptimize --seed 123
 

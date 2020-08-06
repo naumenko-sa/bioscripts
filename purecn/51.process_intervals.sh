@@ -26,6 +26,6 @@ $PURECN/IntervalFile.R \
 --offtarget \
 --genome hg38 \
 --export panel.optimized.bed \
---mappability /projects/ngs/local/users/kmhr378/2020-06-30_DEV1534_purecn/02_reference/GCA_000001405.15_GRCh38_no_alt_analysis_set_100.bw
+--mappability $PURECN/GCA_000001405.15_GRCh38_no_alt_analysis_set_100.bw
 
 date
