@@ -8,15 +8,11 @@
 
 date
 
-. /projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/.bash_profile
-bcbio=/projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/bcbio
+. .profile
 
 ### 5.1 Process intervals file
 # $1 = panel.bed
 # $2 = GCA_000001405.15_GRCh38_no_alt_analysis_set_100.bw
-PURECN=$bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
-
-export PATH=$bcbio/anaconda/envs/r36/bin:$PATH
 
 which Rscript
 

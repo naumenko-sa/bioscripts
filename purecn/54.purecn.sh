@@ -8,12 +8,7 @@
 
 date
 
-. /projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/.bash_profile
-bcbio=/projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/bcbio
-PURECN=$bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
-
-export PATH=$bcbio/anaconda/envs/r36/bin:$PATH
-
+. .profile
 which Rscript
 
 # $1 = tumor.coverage_loess.txt.gz

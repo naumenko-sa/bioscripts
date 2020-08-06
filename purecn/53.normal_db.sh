@@ -8,16 +8,10 @@
 
 date
 
-. /projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/.bash_profile
-bcbio=/projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/bcbio
-
+. .profile
 # 5.2 create normal.db
 # $1 = snv.pon.vcf.gz
 # $2 = coverage.list of coverage_loess.txt.gz gcnormalized coverage of normals
-PURECN=$bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
-
-export PATH=$bcbio/anaconda/envs/r36/bin:$PATH
-
 which Rscript
 
 #Rscript $PURECN/NormalDB.R --help
