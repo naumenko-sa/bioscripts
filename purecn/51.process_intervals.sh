@@ -20,12 +20,16 @@ export PATH=$bcbio/anaconda/envs/r36/bin:$PATH
 
 which Rscript
 
-Rscript $PURECN/IntervalFile.R \
+bname=`basename $1 .bed`
+
+Rscript \
+$PURECN/IntervalFile.R \
 --infile $1 \
 --fasta $bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
---outfile intervals.txt \
+--outfile $bname.txt \
 --offtarget \
 --genome hg38 \
---export baits_optimized_hg38.bed \
+--export panel.optimized.bed \
+--mappability /projects/ngs/local/users/kmhr378/2020-06-30_DEV1534_purecn/02_reference/GCA_000001405.15_GRCh38_no_alt_analysis_set_100.bw
 
 date

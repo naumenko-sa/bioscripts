@@ -11,23 +11,19 @@ date
 . /projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/.bash_profile
 bcbio=/projects/ngs/local/users/kmhr378/2020-07-09_BS_benchmark/bcbio
 
-# 5.2 create normal.db
-# $1 = snv.pon.vcf.gz
-# $2 = list of hgf5 files gcnormalized coverage of normals
+### 5.2 gc_coverage
+# $1 = sample.bam
+# $2 = intervals.txt = output of process_intervals
 PURECN=$bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
 
 export PATH=$bcbio/anaconda/envs/r36/bin:$PATH
 
 which Rscript
 
-#Rscript $PURECN/NormalDB.R --help
-
-Rscript $PURECN/NormalDB.R \
+Rscript \
+$PURECN/Coverage.R \
 --outdir . \
---normal_panel $1 \
---assay exome_idt_v1 \
---genome hg38 \
---force \
---coveragefiles $2
+--bam $1 \
+--intervals $2
 
 date
