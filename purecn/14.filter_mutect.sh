@@ -11,8 +11,7 @@ date
 # run Mutect2 in T only mode to produce calls for PON
 # or TO calls without matched normals
 
-# $1 = sample_N.bam
-# #2 = panel.interval_list
+# $1 = unfiltered.vcf.gzsample_N.bam
 
 # -tumor is deprecated
 
@@ -20,18 +19,12 @@ date
 
 which gatk
 
-bname=`basename $1 .bam`
+bname=`basename $1 .vcf.gz`
 
-gatk Mutect2 \
+gatk FilterMutectCalls \
 -R $bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
--I $1 \
--O $bname.vcf.gz \
---max-mnp-distance 0 \
---intervals $2 \
---interval-padding 50 \
---germline-resource $PURECN/af-only-gnomad.hg38.vcf.gz \
---genotype-germline-sites \
---native-pair-hmm-threads 8
+-V $1 \
+-O $bname.filtered.vcf.gz
 
 tabix -f $bname.vcf.gz
 

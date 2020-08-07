@@ -18,17 +18,18 @@ SAMPLEID=`echo $1 | awk -F '.' '{print $1}'`
 
 Rscript \
 $PURECN/PureCN.R \
---out . \
+--out $SAMPLEID \
 --tumor $1 \
 --sampleid $SAMPLEID \
 --vcf $2 \
---statsfile $2.stats \
 --normaldb normalDB_hg38.rds \
 --mappingbiasfile mapping_bias_hg38.rds \
 --intervals panel.txt \
---snpblacklist hg38_simpleRepeats.bed \
+--snpblacklist $PURECN/hg38_simpleRepeats.bed \
 --genome hg38 \
 --force --postoptimize --seed 123
+
+#--statsfile # mutect1
 
 #Rscript $PURECN/PureCN.R \
 #--sampleid $1 \

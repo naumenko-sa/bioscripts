@@ -11,8 +11,9 @@ date
 # run Mutect2 in T only mode to produce calls for PON
 # or TO calls without matched normals
 
-# $1 = sample_N.bam
-# #2 = panel.interval_list
+# $1 = sample_T.bam
+# $2 = panel.interval_list
+# $3 = snv.pon.vcf.gz
 
 # -tumor is deprecated
 
@@ -31,7 +32,8 @@ gatk Mutect2 \
 --interval-padding 50 \
 --germline-resource $PURECN/af-only-gnomad.hg38.vcf.gz \
 --genotype-germline-sites \
---native-pair-hmm-threads 8
+--native-pair-hmm-threads 8 \
+-pon $3
 
 tabix -f $bname.vcf.gz
 
