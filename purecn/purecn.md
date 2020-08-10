@@ -11,27 +11,27 @@ Simple workflow - native pureCN segmentation
 ## 2. prepare interval files
 
 - remove intervals on ALT chromosomes: `cat coverage.bed | grep -v alt > panel.bed`
-- prepare inverals for mutect2: 21.bed2interval_list.sh
-- prepare intervals for purecn: 22.process_intervals.sh
+- prepare inverals for mutect2: [21.bed2interval_list.sh](21.bed2interval_list.sh)
+- prepare intervals for purecn: [22.process_intervals.sh](22.process_intervals.sh)
 
 ## 3. For all samples (tumor and normals) call SNV with mutect2 and calculate coverage with PureCN:
 
-- mutect2: 31.mutect2.sh ~3-5h
-- purecn: 32.gc_coverage.sh ~30min
+- mutect2: [31.mutect2.sh](31.mutect2.sh) ~3-5h
+- purecn: [32.gc_coverage.sh](32.gc_coverage.sh) ~30min
 
 ## 4. Create SNV PON:
-- 41.combine_variants.sh ~2min
+- [41.combine_variants.sh](41.combine_variants.sh) ~2min
 
 ## 5. Create Normal DB
 
-- 51.normal_db.sh - 5 min
+- [51.normal_db.sh](51.normal_db.sh) - 5 min
 
 ## 6. Call variants in tumor-only sample with SNV PON, filter calls
-- 61.mutect2wpon.sh - 5h
-- 62.filter_mutect.sh - 1min
+- [61.mutect2wpon.sh](61.mutect2wpon.sh) - 5h
+- [62.filter_mutect.sh](62.filter_mutect.sh) - 1min
 
 ## 7. pureCN for a tumor sample
-- 71.purecn.sh - 1h
+- [71.purecn.sh](71.purecn) - 1h
 
 ## Output:
 
