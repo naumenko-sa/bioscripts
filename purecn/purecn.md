@@ -6,7 +6,7 @@ Simple workflow - native pureCN segmentation
 
 - update purecn in r36 bcbio environment
 - install hg38 packages
-- Download references: 01.download_reference.sh
+- Download references: [01.download_reference.sh](01.download_reference.sh).
 
 ## 2. prepare interval files
 
