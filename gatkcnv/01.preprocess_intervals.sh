@@ -9,10 +9,15 @@
 
 # some samples fail downstream when using 250 padding
 
+# remove unplaced contigs and alts
+# cat Exome-Agilent_V6.bed | grep -v random | grep -v alt | grep -v Un > panel.bed
+
+. .profile
+
 bname=`basename $1 .bed`
 
 gatk PreprocessIntervals \
--R  /projects/ngs/reference/UpdateGenomesBcbio/Hsapiens/hg38/seq/hg38.fa \
+-R  $bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
 --interval-merging-rule OVERLAPPING_ONLY \
 -O $bname.padding250.interval_list \
 -L $1 \
