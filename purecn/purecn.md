@@ -33,7 +33,20 @@ Simple workflow - native pureCN segmentation
 ## 7. pureCN for a tumor sample
 - [71.purecn.sh](71.purecn) - 1h
 
-## Output:
+## 8. Output:
+
+- csv - purity + ploidy solution
+- log - purecn log
+- qc.txt - average coverage
+- png - gc normalization
+- local_optima.pdf - landscape of purity/ploidy likelihoods
+- pdf - genome wide profiles for several solutions
+- amplification_pvalues.csv - amplification per every gene w p-value vs normal
+- dnacopy.seg - CNVs
+- chromosomes.pdf - profiles per chromosome for the best PP solution
+- genes.csv - sampe as amplification, no p-values
+- loh.csv - loh regions, 6.2.4, Table 4
+- segmentation.pdf - more detailed coverage info
 
 ## 1. Create SNV PON with Mutect2
 

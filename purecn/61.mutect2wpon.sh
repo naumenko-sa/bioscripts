@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-#SBATCH --job-name=bcbio
+#SBATCH --job-name=mutect2
 #SBATCH --mem=50G
 #SBATCH --export=ALL
 #SBATCH -t 7-50:00
