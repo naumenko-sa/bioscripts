@@ -1,0 +1,3 @@
+export bcbio=/n/app/bcbio/dev
+export PURECN=$bcbio/anaconda/envs/r36/lib/R/library/PureCN/extdata
+export PATH=$bcbio/anaconda/envs/r36/bin:$bcbio/anaconda/bin:/n/app/bcbio/tools/bin:$PATH

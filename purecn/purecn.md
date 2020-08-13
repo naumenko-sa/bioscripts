@@ -5,12 +5,31 @@ Simple workflow - native pureCN segmentation
 ## 1. prepare PureCN
 
 - update purecn in r36 bcbio environment
+```
+conda activate r36
+which R
+R
+```
+
+in R:
+```
+install.packages("BiocManager")
+BiocManager::install("optparse")
+BiocManager::install("TxDb.Hsapiens.UCSC.hg38.knownGene")
+BiocManager::install("org.Hs.eg.db")
+install.packages("remotes")
+BiocManager::install("lima1/PureCN")
+BiocManager::install("PSCBS")
+BiocManager::install("lima1/PSCBS", ref="add_dnacopy_weighting")
+BiocManager::install("raerose01/deconstructSigs")
+```
+
 - install hg38 packages
 - Download references: [01.download_references.sh](01.download_references.sh).
 
 ## 2. prepare interval files
 
-- remove intervals on ALT chromosomes: `cat coverage.bed | grep -v alt > panel.bed`
+- remove intervals on ALT chromosomes: `cat coverage.bed | grep -v random | grep -v alt | grep -v Un > panel.bed`
 - prepare inverals for mutect2: [21.bed2interval_list.sh](21.bed2interval_list.sh)
 - prepare intervals for purecn: [22.process_intervals.sh](22.process_intervals.sh)
 
