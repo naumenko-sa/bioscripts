@@ -53,7 +53,7 @@ BiocManager::install("raerose01/deconstructSigs")
 - [62.filter_mutect.sh](62.filter_mutect.sh) - 1min
 
 ## 7. pureCN for a tumor sample
-- [71.purecn.sh](71.purecn) - 1h
+- [71.purecn.sh](71.purecn.sh) - 1h
 
 ## 8. Output:
 
