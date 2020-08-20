@@ -16,10 +16,8 @@
 
 bname=`basename $1 .bam`
 
-
-
 gatk --java-options "-Xmx3g" CollectAllelicCounts \
     -L $2 \
     -I $1 \
-    -R $3 \
+    -R $bcbio/genomes/Hsapiens/hg38/seq/hg38.fa \
     -O $bname.allelicCounts.tsv

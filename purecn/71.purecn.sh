@@ -26,6 +26,8 @@ which Rscript
 
 SAMPLEID=`echo $1 | awk -F '.' '{print $1}'`
 
+echo $SAMPLEID
+
 Rscript \
 $PURECN/PureCN.R \
 --out $SAMPLEID \
