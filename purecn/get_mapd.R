@@ -23,4 +23,4 @@ for (i in seq(1, nrow(segments))){
     prev_chr <- chr
     prev_seg_mean <- seg_mean
 }
-print(median(delta))
+print(round(median(delta), 2))
