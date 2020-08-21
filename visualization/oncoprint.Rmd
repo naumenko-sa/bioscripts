@@ -1,0 +1,26 @@
+```{r}
+library(ComplexHeatmap)
+
+mat <- list(snv = matrix(c(1, 0, 1,
+                           1, 1, 0, 
+                           0, 1, 1),
+                         nrow = 3))
+
+rownames(mat$snv) = c("g1", "g2", "g3")
+colnames(mat$snv) = c("s1", "s2", "s3")
+
+
+get_type_fun <- function(x) strsplit(x, ";")[[1]]
+get_type_fun(mat[1, 2])
+
+col <-  c(snv = "red", indel = "blue")
+oncoPrint(mat,
+          alter_fun = list(
+              snv = function(x, y, w, h) grid.rect(x, y, w*0.9, h*0.9,
+                                                   gp = gpar(fill = col["snv"], col = NA))
+          ), 
+          col = col)
+
+
+
+```
