@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --partition=short           # Partition (queue) priority
-#SBATCH --time=10:00:00             # Runtime in D-HH:MM format, 10:00:00 for hours
+#SBATCH --time=12:00:00             # Runtime in D-HH:MM format, 10:00:00 for hours
 #SBATCH --job-name=blast            # Job name
 #SBATCH -c 20			    # cores
 #SBATCH --mem=20G                  # total Memory or use --mem-per-cpu
@@ -19,6 +19,7 @@ then
 fi
 
 # set BLASTDB variable
+# only can do negative_taxidlist, not both lists
 
 qry=$1
 base=$2
@@ -28,9 +29,9 @@ ev=$4
 psiblast -num_threads 20 \
 -query $qry \
 -db $base \
--out ${qry}_vs_${base}.psiblast.${ev} \
+-out ${qry}_vs_${base}.psiblast.num_hits_${num_hits}.ev_${ev} \
 -evalue $ev \
--outfmt "6 qseqid sseqid length pident qstart qend sstart send evalue bitscore mismatch" \
+-outfmt "6 qseqid sseqid length qlen slen pident qstart qend sstart send evalue bitscore mismatch gaps staxids sscinames scomnames" \
 -num_alignments $num_hits
 
 date
