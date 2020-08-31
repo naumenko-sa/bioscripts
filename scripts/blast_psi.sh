@@ -1,7 +1,15 @@
 #!/bin/bash
 
+#SBATCH --partition=short           # Partition (queue) priority
+#SBATCH --time=10:00:00             # Runtime in D-HH:MM format, 10:00:00 for hours
+#SBATCH --job-name=blast            # Job name
+#SBATCH -c 20			    # cores
+#SBATCH --mem=20G                  # total Memory or use --mem-per-cpu
+#SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
+#SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
+#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
+
 date
-hostname
 
 if [ $# -lt 4 ]
 then
@@ -10,18 +18,19 @@ then
     exit 0
 fi
 
-module load blast/2.6.0+
-export BLASTDB=/n/data1/cores/bcbio/PIs/george_church/church2020_ecoli_high_quality_multiple_sequence_alignments_hbc04001/data/00_blastdb
+# set BLASTDB variable
 
 qry=$1
 base=$2
 num_hits=$3
 ev=$4
 
-#blastn -num_threads 20 \
-psiblast \
+psiblast -num_threads 20 \
 -query $qry \
--db $base -out ${qry}_vs_${base}.blastn.${ev} -evalue $ev -outfmt "6 qseqid sseqid length pident qstart qend sstart send evalue bitscore mismatch" \
+-db $base \
+-out ${qry}_vs_${base}.psiblast.${ev} \
+-evalue $ev \
+-outfmt "6 qseqid sseqid length pident qstart qend sstart send evalue bitscore mismatch" \
 -num_alignments $num_hits
 
 date
