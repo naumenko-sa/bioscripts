@@ -10,6 +10,8 @@
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
+echo $1
+echo $2
 
 if [ $# -lt 4 ]
 then
