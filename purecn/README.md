@@ -58,7 +58,7 @@ BiocManager::install("raerose01/deconstructSigs")
 ## 8. Output:
 
 - csv - purity + ploidy solution
-- log - purecn log
+- log - purecn log. If there is no purity/ploidy solution, the statement is written in the log, no other files generated
 - qc.txt - average coverage
 - png - gc normalization
 - local_optima.pdf - landscape of purity/ploidy likelihoods
