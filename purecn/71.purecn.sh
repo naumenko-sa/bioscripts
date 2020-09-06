@@ -11,11 +11,13 @@
 
 
 #SBATCH --job-name=purecn
-#SBATCH --mem=20G
+#SBATCH --mem=30G
 #SBATCH --export=ALL
 #SBATCH -t 7-50:00
 #SBATCH -p core -n 10
 
+
+# once OOM killed with 20G and bootstrap500
 date
 
 . .profile
