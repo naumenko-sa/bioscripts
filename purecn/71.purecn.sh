@@ -26,7 +26,7 @@ which Rscript
 # $1 = tumor.coverage_loess.txt.gz
 # $2 = mutect.filtered.vcf.gz
 
-SAMPLEID=`echo $1 | awk -F '.' '{print $1}'`
+SAMPLEID=`echo $2 | awk -F '.' '{print $1}'`
 
 echo $SAMPLEID
 
