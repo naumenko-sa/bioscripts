@@ -26,6 +26,9 @@ date
 # efficienty of a finished job
 # seff job_id
 
+# history
+# sacct -S 2020-09-01 -u user_id
+
 bcbio_nextgen.py ../config/bcbio.yaml -n 20
 
 date
