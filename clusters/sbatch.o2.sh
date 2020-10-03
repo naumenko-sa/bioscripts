@@ -20,6 +20,12 @@ date
 # Rscript --vanilla -e 'rmarkdown::render("03.clustering_new.Rmd")'
 # source deactivate
 
+# memory usage of a running job
+# sstat job_id --format AveRSS,MaxRSS
+
+# efficienty of a finished job
+# seff job_id
+
 bcbio_nextgen.py ../config/bcbio.yaml -n 20
 
 date

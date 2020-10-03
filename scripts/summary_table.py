@@ -6,4 +6,4 @@ lines = sys.stdin.read().splitlines()
 counter = collections.Counter(lines)
 
 for key,count in counter.most_common():
-      print(str(key)+'\t'+str(count)+'\t'+str(1.0*count/len(lines)))
+      print(str(key)+'\t'+str(count)+'\t'+str(round(1.0*count/len(lines), 2)))
