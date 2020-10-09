@@ -29,6 +29,8 @@ date
 # history
 # sacct -S 2020-09-01 -u user_id
 
+# scontrol show jobid -dd <jobid>
+
 bcbio_nextgen.py ../config/bcbio.yaml -n 20
 
 date
