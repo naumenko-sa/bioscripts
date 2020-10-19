@@ -18,6 +18,10 @@
 
 # $1 = normals.list of vcf.gz
 
+# vcf requirements:
+# - AD format field alt/ref
+# - min genotypes 3
+
 . .profile
 
 date
