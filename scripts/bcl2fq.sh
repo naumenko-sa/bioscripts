@@ -7,19 +7,25 @@
 #SBATCH --time=2-00:00              # Runtime in D-HH:MM format, 10:00:00 for hours
 #SBATCH --job-name=bcl2fq          # Job name
 #SBATCH -c 20			    # cores
-#SBATCH --mem=25G           # Memory needed per CPU or --mem-per-cpu
+#SBATCH --mem=50G           # Memory needed per CPU or --mem-per-cpu
 #SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
 
+
+
 #module load bcl2fastq/2.18.0.12
 module load bcl2fastq/2.20.0.422
+# for amplicon run with > 1000 samples
+ulimit -n 10000
 
 # Harvard Single Cell core script - no trimming of reads
 # we use bcl2fastq version 2.18.0.12
-bcl2fastq --use-bases-mask y*,y*,y*,y* \
+# bases mask for SC RNA-seq
+# bcl2fastq --use-bases-mask y*,y*,y*,y* \
+bcl2fastq \
 --mask-short-adapter-reads 0 \
 --minimum-trimmed-read-length 0 \
 --processing-threads 20 \
