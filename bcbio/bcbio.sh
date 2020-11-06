@@ -12,3 +12,4 @@
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 bcbio_nextgen.py ../config/project.yaml -n 20
+#bcbio_nextgen.py ../config/project.yaml -n 72 -t ipython -s slurm -q medium -r t=0-72:00 --timeout 3000
