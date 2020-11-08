@@ -9,6 +9,7 @@ library(tidyverse)
 args = commandArgs(trailingOnly=TRUE)
 
 segments <- read_tsv(args[1])
+
 mean_column <- args[3]
 chrom_column <- args[2]
 

@@ -500,7 +500,8 @@ get_ensembl_gene_ids <- function(panel.genes.csv){
 get_ensembl_gene_ids2 <- function(v_gene_names, mart, keep_duplicates = F){
     # test:
     # v_gene_names_file = "omim.gene.list"
-    ensembl_genes <- as_tibble(getBM(attributes = c("ensembl_gene_id", "external_gene_name",
+    ensembl_genes <- as_tibble(getBM(attributes = c("ensembl_gene_id", 
+                                                    "external_gene_name",
                                                     "chromosome_name"),
               filters = c("external_gene_name"),
               values = v_gene_names,
@@ -508,8 +509,8 @@ get_ensembl_gene_ids2 <- function(v_gene_names, mart, keep_duplicates = F){
     
     # sometimes genes on alleles have lesser ENSG than main assembly (CDSN in grhc37)
     ensembl_genes <- ensembl_genes %>% 
-        filter(str_detect(chromosome_name, "PATCH", negate = T)) %>% 
-        filter(str_detect(chromosome_name, "HSCHR", negate = T))
+        dplyr::filter(!grepl("HSCHR", chromosome_name)) %>% 
+        dplyr::filter(!grepl("HSCHR", chromosome_name))
     
     ensembl_genes$chromosome_name <- NULL
     
@@ -517,18 +518,6 @@ get_ensembl_gene_ids2 <- function(v_gene_names, mart, keep_duplicates = F){
     if (length(genes_not_found) > 0 ){
         cat("ensembl_gene_id not found for: \n")
         print(genes_not_found)
-        cat("trying to fetch them from grch38 \n")
-        mart38 <- init_mart_human(host = "www.ensembl.org")
-        ensembl_genes38 <- as_tibble(getBM(attributes = c("ensembl_gene_id", "external_gene_name"),
-                                         filters = c("external_gene_name"),
-                                         values = genes_not_found,
-                                         mart = mart38))
-        still_not_found <- genes_not_found[!(genes_not_found %in% ensembl_genes38$external_gene_name)]
-        if (length(still_not_found) > 0){
-            cat("Still can't pull genes: \n")
-            print(still_not_found)
-        }
-        ensembl_genes <- bind_rows(ensembl_genes, ensembl_genes38)
     }
     
     ensembl_genes <- ensembl_genes %>% 
@@ -695,7 +684,7 @@ if (length(args) == 0 || args[1] == "--help"){
     cat("phenotips_hpo2gene_coordinates phenotips_hpo.tsv\n")
     cat("gene_vector2bed genes.csv\n")
     cat("get_exon_coordinates2 genes.csv\n")
-    cat("get_ensembl_gene_ids panel.genes.csv\n")
+    cat("get_ensembl_gene_ids panel.genes.csv -> panel.csv\n")
     cat("filter_protein_coding_genes counts.csv\n")
 }else{
     cat(paste0("Running function: ", args[1],"\n"))
