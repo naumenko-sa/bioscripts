@@ -10,7 +10,7 @@
 #SBATCH --mem=50G           # Memory needed per CPU or --mem-per-cpu
 #SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
-#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
+#SBATCH --mail-type=NONE             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
 
@@ -24,13 +24,13 @@ ulimit -n 10000
 # Harvard Single Cell core script - no trimming of reads
 # we use bcl2fastq version 2.18.0.12
 # bases mask for SC RNA-seq
-# bcl2fastq --use-bases-mask y*,y*,y*,y* \
-bcl2fastq \
+ bcl2fastq --use-bases-mask y*,y*,y*,y* \
 --mask-short-adapter-reads 0 \
 --minimum-trimmed-read-length 0 \
 --processing-threads 20 \
---sample-sheet $1 \
 --no-lane-splitting
+
+# --sample-sheet $1
 
 # Bauer core 
 # bcl2fastq \
