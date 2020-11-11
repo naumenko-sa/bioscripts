@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#PBS -d .
-
-if [ -z $bam ]
-then
-    bam=$1
-fi
-
 # sam2bam
 #samtools view -bS $1 > $bamname
 
