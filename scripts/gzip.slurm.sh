@@ -13,7 +13,7 @@
 #SBATCH --mail-type=FAIL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
-#gzip $1
+gzip $1
 #bunzip2 $1
-tar xzf $1
+#tar xzf $1
 date
