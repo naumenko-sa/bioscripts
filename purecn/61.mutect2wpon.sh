@@ -16,6 +16,9 @@
 #SBATCH -t 7-50:00
 #SBATCH -p core -n 8
 
+# performance:
+# sometimes runs > 10h
+
 date
 
 # run Mutect2 in T only mode to produce calls for PON

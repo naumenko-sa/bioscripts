@@ -4,4 +4,4 @@
 #PBS -d .
 #PBS -l vmem=10g,mem=10g
 
-zcat $file | wc -l | awk '{print $0/4}' > $file.nreads
+zcat $1 | wc -l | awk '{print $0/4}' > $file.nreads
