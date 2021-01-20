@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --partition=priority        # Partition (queue) priority
-#SBATCH --time=2-00:00              # Runtime in D-HH:MM format, 10:00:00 for hours
+#SBATCH --partition=short           # Partition (queue) priority
+#SBATCH --time=12:00              # Runtime in D-HH:MM format, 10:00:00 for hours
 #SBATCH --job-name=qc               # Job name
 #SBATCH -c 1			    # cores
 #SBATCH --mem=10G                   # Memory needed per CPU or --mem-per-cpu
