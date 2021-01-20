@@ -7,7 +7,7 @@ installation <- function(){
     # lib = "~/R")
     if (!requireNamespace("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
-    BiocManager::install("biomaRt", version = "3.8")
+    BiocManager::install("biomaRt")
     install.packages("tidyverse")
     #install.packages("bedr")
 }
@@ -125,6 +125,18 @@ gene_descriptions <- function(mart){
     write_excel_csv(ensembl_w_description, "ensembl_w_description.csv")
 }
 
+get_mt_genes() <- function(mart)
+{
+    ensembl_w_description <- getBM(attributes=c("ensembl_gene_id",
+                                              "external_gene_name",
+                                              "description"),
+                                 filters = c("chromosome_name"),
+                                 values = list("MT"),
+                                 mart = mart) 
+    ensembl <- ensembl_w_description %>% dplyr::select(ensembl_gene_id)
+    write_csv(ensembl, file = "human_mt_genes.csv")
+}
+
 # attribute name_1006 is GO_term
 # GO_term takes a while for all genes, demo with chrX
 tutorial_gene_descriptions_w_go_term <- function(mart){
@@ -133,7 +145,7 @@ tutorial_gene_descriptions_w_go_term <- function(mart){
                                                "description",
                                                "name_1006"),
                                   filters = c("chromosome_name"),
-                                  values = list("X"),
+                                  values = list("MT"),
                                   mart = mart)
     write.csv(ensembl_w_description, file="ensembl_w_description.csv", row.names=F)
 }
