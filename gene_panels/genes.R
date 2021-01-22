@@ -125,8 +125,7 @@ gene_descriptions <- function(mart){
     write_excel_csv(ensembl_w_description, "ensembl_w_description.csv")
 }
 
-get_mt_genes() <- function(mart)
-{
+get_mt_genes <- function(mart){
     ensembl_w_description <- getBM(attributes=c("ensembl_gene_id",
                                               "external_gene_name",
                                               "description"),
