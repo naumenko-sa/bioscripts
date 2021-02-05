@@ -13,4 +13,4 @@
 
 bname=`basename $1 .bam`
 
-preseq c_curve -o $bname.out $1
+preseq c_curve -bam -o $bname.out $1
