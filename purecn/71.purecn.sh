@@ -3,18 +3,18 @@
 # #SBATCH --partition=short          # Partition (queue) priority
 # #SBATCH --time=10:00:00            # Runtime in D-HH:MM format, 10:00:00 for hours
 # #SBATCH --job-name=purecn          # Job name
-# #SBATCH -c 10                       # cores
-# #SBATCH --mem=30G                  # Memory needed per CPU or --mem-per-cpu
+# #SBATCH -c 1                       # cores
+# #SBATCH --mem=10G                  # Memory needed per CPU or --mem-per-cpu
 # #SBATCH --output=project_%j.out    # File to which STDOUT will be written, including job ID
 # #SBATCH --error=project_%j.err     # File to which STDERR will be written, including job ID
 # #SBATCH --mail-type=NONE           # Type of email notification (BEGIN, END, FAIL, ALL)
 
 
 #SBATCH --job-name=purecn
-#SBATCH --mem=30G
+#SBATCH --mem=10G
 #SBATCH --export=ALL
 #SBATCH -t 7-50:00
-#SBATCH -p core -n 10
+#SBATCH -p core -n 1
 
 
 # once OOM killed with 20G and bootstrap500
@@ -23,10 +23,10 @@ date
 . .profile
 which Rscript
 
-# $1 = tumor.coverage_loess.txt.gz
-# $2 = mutect.filtered.vcf.gz
+# $1 = sample-ready_coverage_loess.txt.gz
+# $2 = sample-batch-mutect2-annotated.vcf.gz
 
-SAMPLEID=`echo $2 | awk -F '.' '{print $1}'`
+SAMPLEID=`echo $2 | awk -F '-' '{print $1}'`
 
 echo $SAMPLEID
 
@@ -39,15 +39,15 @@ $PURECN/PureCN.R \
 --normaldb normalDB_hg38.rds \
 --mappingbiasfile mapping_bias_hg38.rds \
 --intervals panel.txt \
---snpblacklist $BCBIO/genomes/simple_repeat.bed \
+--snpblacklist $BCBIO/genomes/Hsapiens/hg38/coverage/problem_regions/repeats/simple_repeat.bed \
 --genome hg38 \
 --force \
 --postoptimize \
 --seed 123 \
 --bootstrapn 500 \
---cores 10 \
---funsegmentation PSCBS
-#--minpurity 0.1 --minaf 0.01 --error 0.0005 \
+--cores 1 \
+--funsegmentation PSCBS \
+--minpurity 0.1 --minaf 0.01 --error 0.0005
 
 #--statsfile # mutect1
 
