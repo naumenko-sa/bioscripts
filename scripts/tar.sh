@@ -16,7 +16,7 @@
 
 date
 tar czf $1.tar.gz $1
-md5 $1.tar.gz > $1.tar.gz.md5
+md5sum $1.tar.gz > $1.tar.gz.md5
 date
 
 #tar cf $file.tar $file
