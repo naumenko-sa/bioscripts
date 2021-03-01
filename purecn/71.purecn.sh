@@ -9,12 +9,11 @@
 #SBATCH --error=project_%j.err     # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=NONE           # Type of email notification (BEGIN, END, FAIL, ALL)
 
-
-# #SBATCH --job-name=purecn
-# #SBATCH --mem=30G
-# #SBATCH --export=ALL
-# #SBATCH -t 7-50:00
-# #SBATCH -p core -n 10
+# SBATCH --job-name=purecn
+# SBATCH --mem=10G
+# SBATCH --export=ALL
+# SBATCH -t 7-50:00
+# SBATCH -p core -n 1
 
 
 # once OOM killed with 30G and bootstrap500
@@ -23,8 +22,8 @@ date
 . .profile
 which Rscript
 
-# $1 = tumor.coverage_loess.txt.gz
-# $2 = mutect.filtered.vcf.gz
+# $1 = sample-ready_coverage_loess.txt.gz
+# $2 = sample-batch-mutect2-annotated.vcf.gz
 
 SAMPLEID=`echo $2 | awk -F '-' '{print $1}'`
 
@@ -39,13 +38,15 @@ $PURECN/PureCN.R \
 --normaldb normalDB_hg38.rds \
 --mappingbiasfile mapping_bias_hg38.rds \
 --intervals panel.txt \
---snpblacklist $PURECN/hg38_simpleRepeats.bed \
+--snpblacklist $BCBIO/genomes/Hsapiens/hg38/coverage/problem_regions/repeats/simple_repeat.bed \
 --genome hg38 \
 --force \
 --postoptimize \
 --seed 123 \
 --bootstrapn 500 \
---cores 10
+--cores 1 \
+--funsegmentation PSCBS \
+--minpurity 0.1 --minaf 0.01 --error 0.0005
 
 #--statsfile # mutect1
 
