@@ -10,4 +10,7 @@
 #SBATCH --mail-type=NONE             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 
+# sc run fastqc
+date
 fastqc -noextract -nogroup -t 10 $1 $2 $3 $4
+date
