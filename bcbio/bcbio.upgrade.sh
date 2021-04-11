@@ -13,6 +13,7 @@ date
 # fresh install of new bcbio instance:
 # 1. Don't mix with old environments
 # mv ~/.conda/environments.txt ~/.conda/environments.default.txt - move back
+# make sure there is enough quota in ~
 # export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/bin
 # export PYTHONPATH=
 # wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
