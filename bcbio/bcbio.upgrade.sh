@@ -9,8 +9,6 @@
 #SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 date
-# nohups are dying on qlogin nodes, data nodes are better for long data installation runs
-# data2 has modules, data7 does not.
 ######################################################################
 # fresh install of new bcbio instance:
 # 1. Don't mix with old environments
@@ -19,8 +17,7 @@ date
 # export PYTHONPATH=
 # wget https://raw.github.com/bcbio/bcbio-nextgen/master/scripts/bcbio_nextgen_install.py
 # echo "Installing to " $1
-# module load python/2.7.12 - not working, just plain python from the system is better
-# python bcbio_nextgen_install.py $1 --tooldir $1 --genomes GRCh37 --aligners bwa
+# /n/app/python/3.6.0/bin/python3 bcbio_nextgen_install.py $1 --tooldir $1 --genomes GRCh37 --aligners bwa
  #--isolate --nodata
 ######################################################################
 # 2. Use the new environment: 
