@@ -47,7 +47,10 @@ $PURECN/PureCN.R \
 --bootstrapn 500 \
 --cores 1 \
 --funsegmentation PSCBS \
---minpurity 0.1 --minaf 0.01 --error 0.0005
+--minpurity 0.08 --minaf 0.01 --error 0.0005 \
+--undosd 1.5 \
+--maxsegments 1000
+# default undosd is 0.75 or 1 1.25 makes large segments - fewer segments
 
 #--statsfile # mutect1
 
