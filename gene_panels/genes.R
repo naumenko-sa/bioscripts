@@ -88,6 +88,25 @@ mouse_get_protein_coding_genes <- function(){
     genes_info <- genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
 }
 
+get_protein_coding_genes <- function(mart){
+    genes_info <- getBM(attributes = c("ensembl_gene_id",
+                                     "external_gene_name",
+                                     "description",
+                                     "chromosome_name"),
+                        filters = c("biotype"),
+                        values = list("protein_coding"),
+                        mart = mart)
+  
+    #remove transcripts placed on patches
+    for (remove_chr in c("PATCH", "HSCHR", "GL00", "KI", "CHR")){
+        genes_info <- genes_info[grep(remove_chr, genes_info$chromosome_name, invert = T),]
+    }
+    
+    genes_info <- genes_info %>% dplyr::select(-chromosome_name) %>% arrange(ensembl_gene_id)
+    
+    write_excel_csv(genes_info, "ensembl_w_description.protein_coding.csv")
+}
+
 get_promoters <- function(){
   mart <- init_mart_human()
   
