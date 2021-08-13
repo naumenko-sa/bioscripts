@@ -4,11 +4,11 @@
 # chrom seg.mean in purecn
 # Chromosome Segment_Mean in gatkcnv
 
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse, warn.conflicts = FALSE))
 
 args = commandArgs(trailingOnly=TRUE)
 
-segments <- read_tsv(args[1])
+segments <- read_tsv(args[1], col_types = cols()) %>% drop_na()
 
 mean_column <- args[3]
 chrom_column <- args[2]
@@ -19,7 +19,6 @@ delta <- c()
 for (i in seq(1, nrow(segments))){
     chr <- segments[i, chrom_column] %>% as.character()
     seg_mean <- segments[i, mean_column] %>% as.double()
-    
     if (chr == prev_chr){
         d <- abs(seg_mean - prev_seg_mean)
         delta <- c(delta, d)

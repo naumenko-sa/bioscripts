@@ -12,7 +12,7 @@ which Rscript
 Rscript $PURECN/IntervalFile.R \
 --infile $1 \
 --fasta /data/genomes/Hsapiens/hg38/seq/hg38.fa \
---outfile intvervals.txt \
+--outfile intervals.txt \
 --offtarget \
 --genome hg38 \
 --export baits_optimized_hg38.bed \
