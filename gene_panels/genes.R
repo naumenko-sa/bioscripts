@@ -97,6 +97,8 @@ get_protein_coding_genes <- function(mart){
                         values = list("protein_coding"),
                         mart = mart)
   
+    
+    
     #remove transcripts placed on patches
     for (remove_chr in c("PATCH", "HSCHR", "GL00", "KI", "CHR")){
         genes_info <- genes_info[grep(remove_chr, genes_info$chromosome_name, invert = T),]
