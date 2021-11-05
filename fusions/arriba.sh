@@ -1,7 +1,7 @@
 #!/bin/bash -l
 
 #SBATCH --job-name=arriba
-#SBATCH --mem=20G
+#SBATCH --mem=30G
 #SBATCH --export=ALL
 #SBATCH -t 7-50:00
 #SBATCH -p core -n 1

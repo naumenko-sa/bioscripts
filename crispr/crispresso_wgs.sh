@@ -21,6 +21,8 @@ ml bcbio-nextgen/1.2.8
 # bedtools makewindows -b baits.mm10.sorted.padded100bp.merged.bed -w 40 > baits.mm10.sorted.padded100bp.merged.split_window40.bed
 # cat baits.mm10.sorted.padded100bp.merged.split_window40.bed | awk '{print $0"\tbait"NR"\tNA\tNA\tNA"}' > baits.mm10.sorted.padded100bp.merged.split_window40.tsv
 
+# note the visualization parameter - you could miss offtargets with the default 0.2%
+
 singularity run \
 -e crispresso2_latest.sif CRISPRessoWGS \
 -b ${1}-ready.bam \
@@ -28,6 +30,8 @@ singularity run \
 -r /projects/ngs/reference/UpdateGenomesBcbio/Mmusculus/mm10_gene/seq/mm10_gene.fa \
 -n ${1}_wgs_mode_window_center_6 \
 --quantification_window_center -6 \
---debug
+--debug \
+--min_frequency_alleles_around_cut_to_plot 0.0001
+
 
 date
