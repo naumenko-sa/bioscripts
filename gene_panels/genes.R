@@ -295,7 +295,7 @@ protein_coding_genes_bed <- function(mart){
 # output: genes.bed, has to be sorted with bedtools
 gene_vector2bed <- function(genes.csv){
     mart <- init_mart_human()
-    genes.bed <- str_replace(genes.csv, "csv", "bed")
+    genes.bed <- str_replace(genes.csv, "csv", "unsorted.bed")
     genes <- read_csv(genes.csv)
     gene_coordinates <- get_gene_coordinates(genes$ensembl_gene_id, mart)
     write_tsv(gene_coordinates, genes.bed, col_names = F)
