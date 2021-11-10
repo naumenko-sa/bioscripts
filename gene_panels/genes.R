@@ -517,15 +517,15 @@ bedtools_sort_and_merge_example <- function(){
   
 }
 
-# input file with gene_name column = panel.genes.csv
+# input file with gene_name column = panel.gene_name.csv
 # output file = panel.csv
-get_ensembl_gene_ids <- function(panel.genes.csv){
+get_ensembl_gene_ids <- function(panel.gene_name.csv){
     mart <- init_mart_human()
-    genes <- read_csv(panel.genes.csv)
+    genes <- read_csv(panel.gene_name.csv)
     
     ensembl_ids <- get_ensembl_gene_ids2(genes$gene_name, mart)
     
-    panel.csv <- str_replace(panel.genes.csv, ".genes", "")
+    panel.csv <- str_replace(panel.gene_name.csv, ".gene_name", "")
     write_excel_csv(ensembl_ids, panel.csv)
 }
 
@@ -605,6 +605,9 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
     # gene_name="SDHAF2"
     # gene_name="MAX"
     # gene_name = "SLC7A7"
+  
+    
+    # KMT2B - ENSG00000105663 in GRCh37 and ENSG00000272333 in hg38
     
     # test
     # ensembl_gene_id <- "ENSG00000000419"
@@ -627,8 +630,15 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
         
     cat(" Canonical transcript:", canonical_transcript, "\n")
     
-    if (is.na(canonical_transcript)){ cat("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n
-No transcript for ", ensembl_gene_id, "\n !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n")}
+    if (is.na(canonical_transcript)){ 
+          # trying without gencode_basic
+            genes_info <- getBM(attributes = c("external_gene_name", 
+                                                         "ensembl_transcript_id",
+                                                         "ensembl_gene_id"),
+                                    filters = c("ensembl_gene_id"), 
+                                    values = list(ensembl_gene_id = ensembl_gene_id),
+                                    mart = mart)
+    }
     
     genes_info <- as_tibble(getBM(attributes = c("chromosome_name", 
                                        "genomic_coding_start", "genomic_coding_end",
