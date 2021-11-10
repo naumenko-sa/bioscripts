@@ -631,13 +631,8 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
     cat(" Canonical transcript:", canonical_transcript, "\n")
     
     if (is.na(canonical_transcript)){ 
-          # trying without gencode_basic
-            genes_info <- getBM(attributes = c("external_gene_name", 
-                                                         "ensembl_transcript_id",
-                                                         "ensembl_gene_id"),
-                                    filters = c("ensembl_gene_id"), 
-                                    values = list(ensembl_gene_id = ensembl_gene_id),
-                                    mart = mart)
+          cat(" No canonical transcript for: \n")
+          print(ensembl_gene_id)
     }
     
     genes_info <- as_tibble(getBM(attributes = c("chromosome_name", 
@@ -668,7 +663,7 @@ get_exon_coordinates2 <- function(genes_csv){
         exons <- bind_rows(exons, exons_buf)
     }
     
-    genes_bed <- str_replace(genes_csv, "csv", "bed")
+    genes_bed <- str_replace(genes_csv, "csv", "exons.bed")
     write_tsv(exons, genes_bed, col_names = F)
 }
 
