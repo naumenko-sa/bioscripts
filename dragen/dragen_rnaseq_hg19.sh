@@ -29,6 +29,7 @@ dragen \
 --RGID $sample \
 --RGSM $sample \
 --intermediate-results-dir /staging/tmp \
---enable-rna-gene-fusion true
+--enable-rna-gene-fusion true \
+--rna-gf-merge-calls false
 
 date
