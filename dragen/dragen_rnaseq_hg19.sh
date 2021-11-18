@@ -17,12 +17,12 @@ mkdir dragen_${sample}
 
 dragen \
 --output-directory /staging/2021-07-29_rnaseq/dragen_${sample} \
--r /staging/reference/genomes/Hsapiens/hg38_ERCC \
+-r /staging/reference/genomes/Hsapiens/hg19 \
 --output-file-prefix $sample \
--1 /staging/2021-07-29_rnaseq/input/${sample}_R1_001.fastq.gz \
--2 /staging/2021-07-29_rnaseq/input/${sample}_R2_001.fastq.gz \
+-1 ${1}_1.fq.gz \
+-2 ${1}_2.fq.gz \
 --enable-rna true \
---annotation-file /staging/reference/genomes/Hsapiens/hg38_ERCC/gencode.v38.annotation.TSL_le_3.gtf \
+--annotation-file /staging/reference/genomes/Hsapiens/hg19/ref-transcripts.gtf \
 --enable-rna-quantification true \
 --rna-quantification-library-type A \
 --rna-quantification-gc-bias true \
