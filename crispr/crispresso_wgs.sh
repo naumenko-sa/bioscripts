@@ -28,10 +28,17 @@ singularity run \
 -b ${1}-ready.bam \
 -f baits.mm10.sorted.padded100bp.merged.split_window40.tsv \
 -r /projects/ngs/reference/UpdateGenomesBcbio/Mmusculus/mm10_gene/seq/mm10_gene.fa \
--n ${1}_wgs_mode_window_center_6 \
---quantification_window_center -6 \
+-n ${1}_wgs_mode \
+--plot_window_size 10 \
+--exclude_bp_from_left 5 \
+--exclude_bp_from_right 5 \
 --debug \
 --min_frequency_alleles_around_cut_to_plot 0.0001
+
+# add these two parameters for mhcas9
+#--quantification_window_center -6 \
+#--quantification_window_size 6\
+#################################
 
 
 date
