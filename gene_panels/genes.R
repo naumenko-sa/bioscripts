@@ -713,6 +713,40 @@ filter_protein_coding_genes <- function(counts.csv){
     write_excel_csv(counts, output.csv)
 }
 
+add_gene_name_to_bed <- function(file.bed3){
+    file.bed3 <- "Twist_Exome_Target_hg38.bed"
+    mart <- init_mart_human()
+    bed3 <- read_tsv(file.bed3, col_names = c("chrom", "start", "end"))
+    
+    genes_info <- tibble(getBM(attributes = c("chromosome_name", "start_position", 
+                                             "end_position", "external_gene_name"),
+                        mart = mart))
+    
+    #remove HSCHR - alleles
+    genes_info <- genes_info[grep('PATCH|HSCHR|GL|KI|CHR', genes_info$chromosome_name, invert=T),]
+    
+    genes_info$chromosome_name <- paste0("chr", genes_info$chromosome_name)
+    genes_info[genes_info$chromosome_name == "chrMT",]$chromosome_name <- "chrM"
+    
+    bed4 <- bed3
+    bed4$gene_name <- ""
+    
+    for(i in seq(1, nrow(bed4))){
+         t_gene_name <- genes_info %>% dplyr::filter(chromosome_name == bed4[i,]$chrom, 
+                                                start_position <= bed4[i,]$start, 
+                                                end_position >= bed4[i,]$end) %>% 
+                                      dplyr::select(external_gene_name)
+         
+         if (nrow(t_gene_name) == 1){
+            bed4[i,]$gene_name <- t_gene_name[1,]$external_gene_name        
+         }
+    
+    }
+    
+    write_tsv(bed4, "Twist_Exome_Target_hg38.genes.bed")
+    
+}
+
 ###############################################################################
 args <- commandArgs(trailingOnly = T)
 if (length(args) == 0 || args[1] == "--help"){
