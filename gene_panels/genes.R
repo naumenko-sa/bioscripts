@@ -736,6 +736,17 @@ get_all_genes_hg38(){
     write_tsv(genes_info, "all_genes.unsorted.bed", col_names = FALSE) 
 }
 
+get_canonical_transcript_for_cancer_genes <- function(){
+    canonical_cancer <- read_tsv("canonical_cancer.txt", col_names = c("gene", "transcript"))
+    genes_info <- as_tibble(getBM(attributes = c("ensembl_gene_id", "ensembl_transcript_id"),
+                                filters = c("ensembl_gene_id", "transcript_is_canonical"), 
+                                values = list(ensembl_gene_id = canonical_cancer$gene,
+                                              transcript_is_canonical = T),
+                                mart = mart))
+    write_tsv(genes_info, "canonical_cancer_99.txt", col_names = F)
+  
+}
+
 ###############################################################################
 args <- commandArgs(trailingOnly = T)
 if (length(args) == 0 || args[1] == "--help"){
