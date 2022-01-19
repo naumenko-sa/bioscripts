@@ -9,7 +9,7 @@
 #SBATCH --mem-per-cpu=5G            # Memory needed per CPU
 #SBATCH --output=project_%j.out     # File to which STDOUT will be written, including job ID
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
-#SBATCH --mail-type=ALL             # Type of email notification (BEGIN, END, FAIL, ALL)
+#SBATCH --mail-type=NONE             # Type of email notification (BEGIN, END, FAIL, ALL)
 
 bcbio_nextgen.py ../config/project.yaml -n 20
 #bcbio_nextgen.py ../config/project.yaml -n 72 -t ipython -s slurm -q medium -r t=0-72:00 --timeout 3000
