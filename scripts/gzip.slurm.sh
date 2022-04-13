@@ -15,5 +15,6 @@
 date
 #gunzip $1
 #bunzip2 $1
-tar xzf $1
+#tar xzf $1
+gzip $1
 date
