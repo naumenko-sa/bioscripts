@@ -19,7 +19,7 @@ date
 #md5sum $1.tar.gz > $1.tar.gz.md5
 #date
 
-tar cf $.tar $1
+tar cf $1.tar $1
 md5sum $1.tar > $1.tar.md5
 
 date
