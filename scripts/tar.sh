@@ -15,8 +15,11 @@
 # $1 = dir_to_archive
 
 date
-tar czf $1.tar.gz $1
-md5sum $1.tar.gz > $1.tar.gz.md5
-date
+#tar czf $1.tar.gz $1
+#md5sum $1.tar.gz > $1.tar.gz.md5
+#date
 
-#tar cf $file.tar $file
+tar cf $.tar $1
+md5sum $1.tar > $1.tar.md5
+
+date
