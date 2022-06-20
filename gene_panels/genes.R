@@ -20,6 +20,7 @@ init <- function(){
 # grch38 by default
 # use host=grch37.ensembl.org for grch37 reference
 init_mart_human <- function(host = "useast.ensembl.org"){
+    #host <- "useast.ensembl.org"
     mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     return(mart)
@@ -33,7 +34,7 @@ tutorial_init_mart_human <- function(){
     #library(bedr)
     
     listMarts()
-    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = "grch37.ensembl.org")
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = "useast.ensembl.org")
     datasets <- listDatasets(mart)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     attributes <- listAttributes(mart)
@@ -41,10 +42,39 @@ tutorial_init_mart_human <- function(){
     
     chromosomes <- getBM(attributes = c("chromosome_name"), mart = mart)
     
-    genes <- getBM(attributes = c("ensembl_gene_id", "external_gene_name", "chromosome_name"),
+    genes <- getBM(attributes = c("ensembl_gene_id", "external_gene_name", 
+                                  "chromosome_name", "ensembl_exon_id"),
                   filters = c("chromosome_name"),
                   values = list("22"),
-                  mart = mart)
+                  mart = mart) %>% mutate (external_gene_name = na_if(external_gene_name, "")) %>% 
+       drop_na(external_gene_name)
+    
+    summary <- genes %>% 
+      group_by(external_gene_name) %>% 
+      summarise(n_exons = n())
+    
+    # bins
+    # breaks
+    summary %>% ggplot(aes(n_exons)) + 
+      geom_bar() +
+      scale_x_binned(breaks = c(1, 2, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 100, 300)) +
+      theme_bw()
+      
+    # pre-summarized
+    summary2 <- summary %>% group_by(n_exons) %>% summarise(n_genes = n())
+    
+    summary2 %>% ggplot(aes(x = n_exons, y = n_genes)) +
+      geom_bar(stat= "identity") +
+      theme_bw() +
+      scale_y_log10()
+    
+    
+    summary3 <- summary2 %>% filter(n_exons > 2 & n_exons < 100) 
+    
+    summary3 %>% ggplot(aes(x = n_exons, y = n_genes)) +
+      geom_bar(stat= "identity") +
+      scale_x_binned(n.breaks = 20)+
+      theme_bw()
     
     return(mart)
 }
