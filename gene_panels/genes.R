@@ -16,13 +16,15 @@ installation <- function(){
 init <- function(){
     library(biomaRt)
     library(tidyverse)
-}library(biomaRt)
-    library(tidyverse)
+}
+
+library(biomaRt)
+library(tidyverse)
 
 # grch38 by default
 # use host=grch37.ensembl.org for grch37 reference
 init_mart_human <- function(host = "useast.ensembl.org"){
-    host <- "useast.ensembl.org"
+    #host <- "https://grch37.ensembl.org"
     mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
     return(mart)mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
@@ -616,14 +618,14 @@ get_ensembl_gene_ids2 <- function(v_gene_names, mart, keep_duplicates = F){
     return(ensembl_genes)
 }
 
-get_external_gene_names <- function(gene_list_file){
-    gene_list_file <- "omim.gene.list"
-    genes <- read.table(gene_list_file,stringsAsFactors=F)
+get_external_gene_names <- function(gene_list_file, out_file_csv, mart){
+    #gene_list_file <- "omim.gene.list"
+    genes <- read_csv(gene_list_file, col_names = "ensembl_gene_id")
     genes <- getBM(attributes = c("ensembl_gene_id", "external_gene_name"),
                 filters = c("ensembl_gene_id"),
-                values = genes, mart = mart)
-    write.table(genes,paste0(gene_list_file, ".w_names"), sep = "\t", quote = F,
-                row.names = F, col.names = F)
+                values = genes$ensembl_gene_id, mart = mart)
+    # quote all gene names to avoid converting some genes to numbers
+    write_excel_csvcsv(genes, out_file_csv)
 }
 
 # coordinates of the exon starts and ends
@@ -689,19 +691,17 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
                                        "ensembl_transcript_id"),
                 filters = c("ensembl_transcript_id"),
                 values = c(canonical_transcript), mart = mart)) %>%
-        mutate(chromosome_name = as.character(chromosome_name)) %>%
-        filter(!is.na(genomic_coding_start) & !is.na(genomic_coding_end)) %>%
-        select(chromosome_name, genomic_coding_start, genomic_coding_end, external_gene_name)
+        dplyr::mutate(chromosome_name = as.character(chromosome_name)) %>%
+        dplyr::filter(!is.na(genomic_coding_start) & !is.na(genomic_coding_end)) %>%
+        dplyr::select(chromosome_name, genomic_coding_start, genomic_coding_end, external_gene_name)
     return(genes_info)
 }
 
 # get exon coordinates for canonical isoform for genes in a list
 # input: genes.csv - 1 column csv with ensembl_gene_id
 # output: genes.bed
-get_exon_coordinates2 <- function(genes_csv){
-    mart <- init_mart_human()
+get_exon_coordinates2 <- function(genes_csv, exons_bed, mart){
     genes <- read_csv(genes_csv)
-
     exons <- get_exon_coordinates_for_canonical_isoform(genes$ensembl_gene_id[1], mart)
 
     for(gene in tail(genes$ensembl_gene_id, -1)){
@@ -709,7 +709,6 @@ get_exon_coordinates2 <- function(genes_csv){
         exons <- bind_rows(exons, exons_buf)
     }
 
-    genes_bed <- str_replace(genes_csv, "csv", "exons.bed")
     write_tsv(exons, genes_bed, col_names = F)
 }
 
