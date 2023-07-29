@@ -4,8 +4,6 @@
 # https://www.bioconductor.org/packages/devel/bioc/vignettes/biomaRt/inst/doc/biomaRt.html
 ###############################################################################
 installation <- function(){
-    # lib = "~/R")https://harvard.zoom.us/s/99665777864https://harvard.zoom.us/s/99665777864CA
-
     if (!requireNamespace("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
     BiocManager::install("biomaRt")
@@ -23,11 +21,11 @@ library(tidyverse)
 
 # grch38 by default
 # use host=grch37.ensembl.org for grch37 reference
-init_mart_human <- function(host = "useast.ensembl.org"){
+init_mart_human <- function(host = "https://useast.ensembl.org"){
     #host <- "https://grch37.ensembl.org"
     mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
     mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
-    return(mart)mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
+    return(mart)
 }
 
 tutorial_init_mart_human <- function(){
@@ -145,10 +143,8 @@ get_protein_coding_genes <- function(mart){
                         values = list("protein_coding"),
                         mart = mart)
 
-
-
     #remove transcripts placed on patches
-    for (remove_chr in c("PATCH", "HSCHR", "GL00", "KI", "CHR")){
+    for (remove_chr in c("PATCH", "HSCHR", "GL00", "KI", "CHR", "NOVEL_TEST")){
         genes_info <- genes_info[grep(remove_chr, genes_info$chromosome_name, invert = T),]
     }
 
@@ -317,26 +313,26 @@ protein_coding_genes_bed <- function(mart){
                      values = list("protein_coding"),
                      mart = mart)
 
-    #remove transcripts placed on patches
-    genes_info <- genes_info[grep('PATCH',genes_info$chromosome_name,invert=T),]
-    #remove HSCHR - alleles
-    genes_info <- genes_info[grep('HSCHR',genes_info$chromosome_name,invert=T),]
-
+    # remove transcripts placed on patches
+    for (remove_chr in c("PATCH", "HSCHR", "GL00", "KI", "CHR", "NOVEL_TEST")){
+        genes_info <- genes_info[grep(remove_chr, genes_info$chromosome_name, invert = T),]
+    }
+    
     # after that some genes have several records, i.e. TAP2:
     #6	32789610	32806557	TAP2	ENSG00000204267
     #6	32781544	32806599	TAP2	ENSG00000250264
 
     # sorting by ensembl ID, and using the first one
-    genes_info <- genes_info[order(genes_info$external_gene_name,genes_info$ensembl_gene_id),]
+    genes_info <- genes_info[order(genes_info$external_gene_name, genes_info$ensembl_gene_id),]
 
     genes_info <- genes_info[!duplicated(genes_info$external_gene_name),]
 
 
     genes_info <- genes_info[order(genes_info$chromosome_name,genes_info$start_position),]
 
-    write.table(genes_info,
-                "protein_coding_genes.bed",
-                sep = "\t", quote = F, row.names = F, col.names = F)
+    write_tsv(genes_info,
+              "protein_coding_genes.bed",
+              col_name = FALSE)
 }
 
 # input: genes.csv - one column csv file, ensembl_gene_id column
@@ -382,8 +378,8 @@ get_gene_coordinates <- function(v_ensembl_gene_ids, mart){
     genes_bed <- as_tibble(genes[c(2:4)])
 
     genes_bed <- genes_bed %>%
-                    filter(str_detect(chromosome_name, "PATCH", negate = T)) %>%
-                    filter(str_detect(chromosome_name, "HSCHR", negate = T))
+                    dplyr::filter(str_detect(chromosome_name, "PATCH", negate = T)) %>%
+                    dplyr::filter(str_detect(chromosome_name, "HSCHR", negate = T))
 
     # sort with bedtools
     #genes_bed <- genes_bed[order(as.numeric(as.character(genes_bed$chromosome_name)),
@@ -625,7 +621,7 @@ get_external_gene_names <- function(gene_list_file, out_file_csv, mart){
                 filters = c("ensembl_gene_id"),
                 values = genes$ensembl_gene_id, mart = mart)
     # quote all gene names to avoid converting some genes to numbers
-    write_excel_csvcsv(genes, out_file_csv)
+    write_excel_csv(genes, out_file_csv)
 }
 
 # coordinates of the exon starts and ends
@@ -638,7 +634,7 @@ get_external_gene_names <- function(gene_list_file, out_file_csv, mart){
 # ENSG00000261109
 # this is a slow function, use it for individual genes/gene panels, when every exon is needed
 # for bulk coverage analysis use the function above
-get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
+get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart, all_exons = FALSE){
     # gene_name='HNRNPDL'
     # gene_name = 'PLEC'
     # PATCH gene
@@ -664,13 +660,13 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
                                        "cds_length", "ensembl_gene_id"),
                         filters = c("ensembl_gene_id", "transcript_gencode_basic"),
                         values = list(ensembl_gene_id = ensembl_gene_id,
-                                      transcript_gencode_basic = T),
+                                      transcript_gencode_basic = TRUE),
                         mart = mart))
 
     #remove transcripts located on patches and alleles (HSCHR)
     genes_info <- genes_info %>%
-                    filter(!grepl("PATCH", chromosome_name)) %>%
-                    filter(!grepl("HSCHR", chromosome_name))
+                    dplyr::filter(!grepl("PATCH", chromosome_name)) %>%
+                    dplyr::filter(!grepl("HSCHR", chromosome_name))
 
     # select canonical transcript print out the single trancript
     genes_info <- arrange(genes_info, desc(cds_length))
@@ -693,7 +689,8 @@ get_exon_coordinates_for_canonical_isoform <- function(ensembl_gene_id, mart){
                 values = c(canonical_transcript), mart = mart)) %>%
         dplyr::mutate(chromosome_name = as.character(chromosome_name)) %>%
         dplyr::filter(!is.na(genomic_coding_start) & !is.na(genomic_coding_end)) %>%
-        dplyr::select(chromosome_name, genomic_coding_start, genomic_coding_end, external_gene_name)
+        dplyr::select(chromosome_name, genomic_coding_start, genomic_coding_end, 
+                      external_gene_name, ensembl_gene_id, ensembl_exon_id)
     return(genes_info)
 }
 
@@ -709,7 +706,7 @@ get_exon_coordinates2 <- function(genes_csv, exons_bed, mart){
         exons <- bind_rows(exons, exons_buf)
     }
 
-    write_tsv(exons, genes_bed, col_names = F)
+    write_tsv(exons, exons_bed, col_names = F)
 }
 
 #for (gene in c("SETX","PNKP","AP3B2","GUF1"))
@@ -790,6 +787,15 @@ get_canonical_transcript_for_cancer_genes <- function(){
                                 mart = mart))
     write_tsv(genes_info, "canonical_cancer_99.txt", col_names = F)
 
+}
+
+get_mane_transcript_exons(v_ensembl_gene_ids, mart){
+     genes_info <- as_tibble(getBM(attributes = c("ensembl_gene_id", "ensembl_transcript_id",
+                                                  "transcript_mane_select",
+                                                  "transcript_mane_plus_clinical"),
+                                   filters = c("ensembl_gene_id"),
+                                   values = list(ensembl_gene_id = genes$ensembl_gene_id),
+                                   mart = mart))
 }
 
 ###############################################################################
