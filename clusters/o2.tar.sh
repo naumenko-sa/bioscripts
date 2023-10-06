@@ -13,5 +13,6 @@ date
 
 tar czf $1.tar.gz $1
 md5sum $1.tar.gz > $1.tar.gz.md5
+tar tf $1.tar.gz > $1.tar.gz.file_list.txt
 
 date
