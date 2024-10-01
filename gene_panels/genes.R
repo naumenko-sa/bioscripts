@@ -23,8 +23,9 @@ library(tidyverse)
 # use host=grch37.ensembl.org for grch37 reference
 init_mart_human <- function(host = "https://useast.ensembl.org"){
     #host <- "https://grch37.ensembl.org"
-    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", host = host)
-    mart <- useDataset(mart, dataset = "hsapiens_gene_ensembl")
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", 
+                    host = host,
+                    dataset = "hsapiens_gene_ensembl")
     return(mart)
 }
 
