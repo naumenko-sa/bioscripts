@@ -761,7 +761,7 @@ filter_protein_coding_genes <- function(counts.csv){
 # to annotate exome_kit.bed:
 # sort-bed all_genes.unsorted.bed > all_genes.sort-bed.bed
 # bedmap --echo --echo-map-id --fraction-ref 1 Twist_Exome_Target_hg38.bed all_genes.sort-bed.bed |  sed s/"|"/"\t"/ > Twist_Exome_Target_hg38.genes.bed
-get_all_genes_hg38(){
+get_all_genes_hg38 <- function(){
     mart <- init_mart_human()
     genes_info <- tibble(getBM(attributes = c("chromosome_name",
                                               "start_position",
@@ -790,7 +790,7 @@ get_canonical_transcript_for_cancer_genes <- function(){
 
 }
 
-get_mane_transcript_exons(v_ensembl_gene_ids, mart){
+get_mane_transcript_exons <- function(v_ensembl_gene_ids, mart){
      genes_info <- as_tibble(getBM(attributes = c("ensembl_gene_id", "ensembl_transcript_id",
                                                   "transcript_mane_select",
                                                   "transcript_mane_plus_clinical"),

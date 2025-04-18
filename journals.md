@@ -48,3 +48,5 @@
 * Evolutionary Bioinformatics 1.7
 * Theoretical Population Biology 1.650
 * Bulletin of Mathematical Biology 1.292
+
+[Human Population Genetics and Genomics](https://www.pivotscipub.com/hpgg)
