@@ -22,5 +22,5 @@ bcftools concat chr1.vcf.gz chr2.vcf.gz chr3.vcf.gz chr4.vcf.gz chr5.vcf.gz \
                 chr16.vcf.gz chr17.vcf.gz chr18.vcf.gz chr19.vcf.gz chr20.vcf.gz \
                 chr21.vcf.gz chr22.vcf.gz chrX.vcf.gz chrY.vcf.gz -Ov > 3202.vcf
 
-bgzip 3202.vcf
-tabix 3202.vcf.gz
+#bgzip 3202.vcf
+#tabix 3202.vcf.gz
