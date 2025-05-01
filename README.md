@@ -1,19 +1,14 @@
-|By subject |[By project](https://github.com/naumenko-sa/bioscripts#by-project)|
-|---|---|
-|[Alignment](https://github.com/naumenko-sa/bioscripts#alignment)||
-|[Articles and resources](https://github.com/naumenko-sa/bioscripts#articles-and-resources)||
-|[Annotation](https://github.com/naumenko-sa/bioscripts#annotation)||
-|[bam, cram, bed, fastq](https://github.com/naumenko-sa/bioscripts#bam-cram-bed-fastq)||
-|[Coverage](https://github.com/naumenko-sa/bioscripts#coverage)||
-|[Genome assembly](https://github.com/naumenko-sa/bioscripts#genome-assembly)||
-|[Phylogenetics](https://github.com/naumenko-sa/bioscripts#phylogenetics)||
-|[MISC](https://github.com/naumenko-sa/bioscripts#misc)||
-|[RNA-seq](https://github.com/naumenko-sa/bioscripts#rna-seq)||
-|[Variant analysis](https://github.com/naumenko-sa/bioscripts#variant-analysis-vcf-files)||
-|[Visualization](https://github.com/naumenko-sa/bioscripts#visualization)||
+# 1. Toolkits
+* [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html)
+* [basespace-cli](https://developer.basespace.illumina.com/docs/content/documentation/cli/cli-overview).
+* [samtools](https://www.htslib.org/doc/samtools.html)
+* [bcftools](http://www.htslib.org/doc/bcftools.html)
+* [jvarkit](https://lindenb.github.io/jvarkit/): coverage analysis - bamstats04, bamstats05
+* [Jim Kent's utils UCSC](http://hgdownload.soe.ucsc.edu/admin/exe/): genome-wide alignments, UCSC data
+* [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt): biallelic sites decomposition, info fields removal.
+* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools), vcfstats.
 
 # Alignment
-* [Jim Kent's utils UCSC](http://hgdownload.soe.ucsc.edu/admin/exe/)
 * [Synteny maps](http://www.agcol.arizona.edu/software/symap/)
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
 * alignment.check_3x.sh [alignment.fasta] prints how many sequences in an alignment are not 3x in length
@@ -49,8 +44,6 @@
 * [genes.R](../master/genes.R) - retrieves ENSEMBL annotations from biomaRt, run `Rscript genes.R --help`
 
 # bam, cram, bed, fastq
-* [jvarkit](https://github.com/lindenb/jvarkit/wiki): bamstats04, bamstats05.
-* [bedtools](http://bedtools.readthedocs.io/en/latest/content/bedtools-suite.html) - genome arithmetics.
 * [fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 * [trimmomatic](http://www.usadellab.org/cms/index.php?page=trimmomatic)
 * [PRINSEQ](http://prinseq.sourceforge.net/)
@@ -60,8 +53,6 @@
 Badly filtered rRNA-depleted RNA-seq samples may have huge coverage of low complexity regions. 
 It is better to filter those with [prinseq](http://http://prinseq.sourceforge.net/), however sometimes it is necessary to remove a particular region.
 * [bam.sort.sh](../master/scripts/bam.sort.sh) - sorts a bam file before calculating coverage.
-* [basespace-cli](https://help.basespace.illumina.com/articles/descriptive/basespace-cli/). New Illumina sequencers upload data to basespace cloud.
-bs utility copies data from cloud to HPC. To copy bcl files: `bs cp //./Runs/<project_name>/Data .`
 * [bcl2fastq.sh](https://github.com/naumenko-sa/cre/blob/master/bcl2fastq.sh) converts raw bcl Illumina files to fastq.
 * [cram2fq.sh](../master/scripts/cram2fq.sh) converts cram to fastq, uses cramtools wrapper from bcbio
 * `samtools quickcheck -vvvv [file.bam]` checks the integrity of a bam file.
@@ -72,7 +63,6 @@ bs utility copies data from cloud to HPC. To copy bcl files: `bs cp //./Runs/<pr
 
 # Genome assembly
 The wisdom here is to avoid large genomes, polyploid genomes, and creating your own genome assembler.
-See my [lecture](http://makarich.fbb.msu.ru/snaumenko/ngs_lecture/naumenko.genome_assembly-n.pdf) (in Russian).
 Better to have multiple libraries for large genomes, with the good amount of mate pairs with 5k,10k,20k insert size. 
 For a serious work a special computing node is necessary (1-2T RAM). Surprisingly, such a node is not that expensive: just buy
 a cheap big 4CPU SuperMicro server capable to carry up to 4-8T RAM, buy RAM, and insert it into the server. Avoid vendors and sales persons.
@@ -146,9 +136,6 @@ For variant calling I use [bcbio ensemble approach](https://bcbio-nextgen.readth
 on per-family basis.  In brief, 2 out of 4 (gatk-haplotype, samtools, freebayes, and platypus) algorithms should be voting for a variant to be called.
 This allows to achieve increased sensitivity required for research, compared to conservative strategy of the genetic testing laboratory.
 
-* [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt):biallelic sites decomposition, info fields removal
-* [bcftools](http://www.htslib.org/doc/bcftools.html)
-* [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools), vcfstats.
 * [vcf.rtg.validate.sh](../master/vcf.rtg.validate.sh) - how to run rtg vcfeval validation.
 * [bcbio.pbs](../master/bcbio.pbs) [project] submits bcbio project to the queue.
 * [bcbio.cleanup.sh](../master/bcbio.cleanup.sh) [family] cleans up after bcbio and prepares necessary tables for excel report generator.

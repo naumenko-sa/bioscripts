@@ -9,7 +9,7 @@ date
 wget -c https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa
 wget -c https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/GRCh38_reference_genome/GRCh38_full_analysis_set_plus_decoy_hla.fa.fai
 
-for chr in {`seq 1 20`,X,Y}
+for chr in `seq 15 20`
 do
 #chr=21
 
