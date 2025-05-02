@@ -38,3 +38,5 @@ do
 done
 
 date
+
+# split by chrom dirs and run merge chroms
