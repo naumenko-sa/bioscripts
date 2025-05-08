@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # http://lindenb.github.io/jvarkit/BamStats05.html
-# uses bamstats05 - groups coverage by gene
+# bamstats05 - groups coverage by gene
 # really fast: 2min for a big bam file and 100 genes
 # arguments: bam and bed
 # by default uses protein coding genes
@@ -20,20 +20,23 @@
 #SBATCH --error=project_%j.err      # File to which STDERR will be written, including job ID
 #SBATCH --mail-type=             # Type of email notification (BEGIN, END, FAIL, ALL)
 
-# wants java1.8
+JVARKIT_PATH=~/Desktop/tools/JVARKIT/jvarkit.jar
 
-BAMSTATS_PATH=~/work/tools/jvarkit/dist
+# if you need all reads, add -f "" - empty filter, by default it filters out duplicated reads
 
-# if you need all reads, add -f "" - empty filter, by default it filters out some duplicated reads
-
-bed=$2
+# could be gz'ed
 bam=$1
+bed=$2
 
 if [ -z $bed ]
 then
     bed=~/cre/data/protein_coding_genes.exons.fixed.sorted.bed
 fi
 
-java -Xmx10G -jar ${BAMSTATS_PATH}/bamstats05.jar \
-    -B $bed \
-    $bam > $bam.coverage
+sample_name=`basename $bam .bam`
+
+# note stringent mapq and mincov
+/usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
+    --bed $bed \
+    --mapq 30 \
+    --mincoverage 10 $bam > $sample_name.mq30.minc10.coverage.tsv
