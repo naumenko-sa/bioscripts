@@ -1,11 +1,10 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 # extracts information about omim inheritance modes from genemap2.txt
+# modified from here: https://github.com/OMIM-org/genemap2-parser/blob/master/parseGeneMap2.py
 
 import re
 from os.path import expanduser
-
-home = expanduser('~')
 
 inheritance = {}
 inheritance['Autosomal recessive']='AR'
@@ -24,14 +23,8 @@ inheritance['Somatic mutation'] = 'Smu'
 
 genes = {}
 
-with open("ensembl_w_description.txt", "r") as f1:
-    for line in f1:
-        ar = line.split('\t')
-        genes[ar[0]] = ar[1]
-
-#save non empty lines 
 #gene	inheritance
-f = open('omim_by_orion.txt','r')
+f = open('genemap2.txt', 'r')
 
 print 'Ensembl_gene_id Gene_name2 Omim_inheritance'
 
