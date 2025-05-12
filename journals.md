@@ -32,7 +32,7 @@
 * Genome Biology and Evolution 4.618
 * Mutation Research 4.440
 * Genetics 4.311
-* BMC Genomics 4.07 
+* BMC Genomics 4.07
 * Biology Direct 4.02
 * Genome Medicine 3.91
 * Molecular Phylogenetics and Evolution 3.982
@@ -50,3 +50,4 @@
 * Bulletin of Mathematical Biology 1.292
 
 [Human Population Genetics and Genomics](https://www.pivotscipub.com/hpgg)
+[Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
