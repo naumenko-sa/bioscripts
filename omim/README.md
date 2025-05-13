@@ -61,8 +61,11 @@ X-linked recessive	226
 
 ## **5. Plotting the summary stats**
 
+Outputs `omim_inheritance2025.png`:
+
 ```bash
 Rscript omim_plot_inheritance_dictionary.R
 ```
 
 Or run the script in R-studio.
+
