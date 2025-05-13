@@ -8,6 +8,9 @@
 * [VT toolkit](http://genome.sph.umich.edu/wiki/Vt),[VT toolkit source](https://github.com/atks/vt): biallelic sites decomposition, info fields removal.
 * [RTG: accurate vcf comparison](https://github.com/RealTimeGenomics/rtg-tools), vcfstats.
 
+# 2. OMIM
+* [parse OMIM inheritance mode, plot summary statistics](omim/README.md)
+
 # Alignment
 * [Synteny maps](http://www.agcol.arizona.edu/software/symap/)
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
