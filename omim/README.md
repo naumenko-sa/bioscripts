@@ -23,7 +23,7 @@ cd bioscripts/omim
 ## **3. Usage Examples**
 
 To extract inheritance data from OMIM genemap2. 
-Obtain genemap2.txt on the [OMIM website)(https://omim.org/downloads)
+Obtain genemap2.txt on the [OMIM website](https://omim.org/downloads)
 and save in the current dir
 
 Short call (genemap2.txt and the script in the same dir)
