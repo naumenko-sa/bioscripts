@@ -50,7 +50,7 @@ ENSG00000107404	DVL1	Autosomal dominant
 ENSG00000197785	ATAD3A	Autosomal dominant;Autosomal recessive
 ```
 
-The other output file is inheritance mode dictionary with the following format:
+The other output file is inheritance mode dictionary (`omim_inheritance_dictionary.tsv`) with the following format:
 
 ```tsv
 inheritance_mode	count
