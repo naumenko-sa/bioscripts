@@ -12,6 +12,9 @@
 # 2. OMIM
 * [parse OMIM inheritance mode, plot summary statistics](omim/README.md)
 
+# 3. Gene panels
+* [genes.R](gene_panels/genes.R) - retrieve gene coordinates and transcript IDs from biomaRt, run `Rscript genes.R --help`
+
 # Alignment
 * [Synteny maps](http://www.agcol.arizona.edu/software/symap/)
 * alignment.avr_pw_dist.pl [alignment.fasta] [1=print distances] prints average pairwise distance for multiple alignment, and all pairwise distances if $2==1 
@@ -43,9 +46,6 @@
 * alignment.substitution_profile.pl
 * alignment.tr_trv.pl
 * [alignment.UCSC.dm6droSim1.sh](../alignment.UCSC.dm6droSim1.sh) builds a pairwise alignment of *D.melanogaster* and *D.simulans*.
-
-# Annotation
-* [genes.R](../master/genes.R) - retrieves ENSEMBL annotations from biomaRt, run `Rscript genes.R --help`
 
 # bam, cram, bed, fastq
 * [fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
