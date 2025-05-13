@@ -2,7 +2,7 @@
 
 This script extracts inheritance mode data from OMIM’s genemap2 file and generates structured outputs for analysis.  
 
-## 1. Features:
+## **1. Features**
 ✅ Parses OMIM genemap2.txt  
 ✅ Extracts inheritance mode statistics  
 ✅ Outputs clean TSV files for downstream analysis  
@@ -12,23 +12,34 @@ This script extracts inheritance mode data from OMIM’s genemap2 file and gener
 
 ![OMIM Inheritance Plot](omim_inheritance2025.png)
 
-## 2. Installation
+## **2. Installation**
 
-Clone the repository and install dependencies:
+Clone the repository:
 ```bash
 git clone https://github.com/naumenko-sa/bioscripts.git
 cd bioscripts/omim
 ```
 
-## 3. Usage Examples
+## **3. Usage Examples**
 
-To extract inheritance data from OMIM genemap2:
+To extract inheritance data from OMIM genemap2. 
+Obtain genemap2.txt on the [OMIM website)(https://omim.org/downloads)
+and save in the current dir
 
+Short call (genemap2.txt and the script in the same dir)
 ```bash
-python omim_parser.py --omim_genemap2 genemap2.txt --omim_inheritance omim_inheritance.tsv --omim_inheritance_dictionary omim_inheritance_dictionary.tsv
+python omim_parser.py
 ```
 
-## 4. Example Output
+Full call
+```bash
+python omim_parser.py \
+--omim_genemap2 genemap2.txt \
+--omim_inheritance omim_inheritance.tsv \
+--omim_inheritance_dictionary omim_inheritance_dictionary.tsv
+```
+
+## **4. Example Output**
 
 The script generates an inheritance table (`omim_inheritance.tsv`) with the following format:
 
@@ -48,7 +59,7 @@ Autosomal dominant	2846
 X-linked recessive	226
 ```
 
-## 5. Plotting the summary stats:
+## **5. Plotting the summary stats**
 
 ```bash
 Rscript omim_plot_inheritance_dictionary.R
