@@ -5,12 +5,12 @@
 - [Genetics](https://www.scimagojr.com/journalrank.php?category=1311)
 - [Clinical Genetics](https://www.scimagojr.com/journalrank.php?category=2716)
 
-## Some random journals
+## A selection of journals
 
-[Human Population Genetics and Genomics - ?](https://www.pivotscipub.com/hpgg)
-[Genome Medicine - 10.4](https://genomemedicine.biomedcentral.com/about)
-[NPJ Genomic Medicine - 4.49](https://www.nature.com/npjgenmed/)
-[Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
+- [Human Population Genetics and Genomics - ?](https://www.pivotscipub.com/hpgg)
+- [Genome Medicine - 10.4](https://genomemedicine.biomedcentral.com/about)
+- [NPJ Genomic Medicine - 4.49](https://www.nature.com/npjgenmed/)
+- [Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
 
 ---
 
