@@ -1,4 +1,18 @@
-# List of Journals in Evolution/Bioinformatics for the journal club
+# List of Journals in Evolution/Bioinformatics/Genomics for a journal club
+
+## Journal Navigator:
+
+- [Genetics](https://www.scimagojr.com/journalrank.php?category=1311)
+- [Clinical Genetics](https://www.scimagojr.com/journalrank.php?category=2716)
+
+## Some random journals
+
+[Human Population Genetics and Genomics - ?](https://www.pivotscipub.com/hpgg)
+[Genome Medicine - 10.4](https://genomemedicine.biomedcentral.com/about)
+[NPJ Genomic Medicine - 4.49](https://www.nature.com/npjgenmed/)
+[Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
+
+---
 
 * Nature Reviews Genetics 38.075
 * Nature 36.280
@@ -34,7 +48,6 @@
 * Genetics 4.311
 * BMC Genomics 4.07
 * Biology Direct 4.02
-* Genome Medicine 3.91
 * Molecular Phylogenetics and Evolution 3.982
 * Biology Letters 3.762
 * Evolutionary Computation 3.733
@@ -48,6 +61,3 @@
 * Evolutionary Bioinformatics 1.7
 * Theoretical Population Biology 1.650
 * Bulletin of Mathematical Biology 1.292
-
-[Human Population Genetics and Genomics](https://www.pivotscipub.com/hpgg)
-[Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
