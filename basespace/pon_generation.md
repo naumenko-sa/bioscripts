@@ -23,8 +23,6 @@ EMG specific settings
 - change "Generated Combined Counts file for CNV" to "GC Corrected"
 
 4. Download pon file
-bs list datasets  --project-id [project-id]
-
 bs list appsessions  --project-name [PROJECT_NAME]
 bs list datasets  --filter-field AppSession.Id --filter-term [session_id] | grep pon
 bs download dataset -i [ds.id] -o .

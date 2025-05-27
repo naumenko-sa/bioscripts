@@ -11,6 +11,7 @@
 - [Genome Medicine - 10.4](https://genomemedicine.biomedcentral.com/about)
 - [NPJ Genomic Medicine - 4.49](https://www.nature.com/npjgenmed/)
 - [Journal of Molecular Diagnostics - 3.32](https://www.sciencedirect.com/journal/the-journal-of-molecular-diagnostics)
+- [European Journal of Human Genetics - 5.35](https://www.nature.com/ejhg/)
 
 ---
 
