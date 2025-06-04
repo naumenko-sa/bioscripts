@@ -25,18 +25,32 @@ JVARKIT_PATH=~/Desktop/tools/JVARKIT/jvarkit.jar
 # if you need all reads, add -f "" - empty filter, by default it filters out duplicated reads
 
 # could be gz'ed
-bam=$1
+input_file=$1
 bed=$2
+ref=$3
 
 if [ -z $bed ]
 then
     bed=~/cre/data/protein_coding_genes.exons.fixed.sorted.bed
 fi
 
-sample_name=`basename $bam .bam`
+ext="${input_file#*.}"
+sample="${input_file%%.*}"
 
 # note stringent mapq and mincov
-/usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
-    --bed $bed \
-    --mapq 30 \
-    --mincoverage 10 $bam > $sample_name.mq30.minc10.coverage.tsv
+if [[ "$ext" == "bam" ]];then
+
+    /usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
+        --bed $bed \
+        --mapq 30 \
+        --mincoverage 10 $input_file > $sample.mq30.minc10.coverage.tsv
+
+elif [[ "$ext" == "cram" ]];then
+
+    /usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
+        --bed $bed \
+        --mapq 30 \
+        --mincoverage 10 \
+        --reference $ref $input_file > $sample.miq30.minc10.coverage.tsv
+fi
+
