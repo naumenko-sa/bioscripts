@@ -21,11 +21,23 @@ library(tidyverse)
 
 # grch38 by default
 # use host=grch37.ensembl.org for grch37 reference
-init_mart_human <- function(host = "https://useast.ensembl.org"){
-    #host <- "https://grch37.ensembl.org"
-    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL", 
-                    host = host,
-                    dataset = "hsapiens_gene_ensembl")
+# if we use GRCh37 archive version, it is based on ensembl release 75 data
+init_mart_human <- function(reference = "grch37", version = "114"){
+  
+    if (reference == "grch37"){
+        host = "https://grch37.ensembl.org"
+    }else{
+        #host = "https://useast.ensembl.org"
+        host = "https://www.ensembl.org"
+    }
+  
+    version_df <- listMarts(host = host) |> as.data.frame()
+    ensembl_version <- version_df |> filter(biomart == "ENSEMBL_MART_ENSEMBL") |> pull(version)
+    print(ensembl_version)
+  
+    mart <- useMart(biomart = "ENSEMBL_MART_ENSEMBL",
+                  host = host,
+                  dataset = "hsapiens_gene_ensembl")
     return(mart)
 }
 
