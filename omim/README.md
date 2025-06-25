@@ -28,12 +28,12 @@ and save in the current dir
 
 Short call (genemap2.txt and the script in the same dir)
 ```bash
-python omim_parser.py
+python omim_extract_inheritance.py
 ```
 
 Full call
 ```bash
-python omim_parser.py \
+python omim_extract_inheritance.py \
 --omim_genemap2 genemap2.txt \
 --omim_inheritance omim_inheritance.tsv \
 --omim_inheritance_dictionary omim_inheritance_dictionary.tsv
