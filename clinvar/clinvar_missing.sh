@@ -9,9 +9,10 @@
 panel=$2
 
 # select variants which fall into gene boundaries
-bedtools intersect -header -a $1 -b $panel.genes.bed | gzip -c > clinvar.$panel.vcf.gz
+bedtools intersect -header -a $1 -b $panel.genes.chr.bed | gzip -c > clinvar.$panel.vcf.gz
 
 # select variants which are missing in the panel
-bedtools intersect -header -v -a clinvar.$panel.vcf.gz -b $panel.all_exons.chr.bed | gzip -c > clinvar.$panel.missing.vcf.gz
+bedtools intersect -header -v -a clinvar.$panel.vcf.gz -b $panel.all_exons.chr.bed | bgzip -c > clinvar.$panel.missing.vcf.gz
+tabix clinvar.$panel.missing.vcf.gz
 
 echo "Missing pathogenic of Clinvar: " `gunzip -c clinvar.$panel.missing.vcf.gz | grep -vc "^#"` >> $panel.summary.txt
