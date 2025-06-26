@@ -7,6 +7,7 @@
 3.2 upload bams
 one command produces one dataset with multiple files
 bs dataset upload -p [project_id] --type common.files --exclude '*' --include '*.bam' --dry-run --recursive .
+note that sample name will be taken from the header @RG/SM tag no duplicates allowed in the dataset
 3.3 upload bed
 bs dataset upload -p [project_id] --type common.files PANELTargets_EMG_v2_hg38_2025-05-07.bed
 3.3 bed file should be the same for BSSH and EMG - 4 column format, no header
