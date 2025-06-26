@@ -40,3 +40,7 @@ determine sex for example with https://github.com/adrianodemarino/Determine_sex_
 It also visible on correlation heatmap.
 
 Cost for 89 Panel samples ~ 12 iCredits
+
+If post-analysis of a PON reveals suboptimal samples, 
+a better subset could be selected without re-running the PON generation algorithm with pon_subset.py script.
+If the BED file remains the same, the coverage values don't differ between reruns of the same sample.
