@@ -38,3 +38,5 @@ Male/Female ratio should be ~ 50/50
 determine sex for example with https://github.com/adrianodemarino/Determine_sex_from_bam
 (in targets we don't have probes on Y)
 It also visible on correlation heatmap.
+
+Cost for 89 Panel samples ~ 12 iCredits
