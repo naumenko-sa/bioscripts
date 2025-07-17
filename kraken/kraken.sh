@@ -13,17 +13,18 @@
 #SBATCH --mail-type=NONE            # Type of email notification (BEGIN, END, FAIL, ALL)
 
 # $1 - sample_name
-# $2 - r1.fq.gz
-# $3 - r2.fq.gz
+# $2 - db path
+# $3 - r1.fq.gz
+# $4 - r2.fq.gz
 
-~/work/tools/kraken2/kraken2 \
+/data/tools/kraken2bin/kraken2 \
 --paired \
 --use-names \
 --output - \
 --threads 1 \
 --report $1.kraken.txt \
 --gzip-compressed \
---db ~/work/tools/kraken2/db \
-$2 $3
+--db $2 \
+$3 $4
 #--classified_out $1.classified.txt \
 #$2 $3
