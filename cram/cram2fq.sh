@@ -10,8 +10,12 @@
 
 date
 
+# $1 sample.cram
+# $2 sample_name
+# $3 reference.fa
+
 cramtools \
-fastq -R /n/holylfs05/LABS/hsph_bioinfo/Everyone/bcbio/genomes/Hsapiens/GRCh37/seq/GRCh37.fa \
+fastq -R $3 \
 --gzip \
 -I $1 \
 --fastq-base-name $2
