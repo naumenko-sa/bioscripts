@@ -16,3 +16,4 @@ bedtools intersect -header -v -a clinvar.$panel.vcf.gz -b $panel.all_exons.chr.b
 tabix clinvar.$panel.missing.vcf.gz
 
 echo "Missing pathogenic of Clinvar: " `gunzip -c clinvar.$panel.missing.vcf.gz | grep -vc "^#"` >> $panel.summary.txt
+
