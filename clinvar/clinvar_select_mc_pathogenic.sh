@@ -9,14 +9,8 @@
 
 bname=`basename $1 .vcf.gz`
 
-vembrane filter 'any("frameshift_variant" in mc or \
-                     "splice_donor_variant" in mc or \
-                     "missense_variant" in mc or \
-                     "nonsense" in mc or \
-                     "splice_acceptor_variant" in mc or \
-                     "inframe_deletion" in mc or \
-                     "initiator_codon_variant" in mc \
-                     for mc in INFO["MC"])' > $bname.mc_coding.vcf
+vembrane filter 'any(val in mc for val in ("frameshift_variant", "splice_donor_variant", "splice_acceptor_variant", \
+                                           "missense_variant", "nonsense", "inframe_deletion", "initiator_codon_variant") for mc in INFO["MC"])' $1 > $bname.mc_coding.vcf
 bgzip $bname.mc_coding.vcf
 tabix $bname.mc_coding.vcf.gz
 
