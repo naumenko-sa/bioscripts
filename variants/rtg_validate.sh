@@ -1,7 +1,17 @@
 #!/bin/bash
+
 # validate a vcf file against genome in a bottle calls for NA12878
 # $1 - file.vcf.gz
-# $2 - regions.bed
+# $2 - truth.vcf.gz
+# $3 - regions.bed
+# $4 - reference.SDF
+
+vcf=$1
+truth=$2
+bed=$3
+#reference.SDF
+reference=$4
+
 
 # rtg manual
 # https://github.com/RealTimeGenomics/rtg-tools/blob/master/installer/resources/tools/RTGOperationsManual.pdf
@@ -10,10 +20,10 @@
 
 # uses PASS variants only
 export RTG_JAVA_OPTS='-Xms750m' && export RTG_MEM=9100m && \
-   rtg vcfeval --threads 5 -b /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/validation/giab-NA12878/truth_small_variants.vcf.gz \
-   --bed-regions $2 \
-   -c $1 \
-   -t /hpf/largeprojects/ccmbio/naumenko/tools/bcbio/genomes/Hsapiens/GRCh37/rtg/GRCh37.sdf \
+   rtg vcfeval --threads 5 -b $truth \
+   --bed-regions $bed \
+   -c $vcf \
+   -t $reference \
    -o rtg --vcf-score-field='GQ' 
 #   --all-records
 
@@ -22,3 +32,6 @@ do
     echo snp $f `bcftools view --types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
     echo indels $f `bcftools view --exclude-types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
 done
+
+rm -rf rtg/*
+rmdir rtg
