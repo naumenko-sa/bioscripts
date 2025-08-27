@@ -25,7 +25,7 @@ tabix $sample.raw.vcf.gz
 
 bcftools annotate \
   -a $sample.dragen.hard-filtered.gvcf.gz \
-  -c FILTER \
+  -c CHROM,POS,REF,FILTER \
   $sample.raw.vcf.gz \
   -O v  | bgzip -c  > $sample.vcf.gz
 tabix $sample.vcf.gz
