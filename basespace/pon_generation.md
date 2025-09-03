@@ -8,15 +8,18 @@
 one command produces one dataset with multiple files
 bs dataset upload -p [project_id] --type common.files --exclude '*' --include '*.bam' --dry-run --recursive .
 note that sample name will be taken from the header @RG/SM tag no duplicates allowed in the dataset
+only one input type is allowed, so it is not possible to mix up cram and bam
 3.3 upload bed
 bs dataset upload -p [project_id] --type common.files PANELTargets_EMG_v2_hg38_2025-05-07.bed
-3.3 bed file should be the same for BSSH and EMG - 4 column format, no header
+bed file should be the same for BSSH and EMG - 4 column format, no header
+3.4 upload reference for cram input if different from the base reference in the next step.
 
 APP settings (ran v4.3.8 - has to match Emedgene Dragen)
 - select project
 - Baseline Mode: CNV
 - select bam files
 - select reference hg38 Multigenome/Pangenome
+- select reference for CRAM
 - select bed file
 
 EMG specific settings
