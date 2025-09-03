@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# cram2bam
-samtools view -O bam -o HG001_validation.bam HG001_validation.cram
+# cram2bam, yes works without reference
+samtools view -b -o HG001_validation.bam HG001_validation.cram
 # sort reads by name to output proper pairs
 samtools sort -n -o HG001_validation.sorted.bam HG001_validation.bam
 # bam2fastq
