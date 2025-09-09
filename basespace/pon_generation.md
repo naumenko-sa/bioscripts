@@ -36,6 +36,7 @@ pon is in pon.combined.counts.txt.gz
 
 6. Attach PON to EMG:
 https://help.emg.illumina.com/release-notes/workbench-and-pipeline-updates/new_in_emedgene_37_-february_17_2025#attach-pon-to-kit
+pon extension file should be combined.counts.txt.gz
 
 Male/Female ratio should be ~ 50/50
 determine sex for example with https://github.com/adrianodemarino/Determine_sex_from_bam
