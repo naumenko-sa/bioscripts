@@ -1,0 +1,1 @@
+gunzip -c NA12878_i100.vcf.gz | grep -v "^#" | awk '{print $NF}' | awk -F ':' '{print $1"\t"$3}' > NA12878_i100.tsv
