@@ -13,6 +13,8 @@ bed=$3
 reference=$4
 
 
+bname=`basename $1 .vcf.gz`
+
 # rtg manual
 # https://github.com/RealTimeGenomics/rtg-tools/blob/master/installer/resources/tools/RTGOperationsManual.pdf
 
@@ -24,14 +26,12 @@ export RTG_JAVA_OPTS='-Xms750m' && export RTG_MEM=9100m && \
    --bed-regions $bed \
    -c $vcf \
    -t $reference \
-   -o rtg --vcf-score-field='GQ' 
+   -o ${bname}_rtg --vcf-score-field='GQ' 
 #   --all-records
 
 for f in {tp-baseline,fp,fn}
 do
-    echo snp $f `bcftools view --types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
-    echo indels $f `bcftools view --exclude-types snps rtg/$f.vcf.gz | grep -vc "^#"` >> $1.stat
+    echo snp $f `bcftools view --types snps ${bname}_rtg/${f}.vcf.gz | grep -vc "^#"` >> $1.stat
+    echo indels $f `bcftools view --exclude-types snps ${bname}_rtg/${f}.vcf.gz | grep -vc "^#"` >> $1.stat
 done
 
-rm -rf rtg/*
-rmdir rtg
