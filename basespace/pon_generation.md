@@ -18,7 +18,7 @@ APP settings (ran v4.3.8 - has to match Emedgene Dragen)
 - select project
 - Baseline Mode: CNV
 - select bam files
-- select reference hg38 Multigenome/Pangenome
+- select reference hg38 v4  Multigenome
 - select reference for CRAM if needed
 - select bed file
 
