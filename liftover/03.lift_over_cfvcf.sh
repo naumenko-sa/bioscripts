@@ -7,15 +7,8 @@
 
 bname=`basename $1 .vcf`
 
-#bcftools norm -m -both -f $2 $1 | bgzip -c > $bname.norm.vcf.gz
-#tabix -p vcf $bname.vcf.gz
+# the SNV liftover is not working for CNV
+# convert to bed
+# liftoverbed
+# reconstruct VCF
 
-gatk LiftoverVcf \
-  I=$1 \
-  O=$bname.lifted.vcf \
-  CHAIN=$4 \
-  REJECT=$bname.rejected.vcf \
-  R=$3
-
-#bcftools norm -f $3 -m -both $bname.lifted.vcf.gz | bgzip -c > $bname.lifted.norm.vcf.gz
-#tabix -p vcf $bname.lifted.norm.vcf.gz
