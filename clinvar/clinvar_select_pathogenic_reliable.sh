@@ -27,7 +27,7 @@ tabix clinvar.pathogenic.vcf.gz
 
 gunzip -c clinvar.pathogenic.vcf.gz | grep "^#" > clinvar.pathogenic.chr.vcf
 gunzip -c clinvar.pathogenic.vcf.gz | grep -v "^#" | awk '{print "chr"$0}' | sed s/chrMT/chrM/ >> clinvar.pathogenic.chr.vcf
-bgzip clinvar.pathonetic.chr.vcf
+bgzip clinvar.pathogenic.chr.vcf
 tabix clinvar.pathogenic.chr.vcf.gz
 
 # same story with CLNREVSTAT, when there is a comma, it parses as a tuple
