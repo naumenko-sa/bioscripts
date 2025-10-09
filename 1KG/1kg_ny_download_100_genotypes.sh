@@ -41,7 +41,9 @@ do
         tabix $f.chr${chr}.vcf.gz
     done
 
-    rm chr$chr.clean.vcf.gz chr$chr.clean.vcf.gz.tbi chr$chr.vcf.gz chr$chr.vcf.gz.tbi
+    # leave for the next batch
+    #rm chr$chr.clean.vcf.gz chr$chr.clean.vcf.gz.tbi
+    rm chr$chr.vcf.gz chr$chr.vcf.gz.tbi
 done
 
 date
