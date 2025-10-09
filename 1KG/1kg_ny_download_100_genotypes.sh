@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# download large genotype files and split them by sample, extract first 100 samples
+# download large genotype files and split them by sample, extract N's 100 samples,
+# i.e. 1: 1-100, 2: 101-200
+batchn=$1
 
 # benchmark: chr22: 26G download - 1h
 
@@ -29,10 +31,15 @@ do
         tabix chr${chr}.clean.vcf.gz
     fi
 
-    bcftools query -l chr${chr}.clean.vcf.gz | head -n100 > samples100.txt
-    bcftools +split -S samples100.txt -o . -i'GT="alt"' chr${chr}.clean.vcf.gz
+    bcftools query -l chr${chr}.clean.vcf.gz | head -n $(( batchn*100 )) | tail -n100 > samples_batch${batchn}.txt
+    bcftools +split -S samples_batch${batchn}.txt -o . -i'GT="alt"' chr${chr}.clean.vcf.gz
 
-    for f in `cat samples100.txt`;do mv $f.vcf $f.chr${chr}.vcf;bgzip $f.chr${chr}.vcf;tabix $f.chr${chr}.vcf.gz;done;
+    for f in `cat samples_batch{$batchn}.txt`
+    do
+        mv $f.vcf $f.chr${chr}.vcf
+        bgzip $f.chr${chr}.vcf
+        tabix $f.chr${chr}.vcf.gz
+    done
 
     rm chr$chr.clean.vcf.gz chr$chr.clean.vcf.gz.tbi chr$chr.vcf.gz chr$chr.vcf.gz.tbi
 done
