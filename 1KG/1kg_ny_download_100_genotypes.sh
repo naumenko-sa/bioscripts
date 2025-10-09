@@ -18,8 +18,8 @@ do
     echo `date` $chr
 
     if [ ! -f chr${chr}.clean.vcf.gz ];then
-        wget -c https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/1000G_2504_high_coverage/working/20201028_3202_raw_GT_with_annot/20201028_CCDG_14151_B01_GRM_WGS_2020-08-05_chr${chr}.recalibrated_variants.vcf.gz -O chr${chr}.vcf.gz
-        wget -c https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/1000G_2504_high_coverage/working/20201028_3202_raw_GT_with_annot/20201028_CCDG_14151_B01_GRM_WGS_2020-08-05_chr${chr}.recalibrated_variants.vcf.gz.tbi -O chr${chr}.vcf.gz.tbi
+        wget -c -q https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/1000G_2504_high_coverage/working/20201028_3202_raw_GT_with_annot/20201028_CCDG_14151_B01_GRM_WGS_2020-08-05_chr${chr}.recalibrated_variants.vcf.gz -O chr${chr}.vcf.gz
+        wget -c -q https://ftp-trace.ncbi.nih.gov/1000genomes/ftp/1000G_2504_high_coverage/working/20201028_3202_raw_GT_with_annot/20201028_CCDG_14151_B01_GRM_WGS_2020-08-05_chr${chr}.recalibrated_variants.vcf.gz.tbi -O chr${chr}.vcf.gz.tbi
 
         # remove not PASS
         # remove annotation to make the file smaller (does not make a file lot smaller maybe 2G, 
