@@ -34,7 +34,7 @@ do
     bcftools query -l chr${chr}.clean.vcf.gz | head -n $(( batchn*100 )) | tail -n100 > samples_batch${batchn}.txt
     bcftools +split -S samples_batch${batchn}.txt -o . -i'GT="alt"' chr${chr}.clean.vcf.gz
 
-    for f in `cat samples_batch{$batchn}.txt`
+    for f in `cat samples_batch${batchn}.txt`
     do
         mv $f.vcf $f.chr${chr}.vcf
         bgzip $f.chr${chr}.vcf
