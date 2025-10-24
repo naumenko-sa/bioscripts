@@ -28,7 +28,6 @@ find "$dir1_abs" -type f -print0 | while IFS= read -r -d '' f; do
   if [ -f "$target" ]; then
     if ! cmp -s "$f" "$target"; then
       echo "DIFFER: $rel"
-      cmp "$f" "$target"
     fi
   else
     echo "MISSING in dir2: $rel"
