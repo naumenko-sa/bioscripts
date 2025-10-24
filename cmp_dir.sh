@@ -1,24 +1,30 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 dir1=$1
 dir2=$2
 
-# normalize dir1 to remove any trailing slash for consistent prefix removal
-dir1=${dir1%/}
-# use find with -print0 and a null-safe read loop to handle spaces/newlines in names
-find "./$dir1" -type f -print0 | while IFS= read -r -d '' f; do
-  # f is like ./dir1/path/to/file or ./dir1/file
-  # remove leading ./ if present
-  f_nodot=${f#./}
-  # remove the "dir1/" prefix to get the relative path
-  rel=${f_nodot#"$dir1"/}
+# resolve to absolute paths (works with realpath or with a POSIX fallback)
+if command -v realpath >/dev/null 2>&1; then
+  dir1_abs=$(realpath "$dir1")
+  dir2_abs=$(realpath "$dir2")
+else
+  dir1_abs=$(cd "$dir1" && pwd -P)
+  dir2_abs=$(cd "$dir2" && pwd -P)
+fi
+
+# ensure no trailing slash
+dir1_abs=${dir1_abs%/}
+dir2_abs=${dir2_abs%/}
+
+find "$dir1_abs" -type f -print0 | while IFS= read -r -d '' f; do
+  # f is an absolute path beginning with dir1_abs
+  rel=${f#"$dir1_abs"/}   # relative path inside dir1
+  target="$dir2_abs/$rel" # corresponding absolute path in dir2
 
   #echo "SOURCE: $f"
   #echo "REL   : $rel"
 
-  target="${dir2%/}/$rel"  # ensure dir2 has no trailing slash
   if [ -f "$target" ]; then
     if ! cmp -s "$f" "$target"; then
       echo "DIFFER: $rel"
