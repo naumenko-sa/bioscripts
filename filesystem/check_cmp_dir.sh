@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+# check binary correspondence between two dirs
+
 set -euo pipefail
 
 dir1=$1
