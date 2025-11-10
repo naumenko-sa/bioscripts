@@ -34,7 +34,7 @@ tabix clinvar.pathogenic.chr.vcf.gz
 # we need to extract
 # criteria_provided,_multiple_submitters,_no_conflicts
 # reviewed_by_expert_panel
-# practice_guideline (del dF508)
+# practice_guideline (del dF508) - 23 CF variants, these are 4-star variants
 
 vembrane filter '(INFO["CLNREVSTAT"][0] == "criteria_provided" and INFO["CLNREVSTAT"][1] == "_multiple_submitters" and INFO["CLNREVSTAT"][2] == "_no_conflicts") or \
                  (INFO["CLNREVSTAT"][0] == "reviewed_by_expert_panel") or \
