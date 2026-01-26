@@ -28,10 +28,15 @@ JVARKIT_PATH=~/Desktop/tools/JVARKIT/jvarkit.jar
 input_file=$1
 bed=$2
 ref=$3
+mapq=$4
 
 if [ -z $bed ]
 then
     bed=~/cre/data/protein_coding_genes.exons.fixed.sorted.bed
+fi
+
+if [[ ! -n "$mapq" ]]; then
+    mapq=30
 fi
 
 ext="${input_file#*.}"
@@ -42,15 +47,15 @@ if [[ "$ext" == "bam" ]];then
 
     /usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
         --bed $bed \
-        --mapq 30 \
+        --mapq $mapq \
         --mincoverage 10 $input_file > $sample.mq30.minc10.coverage.tsv
 
 elif [[ "$ext" == "cram" ]];then
 
-    /usr/bin/java -Xmx10G -jar $JVARKIT_PATH bamstats05 \
+    java -Xmx20G -jar $JVARKIT_PATH bamstats05 \
         --bed $bed \
-        --mapq 30 \
+        --mapq $mapq \
         --mincoverage 10 \
-        --reference $ref $input_file > $sample.miq30.minc10.coverage.tsv
+        --reference $ref $input_file > $sample.mq${mapq}.minc10.coverage.tsv
 fi
 
