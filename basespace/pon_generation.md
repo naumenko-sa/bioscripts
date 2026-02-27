@@ -4,9 +4,9 @@
 2. Select samples with median_cov over genes > 300X, min_cov > 150X. The maximum N of samples in BS for a PON = 100.
 3. Calculate PON with Basespace/ DRAGEN baseline Builder v4.3.8
 3.1 Create project
-3.2 upload bams
+3.2 upload bams/crams
 one command produces one dataset with multiple files
-bs dataset upload -p [project_id] --type common.files --exclude '*' --include '*.bam' --dry-run --recursive .
+bs dataset upload -p [project_id] --type common.files --exclude '*' --include '*.cram' --dry-run --recursive .
 note that sample name will be taken from the header @RG/SM tag no duplicates allowed in the dataset
 only one input type is allowed, so it is not possible to mix up cram and bam
 3.3 upload bed
@@ -14,7 +14,7 @@ bs dataset upload -p [project_id] --type common.files PANELTargets_EMG_v2_hg38_2
 bed file should be the same for BSSH and EMG - 4 column format, no header
 3.4 upload reference for cram input if different from the base reference in the next step.
 
-APP settings (ran v4.3.8 - has to match Emedgene Dragen)
+APP settings (ran v4.3.6001 for Dragen 4.3.X - has to match Emedgene Dragen)
 - select project
 - Baseline Mode: CNV
 - select bam files
