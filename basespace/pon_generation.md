@@ -1,4 +1,4 @@
-# How to generate a PON for EMG for CNV calling with Dragen for a panel assay
+# How to generate a PON for EMG for CNV calling with Dragen for a panel or WES assay
 
 1. Investigate the variability of the coverage in assay - see cheo/pon_targets.qmd template.
 2. Select samples with median_cov over genes > 300X, min_cov > 150X. The maximum N of samples in BS for a PON = 100.
