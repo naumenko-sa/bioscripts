@@ -20,3 +20,5 @@ gunzip -c clinvar.conflicting.chr.vcf.gz | grep "^#" > clinvar.conflicting.patho
 gunzip -c clinvar.conflicting.chr.vcf.gz | egrep "CLNSIGCONF=(Pathogenic|Likely_pathogenic)" >> clinvar.conflicting.pathogenic.vcf
 bgzip clinvar.conflicting.pathogenic.vcf
 tabix clinvar.conflicting.pathogenic.vcf.gz
+
+rm clinvar.conflicting.chr.vcf.gz clinvar.conflicting.chr.vcf.gz.tbi clinvar.conflicting.vcf.gz clinvar.conflicting.vcf.gz.tbi
